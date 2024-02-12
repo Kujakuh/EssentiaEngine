@@ -7,6 +7,7 @@
 
 #include <iostream>
 
+//#define RESOURCES_PATH "C:/Workspace/OGLEngine/resources/"
 
 #define USE_GPU_ENGINE 0
 extern "C"
