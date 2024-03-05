@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#define RESOURCES_PATH "C:/Workspace/c_c++/OGLEngine/resources/"
+//#define RESOURCES_PATH "C:/Workspace/c_c++/OGLEngine/resources/"
 
 #define USE_GPU_ENGINE 0
 extern "C"
@@ -36,9 +36,9 @@ int main(void)
 #pragma endregion
 
 
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //you might want to do this when testing the game for shipping
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //you might want to do this when testing the game for shipping
 
 
 	GLFWwindow *window = window = glfwCreateWindow(640, 480, "Simple", NULL, NULL);
@@ -74,7 +74,7 @@ int main(void)
 		glfwGetFramebufferSize(window, &width, &height);
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT);
-		
+		/*
 		glBegin(GL_TRIANGLES);
 		glColor3f(1, 0, 0);
 		glVertex2f(0,1);
@@ -83,7 +83,7 @@ int main(void)
 		glColor3f(0, 0, 1);
 		glVertex2f(-1,-1);
 		glEnd();
-
+		*/
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
