@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-//#define RESOURCES_PATH "C:/Workspace/c_c++/OGLEngine/resources/"
+#define RESOURCES_PATH "C:/Workspace/c_c++/OGLEngine/resources/"
 
 #define USE_GPU_ENGINE 0
 extern "C"
@@ -32,10 +32,9 @@ int main(void)
 		return -1;
 
 
-#pragma region report opengl errors to std
-	//enable opengl debugging output.
+#pragma REGION ENABLE DEBUG CONTEXT
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
-#pragma endregion
+#pragma ENDREGION
 
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -57,14 +56,13 @@ int main(void)
 	glfwSwapInterval(1);
 
 
-#pragma region report opengl errors to std
+#pragma REGION ENABLE OUTPUT DEBUG
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(glDebugOutput, 0);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-#pragma endregion
+#pragma ENDREGION
 
-	//shader loading example
 	Shader s;
 	s.loadShaderProgramFromFile(RESOURCES_PATH "vertex.vert", RESOURCES_PATH "fragment.frag");
 	s.bind();
@@ -77,23 +75,12 @@ int main(void)
 		glfwGetFramebufferSize(window, &width, &height);
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT);
-		/*
-		glBegin(GL_TRIANGLES);
-		glColor3f(1, 0, 0);
-		glVertex2f(0,1);
-		glColor3f(0, 1, 0);
-		glVertex2f(1,-1);
-		glColor3f(0, 0, 1);
-		glVertex2f(-1,-1);
-		glEnd();
-		*/
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	//there is no need to call the clear function for the libraries since the os will do that for us.
-	//by calling this functions we are just wasting time.
-	//glfwDestroyWindow(window);
-	//glfwTerminate();
+	glfwDestroyWindow(window);
+	glfwTerminate();
 	return 0;
 }
