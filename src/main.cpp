@@ -5,6 +5,8 @@
 #include <openglDebug.h>
 #include <demoShader.h>
 
+#include <assimp/Importer.hpp>
+
 #include <iostream>
 
 //#define RESOURCES_PATH "C:/Workspace/c_c++/OGLEngine/resources/"
@@ -67,6 +69,7 @@ int main(void)
 	s.loadShaderProgramFromFile(RESOURCES_PATH "vertex.vert", RESOURCES_PATH "fragment.frag");
 	s.bind();
 
+	Assimp::Importer importer;
 	while (!glfwWindowShouldClose(window))
 	{
 		int width = 0, height = 0;
