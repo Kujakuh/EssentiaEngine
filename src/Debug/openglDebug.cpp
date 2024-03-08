@@ -1,4 +1,4 @@
-#include <openglDebug.h>
+#include <Debug/openglDebug.h>
 #include <iostream>
 
 //https://learnopengl.com/In-Practice/Debugging
