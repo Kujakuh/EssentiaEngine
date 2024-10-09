@@ -3,11 +3,10 @@
 #include <GLFW/glfw3.h>
 
 #include <Debug/openglDebug.h>
-#include <Core/demoShader.h>
+//#include <Core/demoShader.h>
+#include <Core/shader.h>
 
 #include <iostream>
-
-#define RESOURCES_PATH "C:/Workspace/OGLEngine/resources/"
 
 constexpr int _WIDTH = 1600;
 constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
@@ -88,9 +87,8 @@ int main(void)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	Shader s;
-	s.loadShaderProgramFromFile(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag");
-	s.bind();
+	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", 0);
+	s.use();
 
 	while (!glfwWindowShouldClose(window))
 	{
