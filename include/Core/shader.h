@@ -26,6 +26,10 @@
 
 #include <string>
 
+#define LOC_POSITION 0
+#define LOC_TEX_COORD 1
+#define LOC_NORMAL 2
+
 enum DATA_SOURCE
 {
 	FILE_PATH,

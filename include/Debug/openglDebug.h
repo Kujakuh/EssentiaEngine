@@ -8,3 +8,5 @@ void GLAPIENTRY glDebugOutput(GLenum source,
 	GLsizei length,
 	const char *message,
 	const void *userParam);
+
+GLenum glCheckError_(const char* file, int line);
