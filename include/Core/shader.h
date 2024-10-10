@@ -3,23 +3,40 @@
 *
 *	This class is used to read and compile shaders
 *
-*	The constructor will read and compile given shaders
+*	Constructor will read and compile given shaders either
+*	from a specified string or file path
 *
-*	The use() function will activate the shader
+*	use() and disable() methods
 *
-*	The set of setUniform functions will modify the value of the shader uniform
-*	placed at the given location
+*	setUniform() will modify the value of the
+*	current shader uniform that has the provided name
+* 
+*	(
+*		Overload for glm vec3, vec4, mat3, mat4, lose floats,
+*		single float, int, unsigned int, and bool.
+*	)
 *
  */
 
-//#ifndef SHADER_S_H
-//#define SHADER_S_H
-#pragma once
+#ifndef SHADER_S_H
+#define SHADER_S_H
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
 #include <string>
+
+enum DATA_SOURCE
+{
+	FILE_PATH,
+	STR_DATA
+};
+enum SH_TYPE
+{
+	VERTEX,
+	FRAGMENT,
+	GEOMETRY
+};
 
 class Shader
 {
@@ -31,14 +48,14 @@ private:
 public:
 
 	// The constructor will read and compile both shaders
-	Shader(const char* vertexPath, const char* fragmentPath, int stringMode);
+	Shader(const char* vertexPath, const char* fragmentPath, DATA_SOURCE dataSource);
 
 	~Shader();
 
 	inline GLuint getID() const;
 
-	void use();
-	void disable();
+	void use() const;
+	void disable() const;
 
 	void setUniform(const std::string& name, bool value) const;
 	void setUniform(const std::string& name, int value) const;
@@ -53,5 +70,7 @@ public:
 
 
 };
+static const char* DS_TOSTRING[] = { "FILE_PATH", "STR_DATA" };
+static const char* ST_TOSTRING[] = { "VERTEX", "FRAGMENT", "GEOMETRY" };
 
-//#endif // !SHADERS_S_H
+#endif // !SHADERS_S_H

@@ -3,27 +3,25 @@
 #include <GLFW/glfw3.h>
 
 #include <Debug/openglDebug.h>
-//#include <Core/demoShader.h>
 #include <Core/shader.h>
 
 #include <iostream>
 
-constexpr int _WIDTH = 1600;
+constexpr int _WIDTH = 500;
 constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
 
-#define USE_GPU_ENGINE 0
-extern "C"
-{
-	__declspec(dllexport) unsigned long NvOptimusEnablement = USE_GPU_ENGINE;
-	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = USE_GPU_ENGINE;
-}
+#ifndef LIBRARY_EXPORTS
+#	define DllExport __declspec(dllexport)
+#	define DllImport __declspec(dllimport)
+#endif
+
+//extern "C"{}
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 int main(void)
 {
-
 	if (!glfwInit()) return -1;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -31,14 +29,16 @@ int main(void)
 
 
 #pragma region ENABLE DEBUG CONTEXT
+
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+
 #pragma endregion
 
 
-	GLFWwindow *window = window = glfwCreateWindow(_WIDTH, _HEIGHT, "Me quiero pegar un tiro", NULL, NULL);
+	GLFWwindow *window = window = glfwCreateWindow(_WIDTH, _HEIGHT, "OG-L Engine", NULL, NULL);
 	if (window == NULL)
     {
-        std::cout << "Failed to create GLFW window" << '\n';
+        std::cout << " ERROR::GLFW::WINDOW::CREATE" << '\n';
         glfwTerminate();
         return -1;
     }
@@ -49,12 +49,17 @@ int main(void)
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     // Try load Glad for his own OS-specific pointers
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    if ( !gladLoadGLLoader( (GLADloadproc) glfwGetProcAddress) )
     {
-        std::cout << "Failed to inicialice Glad" << '\n';
+        std::cout << "ERROR::GLAD::INIT" << '\n';
         glfwTerminate();
         return -1;
     }
+
+	// -- Most of the times this is an unneeded call
+	// -- since default framebuffer coords are correctly mapped to NDC
+	// -- but its not the case for all devices
+	// glViewport(0, 0, _WIDTH, _HEIGHT);
 
     glEnable(GL_DEPTH_TEST);
 	glfwSwapInterval(1);
@@ -64,10 +69,12 @@ int main(void)
     glfwSetWindowAspectRatio(window, 16, 9);
 
 #pragma region ENABLE OUTPUT DEBUG
+
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(glDebugOutput, 0);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
 #pragma endregion
 
 	float vertices[] = {
@@ -87,12 +94,12 @@ int main(void)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", 0);
+	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
 	s.use();
+	s.setUniform("a", glm::vec3(1.0f, 0.3f, 0.0f));
 
-	while (!glfwWindowShouldClose(window))
+	while ( !glfwWindowShouldClose(window) )
 	{
-		//glfwGetFramebufferSize(window, &width, &height);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
