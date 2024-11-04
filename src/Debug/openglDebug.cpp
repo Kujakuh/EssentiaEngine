@@ -1,3 +1,6 @@
+#ifndef DEBUG_UTILS_S
+#define DEBUG_UTILS_S
+
 #include <Debug/openglDebug.h>
 #include <iostream>
 
@@ -82,3 +85,5 @@ void GLAPIENTRY glDebugOutput(GLenum source,
 }
 
 #define glCheckError() glCheckError_(__FILE__, __LINE__)
+
+#endif // !DEBUG_UTILS_S

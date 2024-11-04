@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include <Debug/openglDebug.h>
-#include <Core/shader.h>
+#include <Core/shader.hpp>
 
 #include <iostream>
 
