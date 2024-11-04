@@ -72,6 +72,10 @@ public:
 	void setUniform(const std::string& name, glm::mat3 value) const;
 	void setUniform(const std::string& name, glm::mat4 value) const;
 
+	// Uniform buffer object : shared between shader programs uniform
+	// Setup data with glBufferSubData()
+	// LearnOpenGL pg: 235/523
+	void bindUBOToBindingPoint(const GLchar* uniformBufferObjectName, GLuint bindingPointIndex);
 
 };
 static const char* DS_TOSTRING[] = { "FILE_PATH", "STR_DATA" };

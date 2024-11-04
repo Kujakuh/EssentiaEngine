@@ -49,7 +49,8 @@ void GLAPIENTRY glDebugOutput(GLenum source,
 
 
 	std::cout << "---------------" << std::endl;
-	std::cout << "Debug message (" << id << "): " << message << std::endl;
+	std::cout << "Debug message (" << id << "): " << message;
+	std::cout << "---------------" << std::endl;
 
 	switch (source)
 	{
