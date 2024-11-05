@@ -53,10 +53,16 @@ public:
 
 	// The constructor will read and compile both shaders
 	Shader(const char* vertexPath, const char* fragmentPath, DATA_SOURCE dataSource);
+	Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, DATA_SOURCE dataSource);
 
 	~Shader();
 
 	inline GLuint getID() const;
+
+	void compileShader(GLuint shader, const char* shaderCode, SH_TYPE shaderType);
+	void buildShaderFile(GLuint shader, const char* file_path, SH_TYPE shaderType);
+	void linkShaderErrorCheck(GLuint shaderProgram);
+	std::string readShaderFile(const char* shaderPath);
 
 	void use() const;
 	void disable() const;

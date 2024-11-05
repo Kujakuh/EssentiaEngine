@@ -17,7 +17,7 @@
 // Utils -----------------------------------------------------------------------
 #pragma region "Shader construct utility functions"
 
-static void compileShader(GLuint shader, const char* shaderCode, SH_TYPE shaderType)
+void Shader::compileShader(GLuint shader, const char* shaderCode, SH_TYPE shaderType)
 {
 	int compilationFlag;
 	char* infoLog;
@@ -37,7 +37,15 @@ static void compileShader(GLuint shader, const char* shaderCode, SH_TYPE shaderT
 	}
 }
 
-static void linkShaderErrorCheck(GLuint shaderProgram)
+void Shader::buildShaderFile(GLuint shader, const char* file_path, SH_TYPE shaderType)
+{
+	std::string shader_code = readShaderFile(file_path);
+	const char* s_shader_code = shader_code.c_str();
+
+	compileShader(shader, s_shader_code, shaderType);
+}
+
+void Shader::linkShaderErrorCheck(GLuint shaderProgram)
 {
 	int linkFlag;
 	char* infoLog;
@@ -52,7 +60,7 @@ static void linkShaderErrorCheck(GLuint shaderProgram)
 	}
 }
 
-static std::string readShaderFile(const char* shaderPath)
+std::string Shader::readShaderFile(const char* shaderPath)
 {
 	std::string shaderCode;
 	std::ifstream shaderFile;
@@ -96,14 +104,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, DATA_SOURCE dat
 
 	if (dataSource == FILE_PATH)
 	{
-		std::string vertexCode = readShaderFile(vertexPath);
-		std::string fragmentCode = readShaderFile(fragmentPath);
-
-		const char* vShaderCode = vertexCode.c_str();
-		const char* fShaderCode = fragmentCode.c_str();
-
-		compileShader(vertexShader, vShaderCode, VERTEX);
-		compileShader(fragmentShader, fShaderCode, FRAGMENT);
+		buildShaderFile(vertexShader, vertexPath, VERTEX);
+		buildShaderFile(fragmentShader, fragmentPath, FRAGMENT);
 	}
 	else if (dataSource == STR_DATA)
 	{
@@ -123,6 +125,42 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, DATA_SOURCE dat
 	// Free Memory 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+}
+Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, DATA_SOURCE dataSource)
+{
+	this->ID = 0;
+	GLuint vertexShader, fragmentShader, geometryShader;
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+
+	if (dataSource == FILE_PATH)
+	{
+		buildShaderFile(vertexShader, vertexPath, VERTEX);
+		buildShaderFile(fragmentShader, fragmentPath, FRAGMENT);
+		buildShaderFile(geometryShader, geometryPath, GEOMETRY);
+	}
+	else if (dataSource == STR_DATA)
+	{
+		compileShader(vertexShader, vertexPath, VERTEX);
+		compileShader(fragmentShader, fragmentPath, FRAGMENT);
+		compileShader(geometryShader, geometryPath, GEOMETRY);
+	}
+
+	// Shader program creation and linking
+	this->ID = glCreateProgram();
+	glAttachShader(this->ID, vertexShader);
+	glAttachShader(this->ID, fragmentShader);
+	glAttachShader(this->ID, geometryShader);
+	glLinkProgram(this->ID);
+
+	// Check linking errors
+	linkShaderErrorCheck(this->ID);
+
+	// Free Memory 
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	glDeleteShader(geometryShader);
 }
 
 Shader::~Shader()
