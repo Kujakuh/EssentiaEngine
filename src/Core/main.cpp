@@ -6,6 +6,8 @@
 #include <Core/shader.hpp>
 
 #include <iostream>
+#include <coroutine>
+#include <format>
 
 constexpr int _WIDTH = 500;
 constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
@@ -19,6 +21,12 @@ constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+
+//std::coroutine<int> generator() {
+//	for (int i = 0; i < 5; ++i) {
+//		co_yield I;
+//	}
+//}
 
 int main(void)
 {
@@ -34,6 +42,8 @@ int main(void)
 
 #pragma endregion
 
+	// ANTI-ALIASING (multisample  MSAA) 1 -> 4 sampling point per fragment
+	glfwWindowHint(GLFW_SAMPLES, 8);
 
 	GLFWwindow *window = window = glfwCreateWindow(_WIDTH, _HEIGHT, "OG-L Engine", NULL, NULL);
 	if (window == NULL)
@@ -77,6 +87,10 @@ int main(void)
 
 #pragma endregion
 
+#pragma region ANTI-ALIASING (opengl) MSAA
+	glEnable(GL_MULTISAMPLE);
+#pragma endregion 
+
 	float vertices[] = {
 	-0.5f, -0.5f, 0.0f,
 	 0.5f, -0.5f, 0.0f,
@@ -94,7 +108,9 @@ int main(void)
 	glVertexAttribPointer(LOC_POSITION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
+	std::string a = std::string(RESOURCES_PATH) + "Shaders/vertex.vert";
+
+	Shader s(a.c_str(), RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
 	s.use();
 	s.setUniform("a", glm::vec3(1.0f, 0.3f, 0.0f));
 
