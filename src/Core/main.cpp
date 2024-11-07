@@ -6,8 +6,6 @@
 #include <Core/shader.hpp>
 
 #include <iostream>
-#include <coroutine>
-#include <format>
 
 constexpr int _WIDTH = 500;
 constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
@@ -22,11 +20,7 @@ constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
-//std::coroutine<int> generator() {
-//	for (int i = 0; i < 5; ++i) {
-//		co_yield I;
-//	}
-//}
+
 
 int main(void)
 {
