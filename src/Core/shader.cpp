@@ -20,7 +20,7 @@
 void Shader::compileShader(GLuint shader, const char* shaderCode, SH_TYPE shaderType)
 {
 	int compilationFlag;
-	char* infoLog;
+	char* infoLog = new char[512]();
 
 	glShaderSource(shader, 1, &shaderCode, NULL);
 	glCompileShader(shader);
@@ -48,7 +48,7 @@ void Shader::buildShaderFile(GLuint shader, const char* file_path, SH_TYPE shade
 void Shader::linkShaderErrorCheck(GLuint shaderProgram)
 {
 	int linkFlag;
-	char* infoLog;
+	char* infoLog = new char[512]();
 
 	// Check linking errors
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linkFlag);
