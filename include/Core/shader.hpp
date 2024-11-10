@@ -1,5 +1,5 @@
 /*
-*	SHADER_S.HPP
+*	SHADER.HPP
 *
 *	This class is used to read and compile shaders
 *
@@ -18,13 +18,18 @@
 *
  */
 
-#ifndef SHADER_S_H
-#define SHADER_S_H
+#ifndef SHADER_H
+#define SHADER_H
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <string>
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 #define LOC_POSITION 0
 #define LOC_TEX_COORD 1
@@ -87,4 +92,4 @@ public:
 static const char* DS_TOSTRING[] = { "FILE_PATH", "STR_DATA" };
 static const char* ST_TOSTRING[] = { "VERTEX", "FRAGMENT", "GEOMETRY" };
 
-#endif // !SHADERS_S_H
+#endif // !SHADERS_H

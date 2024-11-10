@@ -1,18 +1,4 @@
-#ifndef SHADER_S_S
-#define SHADER_S_S
-
 #include <Core/shader.hpp>
-
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-
-// For glm::value_ptr
-#include <glm/gtc/type_ptr.hpp>
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
 
 // Utils -----------------------------------------------------------------------
 #pragma region "Shader construct utility functions"
@@ -232,5 +218,3 @@ void Shader::bindUBOToBindingPoint(const GLchar* uniformBufferObjectName,GLuint 
 	unsigned int ubo_index = glGetUniformBlockIndex(this->ID, uniformBufferObjectName);
 	glUniformBlockBinding(this->ID, ubo_index, bindingPointIndex);
 }
-
-#endif //!SHADER_S_S

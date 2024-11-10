@@ -4,6 +4,7 @@
 
 #include <Debug/openglDebug.h>
 #include <Core/shader.hpp>
+#include <Core/ECS/EnTT.hpp>
 
 #include <iostream>
 
@@ -24,6 +25,21 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 int main(void)
 {
+	EnTT::SceneManager* sceneManager = EnTT::SceneManager::GetInstance();
+
+	// Crear una escena
+	EnTT::Scene* scene = new EnTT::Scene();
+	sceneManager->ChangeScene(scene);
+
+	// Crear entidades
+	EnTT::Entity& entity1 = scene->CreateEntity("Entity1");
+	EnTT::Entity& entity2 = scene->CreateEntity("Entity2");
+	EnTT::Entity& entity3 = scene->CreateEntity("Entity3");
+	scene->RemoveEntity(entity2.GetID());
+
+	EnTT::Entity& entity4 = scene->CreateEntity("Entity4");
+	std::cout << entity4.GetID() << entity4.GetName() << std::endl;
+
 	if (!glfwInit()) return -1;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
