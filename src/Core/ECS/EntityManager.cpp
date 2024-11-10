@@ -28,8 +28,18 @@ namespace EnTT
         return nullptr;  // La entidad no existe
     }
 
+    Entity* EntityManager::GetEntityByName(const std::string& name) {
+        auto it = std::find_if(entities.begin(), entities.end(),
+            [&name](const std::unique_ptr<Entity>& entity) {
+                return entity->GetName() == name; 
+            });
+
+        return it != entities.end() ? it->get() : nullptr;
+    }
+
     void EntityManager::RemoveEntity(int entityId) {
         if (entityId >= 0 && entityId < entities.size() && entities[entityId]) {
+            entities[entityId]->Destroy();
             entities[entityId].reset();  // Eliminar la entidad
             availableIDs.push(entityId); // Guardar el ID para reutilizar
         }

@@ -16,6 +16,7 @@ namespace EnTT
     public:
         Entity& CreateEntity(const std::string& name);
         Entity* GetEntityByID(int entityId);
+        Entity* GetEntityByName(const std::string& name);
         void RemoveEntity(int entityId);
 
         template <typename... Components>

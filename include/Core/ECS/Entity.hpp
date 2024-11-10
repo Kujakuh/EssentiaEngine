@@ -32,6 +32,8 @@ namespace EnTT
 
         template <typename T>
         bool HasComponent() const;
+
+        void Destroy();
     };
 }
 

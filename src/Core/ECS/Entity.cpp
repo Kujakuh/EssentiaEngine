@@ -29,4 +29,8 @@ namespace EnTT
     bool Entity::HasComponent() const {
         return components.find(typeid(T)) != components.end();
     }
+
+    void Entity::Destroy() {
+        components.clear();
+    }
 }
