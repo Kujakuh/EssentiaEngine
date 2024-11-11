@@ -60,7 +60,7 @@ int main(void)
 	// ANTI-ALIASING (multisample  MSAA) 1 -> 4 sampling point per fragment
 	glfwWindowHint(GLFW_SAMPLES, 8);
 
-	GLFWwindow *window = window = glfwCreateWindow(_WIDTH, _HEIGHT, "OG-L Engine", NULL, NULL);
+	GLFWwindow *window = window = glfwCreateWindow(_WIDTH, _HEIGHT, "Essentia", NULL, NULL);
 	if (window == NULL)
     {
         std::cout << " ERROR::GLFW::WINDOW::CREATE" << '\n';
