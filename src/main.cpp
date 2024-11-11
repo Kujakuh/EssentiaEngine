@@ -4,9 +4,12 @@
 
 #include <Debug/openglDebug.h>
 #include <Core/shader.hpp>
-#include <Core/ECS/ecs.hpp>
 
 #include <iostream>
+
+#include <EssentiaEngine>
+using namespace Essentia;
+
 #include "testScene.cpp"
 
 constexpr int _WIDTH = 500;
@@ -25,23 +28,23 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 int main(void)
 {
-	Essentia::SceneManager* sceneManager = Essentia::SceneManager::GetInstance();
+	SceneManager* sceneManager = SceneManager::GetInstance();
 
 	// Crear una escena
 	testScene* scene = new testScene();
 	sceneManager->ChangeScene(scene);
 
 	// Crear entidades
-	Essentia::Entity& entity1 = scene->CreateEntity("Entity1");
-	Essentia::Entity& entity2 = scene->CreateEntity("Entity2");
-	Essentia::Entity& entity3 = scene->CreateEntity("Entity3");
+	Entity& entity1 = scene->CreateEntity("Entity1");
+	Entity& entity2 = scene->CreateEntity("Entity2");
+	Entity& entity3 = scene->CreateEntity("Entity3");
 	scene->RemoveEntity(entity3.GetID());
 	scene->RemoveEntity(entity2.GetID());
 	scene->RemoveEntity(entity1.GetID());
 
-	Essentia::Entity& entity4 = scene->CreateEntity("Entity4");
-	Essentia::Entity& entity5 = scene->CreateEntity("Entity5");
-	Essentia::Entity& entity6 = scene->CreateEntity("Entity6");
+	Entity& entity4 = scene->CreateEntity("Entity4");
+	Entity& entity5 = scene->CreateEntity("Entity5");
+	Entity& entity6 = scene->CreateEntity("Entity6");
 
 	Transform t(glm::vec3(1),
 				glm::quat(1, 1, 1, 1),

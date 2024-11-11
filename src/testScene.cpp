@@ -1,5 +1,5 @@
 #include <iostream>
-#include <Core/ECS/ecs.hpp>
+#include <Core/Essentia_ECS>
 
 class testScene : public Essentia::Scene
 {

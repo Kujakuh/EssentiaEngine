@@ -1,0 +1,6 @@
+#ifndef ESSENTIA_IMPORTS_H
+#define ESSENTIA_IMPORTS_H
+
+#include <Core/Essentia_ECS>
+
+#endif //!ESSENTIA_IMPORTS_H

@@ -73,7 +73,7 @@ class Shader
 		// Uniform buffer object : shared between shader programs uniform
 		// Setup data with glBufferSubData()
 		// LearnOpenGL pg: 235/523
-		void bindUBOToBindingPoint(const GLchar* uniformBufferObjectName, GLuint bindingPointIndex);
+		void bindUBOToBindingPoint(const GLchar* uniformBufferObjectName, GLuint bindingPointIndex) const;
 };
 
 #endif // !SHADERS_H

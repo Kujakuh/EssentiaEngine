@@ -1,3 +1,6 @@
+#ifndef ECS_IMPORTS_H
+#define ECS_IMPORTS_H
+
 #include <Core/ECS/Entity.hpp>
 #include <Core/ECS/EntityManager.hpp>
 #include <Core/ECS/ISystem.hpp>
@@ -5,3 +8,5 @@
 #include <Core/ECS/SystemDispatcher.hpp>
 #include <Core/ECS/Scene.hpp>
 #include <Core/ECS/SceneManager.hpp>
+
+#endif //!ECS_IMPORTS_H
