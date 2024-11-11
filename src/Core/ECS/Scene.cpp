@@ -1,6 +1,6 @@
 #include <Core/ECS/Scene.hpp>
 
-namespace EnTT
+namespace Essentia
 {
     Entity& Scene::CreateEntity(const std::string& name) {return entityManager.CreateEntity(name);}
 

@@ -1,7 +1,7 @@
 #ifndef ICOMPONENT_H
 #define ICOMPONENT_H
 
-namespace EnTT
+namespace Essentia
 {
     class IComponent 
     {

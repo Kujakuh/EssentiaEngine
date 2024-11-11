@@ -1,6 +1,6 @@
 #include <Core/ECS/SceneManager.hpp>
 
-namespace EnTT
+namespace Essentia
 {
     SceneManager* SceneManager::instance = nullptr;
 

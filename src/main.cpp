@@ -4,9 +4,10 @@
 
 #include <Debug/openglDebug.h>
 #include <Core/shader.hpp>
-#include <Core/ECS/EnTT.hpp>
+#include <Core/ECS/ecs.hpp>
 
 #include <iostream>
+#include "testScene.cpp"
 
 constexpr int _WIDTH = 500;
 constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
@@ -22,28 +23,40 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 
-
 int main(void)
 {
-	EnTT::SceneManager* sceneManager = EnTT::SceneManager::GetInstance();
+	Essentia::SceneManager* sceneManager = Essentia::SceneManager::GetInstance();
 
 	// Crear una escena
-	EnTT::Scene* scene = new EnTT::Scene();
+	testScene* scene = new testScene();
 	sceneManager->ChangeScene(scene);
 
 	// Crear entidades
-	EnTT::Entity& entity1 = scene->CreateEntity("Entity1");
-	EnTT::Entity& entity2 = scene->CreateEntity("Entity2");
-	EnTT::Entity& entity3 = scene->CreateEntity("Entity3");
+	Essentia::Entity& entity1 = scene->CreateEntity("Entity1");
+	Essentia::Entity& entity2 = scene->CreateEntity("Entity2");
+	Essentia::Entity& entity3 = scene->CreateEntity("Entity3");
 	scene->RemoveEntity(entity3.GetID());
 	scene->RemoveEntity(entity2.GetID());
 	scene->RemoveEntity(entity1.GetID());
 
-	EnTT::Entity& entity4 = scene->CreateEntity("Entity4");
-	EnTT::Entity& entity5 = scene->CreateEntity("Entity5");
-	EnTT::Entity& entity6 = scene->CreateEntity("Entity6");
+	Essentia::Entity& entity4 = scene->CreateEntity("Entity4");
+	Essentia::Entity& entity5 = scene->CreateEntity("Entity5");
+	Essentia::Entity& entity6 = scene->CreateEntity("Entity6");
 
-	std::cout << entity4.GetID() << entity4.GetName() << std::endl;
+	Transform t(glm::vec3(1),
+				glm::quat(1, 1, 1, 1),
+				glm::vec3(1));
+
+	entity6.AddComponent<Transform>(t);
+	entity4.AddComponent<Transform>(t);
+	Transform *ref = entity6.GetComponent<Transform>();
+
+	ref->setPosition().x = 24;
+	if(entity6.HasComponent<Transform>())
+	std::cout << entity6.GetID() << scene->GetEntityManager().GetEntityByName(entity4.GetName())->GetName() << entity6.GetComponent<Transform>()->getPosition().x << std::endl;
+
+	auto ents = scene->GetEntityManager().GetEntitiesWith<>();
+	std::cout << ents.size() << std::endl;
 
 	if (!glfwInit()) return -1;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);

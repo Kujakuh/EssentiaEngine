@@ -1,6 +1,6 @@
 #include <Core/ECS/SystemDispatcher.hpp>
 
-namespace EnTT
+namespace Essentia
 {
     void SystemDispatcher::RegisterSystem(std::shared_ptr<ISystem> system) 
     {

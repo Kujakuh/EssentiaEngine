@@ -6,7 +6,7 @@
 #include <Core/ECS/EntityManager.hpp>
 #include <Core/ECS/SystemDispatcher.hpp>
 
-namespace EnTT
+namespace Essentia
 {
     class Scene 
     {

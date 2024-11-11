@@ -3,7 +3,7 @@
 
 #include <Core/ECS/EntityManager.hpp>
 
-namespace EnTT
+namespace Essentia
 {
     class ISystem 
     {

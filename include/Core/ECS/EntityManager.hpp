@@ -6,7 +6,7 @@
 #include <queue>
 #include <Core/ECS/Entity.hpp>
 
-namespace EnTT
+namespace Essentia
 {
     class EntityManager 
     {
@@ -20,8 +20,24 @@ namespace EnTT
             Entity* GetEntityByName(const std::string& name);
             void RemoveEntity(int entityId);
 
+        public:
             template <typename... Components>
-            std::vector<Entity*> GetEntitiesWith();
+            std::vector<Entity*> GetEntitiesWith()
+            {
+                std::vector<Entity*> result;
+
+                for (auto& entity : entities)
+                {
+                    if (entity)
+                    {
+                        bool hasAllComponents = true;
+                        (void)std::initializer_list<int>{(hasAllComponents &= entity->HasComponent<Components>(), 0)...};
+
+                        if (hasAllComponents) result.push_back(entity.get());
+                    }
+                }
+                return result;
+            }
     };
 }
 

@@ -4,7 +4,7 @@
 #include <Core/ECS/Scene.hpp>
 #include <memory>
 
-namespace EnTT
+namespace Essentia
 {
     class SceneManager 
     {

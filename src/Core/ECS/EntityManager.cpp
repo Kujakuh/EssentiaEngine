@@ -1,6 +1,6 @@
 #include <Core/ECS/EntityManager.hpp>
 
-namespace EnTT
+namespace Essentia
 {
     Entity& EntityManager::CreateEntity(const std::string& name) 
     {
@@ -51,23 +51,5 @@ namespace EnTT
             entities[entityId].reset();
             availableIDs.push(entityId);
         }
-    }
-
-    template <typename... Components>
-    std::vector<Entity*> EntityManager::GetEntitiesWith()
-    {
-        std::vector<Entity*> result;
-
-        for (auto& entity : entities)
-        {
-            if (entity)
-            {
-                bool hasAllComponents = true;
-                (void)std::initializer_list<int>{(hasAllComponents &= entity->HasComponent<Components>(), 0)...};
-
-                if (hasAllComponents) result.push_back(entity.get());
-            }
-        }
-        return result;
     }
 }
