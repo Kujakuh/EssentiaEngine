@@ -5,10 +5,11 @@
 
 namespace EnTT
 {
-    class ISystem {
-    public:
-        virtual void Update(EntityManager& entityManager) = 0;
-        virtual ~ISystem() = default;
+    class ISystem 
+    {
+        public:
+            virtual void Update(EntityManager& entityManager) = 0;
+            virtual ~ISystem() = default;
     };
 }
 

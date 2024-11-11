@@ -8,20 +8,21 @@
 
 namespace EnTT
 {
-    class EntityManager {
-    private:
-        std::vector<std::unique_ptr<Entity>> entities;
-        std::queue<int> availableIDs;
+    class EntityManager 
+    {
+        private:
+            std::vector<std::unique_ptr<Entity>> entities;
+            std::queue<int> availableIDs;
 
-    public:
-        Entity& CreateEntity(const std::string& name);
-        Entity* GetEntityByID(int entityId);
-        Entity* GetEntityByName(const std::string& name);
-        void RemoveEntity(int entityId);
+        public:
+            Entity& CreateEntity(const std::string& name);
+            Entity* GetEntityByID(int entityId);
+            Entity* GetEntityByName(const std::string& name);
+            void RemoveEntity(int entityId);
 
-        template <typename... Components>
-        std::vector<Entity*> GetEntitiesWith();
+            template <typename... Components>
+            std::vector<Entity*> GetEntitiesWith();
     };
 }
 
-#endif // ENTITY_MANAGER_H
+#endif // !ENTITY_MANAGER_H

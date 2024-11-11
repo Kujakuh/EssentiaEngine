@@ -31,65 +31,49 @@
 #include <fstream>
 #include <sstream>
 
-#define LOC_POSITION 0
-#define LOC_TEX_COORD 1
-#define LOC_NORMAL 2
-
-enum DATA_SOURCE
-{
-	FILE_PATH,
-	STR_DATA
-};
-enum SH_TYPE
-{
-	VERTEX,
-	FRAGMENT,
-	GEOMETRY
-};
+#include <Core/enums.hpp>
+#include <Core/values.hpp>
 
 class Shader
 {
-private:
+	private:
 
-	// Shader program ID
-	GLuint ID;
+		// Shader program ID
+		GLuint ID;
 
-public:
+	public:
 
-	// The constructor will read and compile both shaders
-	Shader(const char* vertexPath, const char* fragmentPath, DATA_SOURCE dataSource);
-	Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, DATA_SOURCE dataSource);
+		// The constructor will read and compile both shaders
+		Shader(const char* vertexPath, const char* fragmentPath, DATA_SOURCE dataSource);
+		Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, DATA_SOURCE dataSource);
 
-	~Shader();
+		~Shader();
 
-	inline GLuint getID() const;
+		inline GLuint getID() const;
 
-	void compileShader(GLuint shader, const char* shaderCode, SH_TYPE shaderType);
-	void buildShaderFile(GLuint shader, const char* file_path, SH_TYPE shaderType);
-	void linkShaderErrorCheck(GLuint shaderProgram);
-	std::string readShaderFile(const char* shaderPath);
+		void compileShader(GLuint shader, const char* shaderCode, SH_TYPE shaderType);
+		void buildShaderFile(GLuint shader, const char* file_path, SH_TYPE shaderType);
+		void linkShaderErrorCheck(GLuint shaderProgram);
+		std::string readShaderFile(const char* shaderPath);
 
-	void use() const;
-	void disable() const;
+		void use() const;
+		void disable() const;
 
-	void setUniform(const std::string& name, bool value) const;
-	void setUniform(const std::string& name, int value) const;
-	void setUniform(const std::string& name, unsigned int value) const;
-	void setUniform(const std::string& name, float value) const;
-	void setUniform(const std::string& name, float v1, float v2, float v3) const;
-	void setUniform(const std::string& name, float v1, float v2, float v3, float v4) const;
-	void setUniform(const std::string& name, glm::vec3 value) const;
-	void setUniform(const std::string& name, glm::vec4 value) const;
-	void setUniform(const std::string& name, glm::mat3 value) const;
-	void setUniform(const std::string& name, glm::mat4 value) const;
+		void setUniform(const std::string& name, bool value) const;
+		void setUniform(const std::string& name, int value) const;
+		void setUniform(const std::string& name, unsigned int value) const;
+		void setUniform(const std::string& name, float value) const;
+		void setUniform(const std::string& name, float v1, float v2, float v3) const;
+		void setUniform(const std::string& name, float v1, float v2, float v3, float v4) const;
+		void setUniform(const std::string& name, glm::vec3 value) const;
+		void setUniform(const std::string& name, glm::vec4 value) const;
+		void setUniform(const std::string& name, glm::mat3 value) const;
+		void setUniform(const std::string& name, glm::mat4 value) const;
 
-	// Uniform buffer object : shared between shader programs uniform
-	// Setup data with glBufferSubData()
-	// LearnOpenGL pg: 235/523
-	void bindUBOToBindingPoint(const GLchar* uniformBufferObjectName, GLuint bindingPointIndex);
-
+		// Uniform buffer object : shared between shader programs uniform
+		// Setup data with glBufferSubData()
+		// LearnOpenGL pg: 235/523
+		void bindUBOToBindingPoint(const GLchar* uniformBufferObjectName, GLuint bindingPointIndex);
 };
-static const char* DS_TOSTRING[] = { "FILE_PATH", "STR_DATA" };
-static const char* ST_TOSTRING[] = { "VERTEX", "FRAGMENT", "GEOMETRY" };
 
 #endif // !SHADERS_H

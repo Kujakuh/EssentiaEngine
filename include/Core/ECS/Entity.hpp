@@ -11,29 +11,29 @@
 
 namespace EnTT
 {
-    class Entity {
-    private:
-        int id;
-        std::string name;
-        std::unordered_map<std::type_index, std::unique_ptr<IComponent>> components;
+    class Entity 
+    {
+        private:
+            int id;
+            std::string name;
+            std::unordered_map<std::type_index, std::unique_ptr<IComponent>> components;
 
-    public:
-        Entity(int id, const std::string& name);
+        public:
+            Entity(int id, const std::string& name);
 
-        int GetID() const;
-        void SetID(int id) const;
-        const std::string& GetName() const;
+            int GetID() const;
+            const std::string& GetName() const;
 
-        template <typename T, typename... Args>
-        T& AddComponent(Args&&... args);
+            template <typename T, typename... Args>
+            T& AddComponent(Args&&... args);
 
-        template <typename T>
-        T* GetComponent();
+            template <typename T>
+            T* GetComponent();
 
-        template <typename T>
-        bool HasComponent() const;
+            template <typename T>
+            bool HasComponent() const;
 
-        void Destroy();
+            void Destroy();
     };
 }
 

@@ -2,15 +2,17 @@
 
 namespace EnTT
 {
-    Entity& EntityManager::CreateEntity(const std::string& name) {
+    Entity& EntityManager::CreateEntity(const std::string& name) 
+    {
         int entityId;
 
-        // Reutilizar un ID disponible o asignar uno nuevo
-        if (!availableIDs.empty()) {
+        if (!availableIDs.empty()) 
+        {
             entityId = availableIDs.front();
             availableIDs.pop();
         }
-        else {
+        else 
+        {
             entityId = static_cast<int>(entities.size());
             entities.emplace_back(nullptr); // Reservar espacio en el vector
         }
@@ -21,42 +23,49 @@ namespace EnTT
         return *entities[entityId];
     }
 
-    Entity* EntityManager::GetEntityByID(int entityId) {
-        if (entityId >= 0 && entityId < entities.size() && entities[entityId]) {
+    Entity* EntityManager::GetEntityByID(int entityId) 
+    {
+        if (entityId >= 0 && entityId < entities.size() && entities[entityId]) 
+        {
             return entities[entityId].get();
         }
-        return nullptr;  // La entidad no existe
+        return nullptr;
     }
 
-    Entity* EntityManager::GetEntityByName(const std::string& name) {
+    Entity* EntityManager::GetEntityByName(const std::string& name)
+    {
         auto it = std::find_if(entities.begin(), entities.end(),
-            [&name](const std::unique_ptr<Entity>& entity) {
+            [&name](const std::unique_ptr<Entity>& entity) 
+            {
                 return entity->GetName() == name; 
             });
 
         return it != entities.end() ? it->get() : nullptr;
     }
 
-    void EntityManager::RemoveEntity(int entityId) {
-        if (entityId >= 0 && entityId < entities.size() && entities[entityId]) {
+    void EntityManager::RemoveEntity(int entityId) 
+    {
+        if (entityId >= 0 && entityId < entities.size() && entities[entityId]) 
+        {
             entities[entityId]->Destroy();
-            entities[entityId].reset();  // Eliminar la entidad
-            availableIDs.push(entityId); // Guardar el ID para reutilizar
+            entities[entityId].reset();
+            availableIDs.push(entityId);
         }
     }
 
     template <typename... Components>
-    std::vector<Entity*> EntityManager::GetEntitiesWith() {
+    std::vector<Entity*> EntityManager::GetEntitiesWith()
+    {
         std::vector<Entity*> result;
 
-        for (auto& entity : entities) {
-            if (entity) {
+        for (auto& entity : entities)
+        {
+            if (entity)
+            {
                 bool hasAllComponents = true;
                 (void)std::initializer_list<int>{(hasAllComponents &= entity->HasComponent<Components>(), 0)...};
 
-                if (hasAllComponents) {
-                    result.push_back(entity.get());
-                }
+                if (hasAllComponents) result.push_back(entity.get());
             }
         }
         return result;

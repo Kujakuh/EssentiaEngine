@@ -8,13 +8,15 @@
 
 namespace EnTT
 {
-    class SystemDispatcher {
-    private:
-        std::vector<std::shared_ptr<ISystem>> systems;
+    class SystemDispatcher 
+    {
+        private:
+            std::vector<std::shared_ptr<ISystem>> systems;
 
-    public:
-        void RegisterSystem(std::shared_ptr<ISystem> system);
-        void Dispatch(EntityManager& entityManager);
+        public:
+            void RegisterSystem(std::shared_ptr<ISystem> system);
+            void Dispatch(EntityManager& entityManager);
     };
 }
+
 #endif // !SYSTEM_DISPATCHER_H

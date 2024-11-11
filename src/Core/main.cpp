@@ -35,9 +35,14 @@ int main(void)
 	EnTT::Entity& entity1 = scene->CreateEntity("Entity1");
 	EnTT::Entity& entity2 = scene->CreateEntity("Entity2");
 	EnTT::Entity& entity3 = scene->CreateEntity("Entity3");
+	scene->RemoveEntity(entity3.GetID());
 	scene->RemoveEntity(entity2.GetID());
+	scene->RemoveEntity(entity1.GetID());
 
 	EnTT::Entity& entity4 = scene->CreateEntity("Entity4");
+	EnTT::Entity& entity5 = scene->CreateEntity("Entity5");
+	EnTT::Entity& entity6 = scene->CreateEntity("Entity6");
+
 	std::cout << entity4.GetID() << entity4.GetName() << std::endl;
 
 	if (!glfwInit()) return -1;

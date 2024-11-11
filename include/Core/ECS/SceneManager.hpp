@@ -6,18 +6,18 @@
 
 namespace EnTT
 {
+    class SceneManager 
+    {
+        private:
+            static SceneManager* instance;
+            Scene* currentScene;
 
-    class SceneManager {
-    private:
-        static SceneManager* instance;
-        Scene* currentScene;
-
-    public:
-        static SceneManager* GetInstance();
-        void ChangeScene(Scene* newScene);
-        void ChangeScene(Scene* newScene, std::vector<Entity*> entities, std::vector<std::string> arguments);
-        Scene* GetCurrentScene();
+        public:
+            static SceneManager* GetInstance();
+            void ChangeScene(Scene* newScene);
+            void ChangeScene(Scene* newScene, std::vector<Entity*> entities, std::vector<std::string> arguments);
+            Scene* GetCurrentScene();
     };
-
 }
-#endif // SCENE_MANAGER_H
+
+#endif // !SCENE_MANAGER_H

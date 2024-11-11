@@ -2,48 +2,44 @@
 
 namespace EnTT
 {
+    Entity& Scene::CreateEntity(const std::string& name) {return entityManager.CreateEntity(name);}
 
-    Entity& Scene::CreateEntity(const std::string& name) {
-        return entityManager.CreateEntity(name);
-    }
+    EntityManager& Scene::GetEntityManager() {return entityManager;}
 
-    EntityManager& Scene::GetEntityManager() {
-        return entityManager;
-    }
+    void Scene::RemoveEntity(int entityId) {entityManager.RemoveEntity(entityId);}
 
-    void Scene::RemoveEntity(int entityId) {
-        entityManager.RemoveEntity(entityId);
-    }
+    bool Scene::isRunning() const {return running;}
 
-    void Scene::SetActive(bool active) {
-        if (active && !running) {
+    void Scene::SetActive(bool active)
+    {
+        if (active && !running) 
+        {
             running = true;
             RegisterSystems();
             onInit();
         }
-        else if (!active && running) {
+        else if (!active && running) 
+        {
             running = false;
             onDestroy();
         }
     }
 
-    void Scene::SetActive(bool active, std::vector<Entity*> entities, std::vector<std::string> arguments) {
-
-        if (active && !running) {
+    void Scene::SetActive(bool active, std::vector<Entity*> entities, std::vector<std::string> arguments)
+    {
+        if (active && !running)
+        {
             running = true;
             RegisterSystems();
             onInit();
             inputOnInit(entities, arguments);
         }
-        else if (!active && running) {
+        else if (!active && running)
+        {
             running = false;
             onDestroy();
             outputOnDestroy(entities, arguments);
         }
-    }
-
-    bool Scene::isRunning() const {
-        return running;
     }
 
     void Scene::inputOnInit(const std::vector<Entity*>& entities, const std::vector<std::string>& arguments) {}
