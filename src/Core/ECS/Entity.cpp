@@ -16,6 +16,8 @@ namespace Essentia
         return name; 
     }
 
+    std::unordered_map<std::type_index, std::shared_ptr<IComponent>> Entity::getComponents() {return components;}
+
     void Entity::Destroy()
     {
         if (!isAlive) throw UnreachableEntityException("Destroy");

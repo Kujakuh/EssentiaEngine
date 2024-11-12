@@ -27,6 +27,7 @@ namespace Essentia
 
             int GetID() const;
             const std::string& GetName() const;
+            std::unordered_map<std::type_index, std::shared_ptr<IComponent>> getComponents();
             void Destroy();
 
         public:
