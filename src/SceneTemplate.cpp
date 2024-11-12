@@ -14,6 +14,7 @@ class SceneTemplate : public Scene
 		{
 			std::cout << "Scene Init" << '\n';
 		}
+
 };
 
 

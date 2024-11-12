@@ -34,38 +34,37 @@ int main(void)
 	SceneTemplate *scene = new SceneTemplate();
 	sceneManager->ChangeScene(scene);
 
-	Entity& entity1 = scene->CreateEntity("Entity1");
-	Entity entity2 = scene->CreateEntity("Entity2");
-	Entity entity3 = scene->CreateEntity("Entity3");
+	GameObject entity1 = scene->CreateEntity("Entity1");
+	GameObject entity2 = scene->CreateEntity("Entity2");
+	GameObject entity3 = scene->CreateEntity("Entity3");
 	scene->DestroyEntity(entity3);
 	scene->DestroyEntity(entity2);
 	scene->DestroyEntity(entity1);
-
-	Entity entity4 = scene->CreateEntity("Entity4");
+	//entity1->AddComponent<Transform>();
+	GameObject entity4 = scene->CreateEntity("Entity4");
 	EntityTemplate myEntity(scene);
-	Entity entity6 = scene->CreateEntity("Entity6");
-
+	GameObject entity6 = scene->CreateEntity("Entity6");
 
 	Transform t(vector3(1),
 				quaternion(1, 1, 1, 1),
 				vector3(1));
 
-	entity6.AddComponent<Transform>(t);
-	entity4.AddComponent<Transform>(vector3(1,2,4), quaternion(0.3,-0.9, 0, 1), vector3(1,3,2));
+	entity6.lock()->AddComponent<Transform>(t);
+	entity4.lock()->AddComponent<Transform>(vector3(1,2,4), quaternion(0.3,-0.9, 0, 1), vector3(1,3,2));
+	Transform *ref = entity3.lock()->GetComponent<Transform>();
 
-	if (entity4.HasComponent<Transform>())
+	if (entity4.lock()->HasComponent<Transform>())
 	{
-		Transform *ref = entity3.GetComponent<Transform>();
 		ref->setPosition().x = 24;
 
 		ref->rotate(vector3(90, 0, 0));
 		printMatrix(ref->getModelMatrix());
-		std::cout << entity4.GetID() << scene->GetEntityByID(0)->GetName() << std::endl;
+		std::cout << entity4.lock()->GetID() << scene->GetEntityByID(1).lock()->GetName() << std::endl;
 		ref->updateMatrix();
 		printMatrix(ref->getModelMatrix());
 	}
-	std::vector<Entity*> ents = scene->GetEntitiesWith<Transform>();
-	std::cout << ents.size() << ents.at(0)->GetName() << std::endl;
+	std::vector<GameObject> ents = scene->GetEntitiesWith<Transform>();
+	std::cout << ents.size() << ents.at(0).lock()->GetName() << std::endl;
 
 
 	if (!glfwInit()) return -1;

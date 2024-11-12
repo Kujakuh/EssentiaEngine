@@ -2,18 +2,17 @@
 
 namespace Essentia
 {
-    Entity& Scene::CreateEntity(const std::string& name) {return entityManager.CreateEntity(name);}
+    std::weak_ptr<Entity> Scene::CreateEntity(const std::string& name) {return entityManager.CreateEntity(name);}
 
     EntityManager& Scene::GetEntityManager() {return entityManager;}
 
-    Entity* Scene::GetEntityByID(int entityId) {return entityManager.GetEntityByID(entityId);}
+    std::weak_ptr<Entity> Scene::GetEntityByID(int entityId) {return entityManager.GetEntityByID(entityId);}
 
-    Entity* Scene::GetEntityByName(const std::string& name) { return entityManager.GetEntityByName(name);}
+    std::weak_ptr<Entity> Scene::GetEntityByName(const std::string& name) { return entityManager.GetEntityByName(name);}
 
-    void Scene::DestroyEntity(Entity& entity) 
+    void Scene::DestroyEntity(std::weak_ptr<Entity> entity) 
     {
-        entityManager.RemoveEntity(entity);
-        entity.Destroy();
+        entityManager.RemoveEntity(entity.lock()->GetID());
     }
 
     bool Scene::isRunning() const {return running;}

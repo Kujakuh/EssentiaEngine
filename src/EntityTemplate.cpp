@@ -5,11 +5,11 @@ class EntityTemplate
 {
 public:
 
-    Entity* entity;
+    GameObject entity;
 
     EntityTemplate(Essentia::Scene* scene)
     {
-        entity = &(scene->GetEntityManager().CreateEntity("MyCustomEntity"));
+        entity = scene->GetEntityManager().CreateEntity("MyCustomEntity");
     }
     
 };

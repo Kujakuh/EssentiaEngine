@@ -6,6 +6,7 @@
 #include <memory>
 #include <typeindex>
 #include <typeinfo>
+#include <iostream>
 
 #include <Core/ECS/IComponent.hpp>
 #include <Core/Components/components.hpp>
@@ -19,9 +20,9 @@ namespace Essentia
             int id;
             std::string name;
             std::unordered_map<std::type_index, std::shared_ptr<IComponent>> components;
-            bool isAlive;
 
         public:
+            bool isAlive;
             Entity(int id, const std::string& name);
 
             int GetID() const;

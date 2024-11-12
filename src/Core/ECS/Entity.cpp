@@ -19,6 +19,7 @@ namespace Essentia
     void Entity::Destroy()
     {
         if (!isAlive) throw UnreachableEntityException("Destroy");
+
         isAlive = false;
         for (auto& component : components) component.second.reset();
         components.clear(); 

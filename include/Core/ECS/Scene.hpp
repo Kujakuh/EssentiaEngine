@@ -18,11 +18,11 @@ namespace Essentia
         public:
             virtual ~Scene() = default;
 
-            Entity& CreateEntity(const std::string& name);
+            std::weak_ptr<Entity> CreateEntity(const std::string& name);
             EntityManager& GetEntityManager();
-            Entity* GetEntityByID(int entityId);
-            Entity* GetEntityByName(const std::string& name);
-            void DestroyEntity(Entity& entity);
+            std::weak_ptr<Entity> GetEntityByID(int entityId);
+            std::weak_ptr<Entity> GetEntityByName(const std::string& name);
+            void DestroyEntity(std::weak_ptr<Entity> entity);
 
             void SetActive(bool active);
             void SetActive(bool active, std::vector<Entity*> entities, std::vector<std::string> arguments);
