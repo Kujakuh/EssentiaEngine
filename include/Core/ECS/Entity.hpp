@@ -9,6 +9,7 @@
 
 #include <Core/ECS/IComponent.hpp>
 #include <Core/Components/components.hpp>
+#include <Core/Exceptions/Exceptions.hpp>
 
 namespace Essentia
 {
@@ -18,6 +19,7 @@ namespace Essentia
             int id;
             std::string name;
             std::unordered_map<std::type_index, std::shared_ptr<IComponent>> components;
+            bool isAlive;
 
         public:
             Entity(int id, const std::string& name);
@@ -30,6 +32,8 @@ namespace Essentia
             template <typename T, typename... Args>
             T& AddComponent(Args&&... args)
             {
+                if (!isAlive) throw UnreachableEntityException("AddComponent");
+
                 auto component = std::make_shared<T>(std::forward<Args>(args)...);
                 components[typeid(T)] = std::move(component);
                 return *static_cast<T*>(components[typeid(T)].get());
@@ -38,6 +42,8 @@ namespace Essentia
             template <typename T>
             T* GetComponent()
             {
+                if (!isAlive) throw UnreachableEntityException("GetComponent");
+
                 auto it = components.find(typeid(T));
                 if (it != components.end()) {
                     return static_cast<T*>(it->second.get());
@@ -48,8 +54,12 @@ namespace Essentia
             template <typename T>
             bool HasComponent() const
             {
+                if (!isAlive) throw UnreachableEntityException("HasComponent");
+
                 return components.find(typeid(T)) != components.end();
             }
+
+            friend class EntityManager;
     };
 }
 

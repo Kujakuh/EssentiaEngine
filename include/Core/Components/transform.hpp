@@ -81,6 +81,20 @@ struct Transform : Essentia::IComponent
                 needsUpdate = false;
             }
         }
+
+    public:
+        void rotate(const glm::vec3& eulerAngles)
+        {
+            if (eulerAngles == glm::vec3(0.0f)) return;
+
+            glm::vec3 radians = glm::radians(eulerAngles);
+            glm::quat rotationX = glm::angleAxis(radians.x, glm::vec3(1, 0, 0));
+            glm::quat rotationY = glm::angleAxis(radians.y, glm::vec3(0, 1, 0));
+            glm::quat rotationZ = glm::angleAxis(radians.z, glm::vec3(0, 0, 1));
+
+            rotation = rotationZ * rotationY * rotationX * rotation;
+            needsUpdate = true;
+        }
 };
 
 #endif // !TRANSFORM_H

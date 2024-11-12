@@ -6,7 +6,15 @@ namespace Essentia
 
     EntityManager& Scene::GetEntityManager() {return entityManager;}
 
-    void Scene::RemoveEntity(int entityId) {entityManager.RemoveEntity(entityId);}
+    Entity* Scene::GetEntityByID(int entityId) {return entityManager.GetEntityByID(entityId);}
+
+    Entity* Scene::GetEntityByName(const std::string& name) { return entityManager.GetEntityByName(name);}
+
+    void Scene::DestroyEntity(Entity& entity) 
+    {
+        entityManager.RemoveEntity(entity);
+        entity.Destroy();
+    }
 
     bool Scene::isRunning() const {return running;}
 

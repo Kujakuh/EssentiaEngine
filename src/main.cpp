@@ -2,15 +2,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <Debug/openglDebug.h>
 #include <Core/shader.hpp>
-
 #include <iostream>
 
+#include <DebugTools>
 #include <EssentiaEngine>
 using namespace Essentia;
 
-#include "testScene.cpp"
+#include "SceneTemplate.cpp"
+#include "EntityTemplate.cpp"
 
 constexpr int _WIDTH = 500;
 constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
@@ -31,41 +31,47 @@ int main(void)
 	SceneManager* sceneManager = SceneManager::GetInstance();
 
 	// Crear una escena
-	testScene* scene = new testScene();
+	SceneTemplate *scene = new SceneTemplate();
 	sceneManager->ChangeScene(scene);
 
-	// Crear entidades
 	Entity& entity1 = scene->CreateEntity("Entity1");
-	Entity& entity2 = scene->CreateEntity("Entity2");
-	Entity& entity3 = scene->CreateEntity("Entity3");
-	scene->RemoveEntity(entity3.GetID());
-	scene->RemoveEntity(entity2.GetID());
-	scene->RemoveEntity(entity1.GetID());
+	Entity entity2 = scene->CreateEntity("Entity2");
+	Entity entity3 = scene->CreateEntity("Entity3");
+	scene->DestroyEntity(entity3);
+	scene->DestroyEntity(entity2);
+	scene->DestroyEntity(entity1);
 
-	Entity& entity4 = scene->CreateEntity("Entity4");
-	Entity& entity5 = scene->CreateEntity("Entity5");
-	Entity& entity6 = scene->CreateEntity("Entity6");
+	Entity entity4 = scene->CreateEntity("Entity4");
+	EntityTemplate myEntity(scene);
+	Entity entity6 = scene->CreateEntity("Entity6");
 
-	Transform t(glm::vec3(1),
-				glm::quat(1, 1, 1, 1),
-				glm::vec3(1));
+
+	Transform t(vector3(1),
+				quaternion(1, 1, 1, 1),
+				vector3(1));
 
 	entity6.AddComponent<Transform>(t);
-	entity4.AddComponent<Transform>(t);
-	Transform *ref = entity6.GetComponent<Transform>();
+	entity4.AddComponent<Transform>(vector3(1,2,4), quaternion(0.3,-0.9, 0, 1), vector3(1,3,2));
 
-	ref->setPosition().x = 24;
-	if(entity6.HasComponent<Transform>())
-	std::cout << entity6.GetID() << scene->GetEntityManager().GetEntityByName(entity4.GetName())->GetName() << entity6.GetComponent<Transform>()->getPosition().x << std::endl;
+	if (entity4.HasComponent<Transform>())
+	{
+		Transform *ref = entity3.GetComponent<Transform>();
+		ref->setPosition().x = 24;
 
-	auto ents = scene->GetEntityManager().GetEntitiesWith<>();
-	std::cout << ents.size() << std::endl;
+		ref->rotate(vector3(90, 0, 0));
+		printMatrix(ref->getModelMatrix());
+		std::cout << entity4.GetID() << scene->GetEntityByID(0)->GetName() << std::endl;
+		ref->updateMatrix();
+		printMatrix(ref->getModelMatrix());
+	}
+	std::vector<Entity*> ents = scene->GetEntitiesWith<Transform>();
+	std::cout << ents.size() << ents.at(0)->GetName() << std::endl;
+
 
 	if (!glfwInit()) return -1;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 
 #pragma region ENABLE DEBUG CONTEXT
 
@@ -143,7 +149,7 @@ int main(void)
 
 	Shader s(a.c_str(), RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
 	s.use();
-	s.setUniform("a", glm::vec3(1.0f, 0.3f, 0.0f));
+	s.setUniform("a", vector3(1.0f, 0.3f, 0.0f));
 
 	while ( !glfwWindowShouldClose(window) )
 	{

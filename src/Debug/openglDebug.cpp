@@ -1,7 +1,7 @@
 #ifndef DEBUG_UTILS_S
 #define DEBUG_UTILS_S
 
-#include <Debug/openglDebug.h>
+#include <Debug/openglDebug.hpp>
 #include <iostream>
 
 // --https://learnopengl.com/In-Practice/Debugging

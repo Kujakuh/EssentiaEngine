@@ -20,6 +20,7 @@ namespace Essentia
         // Crear y almacenar la entidad
         auto entity = std::make_unique<Entity>(entityId, name);
         entities[entityId] = std::move(entity);
+        entities[entityId].get()->AddComponent<Transform>();
         return *entities[entityId];
     }
 
@@ -43,8 +44,10 @@ namespace Essentia
         return it != entities.end() ? it->get() : nullptr;
     }
 
-    void EntityManager::RemoveEntity(int entityId) 
+    void EntityManager::RemoveEntity(Entity& entity)
     {
+        int entityId = entity.GetID();
+
         if (entityId >= 0 && entityId < entities.size() && entities[entityId]) 
         {
             entities[entityId]->Destroy();

@@ -18,7 +18,7 @@ namespace Essentia
             Entity& CreateEntity(const std::string& name);
             Entity* GetEntityByID(int entityId);
             Entity* GetEntityByName(const std::string& name);
-            void RemoveEntity(int entityId);
+            void RemoveEntity(Entity& entity);
 
         public:
             template <typename... Components>

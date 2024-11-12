@@ -20,7 +20,9 @@ namespace Essentia
 
             Entity& CreateEntity(const std::string& name);
             EntityManager& GetEntityManager();
-            void RemoveEntity(int entityId);
+            Entity* GetEntityByID(int entityId);
+            Entity* GetEntityByName(const std::string& name);
+            void DestroyEntity(Entity& entity);
 
             void SetActive(bool active);
             void SetActive(bool active, std::vector<Entity*> entities, std::vector<std::string> arguments);
@@ -34,6 +36,10 @@ namespace Essentia
 
             virtual void inputOnInit(const std::vector<Entity*>& entities = {}, const std::vector<std::string>& arguments = {});
             virtual void outputOnDestroy(std::vector<Entity*>& entities, std::vector<std::string>& arguments);
+
+        public:
+            template <typename... Components>
+            decltype(auto) GetEntitiesWith() {return entityManager.GetEntitiesWith<Components...>();}
     };
 }
 
