@@ -2,18 +2,24 @@
 
 namespace Essentia
 {
-    std::weak_ptr<Entity> Scene::CreateEntity(const std::string& name) {return entityManager.CreateEntity(name);}
+    WeakptrWrapper<Entity> Scene::CreateEntity(const std::string& name) {return entityManager.CreateEntity(name);}
 
     EntityManager& Scene::GetEntityManager() {return entityManager;}
 
-    std::weak_ptr<Entity> Scene::GetEntityByID(int entityId) {return entityManager.GetEntityByID(entityId);}
+    WeakptrWrapper<Entity> Scene::GetEntityByID(int entityId) {return entityManager.GetEntityByID(entityId);}
 
-    std::weak_ptr<Entity> Scene::GetEntityByName(const std::string& name) { return entityManager.GetEntityByName(name);}
+    WeakptrWrapper<Entity> Scene::GetEntityByName(const std::string& name) { return entityManager.GetEntityByName(name);}
 
-    void Scene::DestroyEntity(std::weak_ptr<Entity> entity) 
+    void Scene::DestroyEntity(WeakptrWrapper<Entity> entity)
     {
-        entityManager.RemoveEntity(entity.lock()->GetID());
+        try {
+            entityManager.RemoveEntity(entity->GetID());
+        }
+        catch (const std::runtime_error& e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
     }
+
 
     bool Scene::isRunning() const {return running;}
 

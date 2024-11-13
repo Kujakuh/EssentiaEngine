@@ -2,7 +2,7 @@
 
 namespace Essentia
 {
-    std::weak_ptr<Entity> EntityManager::CreateEntity(const std::string& name)
+    WeakptrWrapper<Entity> EntityManager::CreateEntity(const std::string& name)
     {
         int entityId;
 
@@ -21,28 +21,35 @@ namespace Essentia
         auto entity = std::make_shared<Entity>(entityId, name);
         entities[entityId] = std::move(entity);
         entities[entityId].get()->AddComponent<Transform>();
-        return entities[entityId];
+        return WeakptrWrapper<Entity>(entities[entityId]);
     }
 
-    std::weak_ptr<Entity> EntityManager::GetEntityByID(int entityId) 
+    WeakptrWrapper<Entity> EntityManager::GetEntityByID(int entityId)
     {
         if (entityId >= 0 && entityId < entities.size() && entities[entityId]) 
         {
-            return entities[entityId];
+            return WeakptrWrapper<Entity>(entities[entityId]);
         }
-        return std::weak_ptr<Entity>();
+        return WeakptrWrapper<Entity>(std::weak_ptr<Entity>());
     }
 
-    std::weak_ptr<Entity> EntityManager::GetEntityByName(const std::string& name)
+    WeakptrWrapper<Entity> EntityManager::GetEntityByName(const std::string& name)
     {
         auto it = std::find_if(entities.begin(), entities.end(),
             [&name](const std::weak_ptr<Entity>& entity)
             {
-                return entity.lock()->GetName() == name;
+                auto sharedEntity = entity.lock();
+                return sharedEntity && sharedEntity->GetName() == name;
             });
 
-        return it != entities.end() ? std::weak_ptr<Entity>(entities[it - entities.begin()]) : std::weak_ptr<Entity>();
+        if (it != entities.end())
+        {
+            return WeakptrWrapper<Entity>(*it);
+        }
+
+        return WeakptrWrapper<Entity>(std::weak_ptr<Entity>());
     }
+
 
     void EntityManager::RemoveEntity(int entityId)
     {

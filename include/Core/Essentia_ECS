@@ -8,5 +8,6 @@
 #include <Core/ECS/SystemDispatcher.hpp>
 #include <Core/ECS/Scene.hpp>
 #include <Core/ECS/SceneManager.hpp>
+#include <Core/Memory/WeakptrWrapper.hpp>
 
 #endif //!ECS_IMPORTS_H

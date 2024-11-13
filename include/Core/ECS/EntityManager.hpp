@@ -5,6 +5,7 @@
 #include <memory>
 #include <queue>
 #include <Core/ECS/Entity.hpp>
+#include <Core/Memory/WeakptrWrapper.hpp>
 
 namespace Essentia
 {
@@ -15,16 +16,16 @@ namespace Essentia
             std::queue<int> availableIDs;
 
         public:
-            std::weak_ptr<Entity> CreateEntity(const std::string& name);
-            std::weak_ptr<Entity> GetEntityByID(int entityId);
-            std::weak_ptr<Entity> GetEntityByName(const std::string& name);
+            WeakptrWrapper<Entity> CreateEntity(const std::string& name);
+            WeakptrWrapper<Entity> GetEntityByID(int entityId);
+            WeakptrWrapper<Entity> GetEntityByName(const std::string& name);
             void RemoveEntity(int entityId);
 
         public:
             template <typename... Components>
-            std::vector<std::weak_ptr<Entity>> GetEntitiesWith()
+            std::vector<WeakptrWrapper<Entity>> GetEntitiesWith()
             {
-                std::vector<std::weak_ptr<Entity>> result;
+                std::vector<WeakptrWrapper<Entity>> result;
 
                 for (auto& entity : entities)
                 {
@@ -34,11 +35,12 @@ namespace Essentia
                         (void)std::initializer_list<int>{(hasAllComponents &= entity->HasComponent<Components>(), 0)...};
 
                         if (hasAllComponents)
-                            result.push_back(std::weak_ptr<Entity>(entity));
+                            result.emplace_back(WeakptrWrapper<Entity>(entity));
                     }
                 }
                 return result;
             }
+
 
     };
 }

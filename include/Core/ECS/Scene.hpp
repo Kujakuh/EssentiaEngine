@@ -5,6 +5,7 @@
 #include <memory>
 #include <Core/ECS/EntityManager.hpp>
 #include <Core/ECS/SystemDispatcher.hpp>
+#include <Core/Memory/WeakptrWrapper.hpp>
 
 namespace Essentia
 {
@@ -18,11 +19,11 @@ namespace Essentia
         public:
             virtual ~Scene() = default;
 
-            std::weak_ptr<Entity> CreateEntity(const std::string& name);
+            WeakptrWrapper<Entity> CreateEntity(const std::string& name);
             EntityManager& GetEntityManager();
-            std::weak_ptr<Entity> GetEntityByID(int entityId);
-            std::weak_ptr<Entity> GetEntityByName(const std::string& name);
-            void DestroyEntity(std::weak_ptr<Entity> entity);
+            WeakptrWrapper<Entity> GetEntityByID(int entityId);
+            WeakptrWrapper<Entity> GetEntityByName(const std::string& name);
+            void DestroyEntity(WeakptrWrapper<Entity> entity);
 
             void SetActive(bool active);
             void SetActive(bool active, std::vector<Entity*> entities, std::vector<std::string> arguments);

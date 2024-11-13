@@ -49,22 +49,22 @@ int main(void)
 				quaternion(1, 1, 1, 1),
 				vector3(1));
 
-	entity6.lock()->AddComponent<Transform>(t);
-	entity4.lock()->AddComponent<Transform>(vector3(1,2,4), quaternion(0.3,-0.9, 0, 1), vector3(1,3,2));
-	Transform *ref = entity3.lock()->GetComponent<Transform>();
+	entity6->AddComponent<Transform>(t);
+	entity4->AddComponent<Transform>(vector3(1,2,4), quaternion(0.3,-0.9, 0, 1), vector3(1,3,2));
+	Transform *ref = myEntity.entity->GetComponent<Transform>();
 
-	if (entity4.lock()->HasComponent<Transform>())
+	if (entity4->HasComponent<Transform>())
 	{
 		ref->setPosition().x = 24;
 
 		ref->rotate(vector3(90, 0, 0));
 		printMatrix(ref->getModelMatrix());
-		std::cout << entity4.lock()->GetID() << scene->GetEntityByID(1).lock()->GetName() << std::endl;
+		std::cout << entity4->GetID() << scene->GetEntityByID(1)->GetName() << std::endl;
 		ref->updateMatrix();
 		printMatrix(ref->getModelMatrix());
 	}
 	std::vector<GameObject> ents = scene->GetEntitiesWith<Transform>();
-	std::cout << ents.size() << ents.at(0).lock()->GetName() << std::endl;
+	std::cout << ents.size() << ents.at(0)->GetName() << std::endl;
 
 
 	if (!glfwInit()) return -1;

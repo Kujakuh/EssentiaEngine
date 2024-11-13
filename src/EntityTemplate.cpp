@@ -7,9 +7,9 @@ public:
 
     GameObject entity;
 
-    EntityTemplate(Essentia::Scene* scene)
+    EntityTemplate(Essentia::Scene* scene) : entity(scene->CreateEntity("MyCustomEntity"))
     {
-        entity = scene->GetEntityManager().CreateEntity("MyCustomEntity");
+
     }
     
 };
