@@ -6,7 +6,6 @@
 #include <iostream>
 
 #include <EssentiaEngine>
-using namespace Essentia;
 
 #include "SceneTemplate.cpp"
 #include "GameObjectTemplate.cpp"
@@ -44,20 +43,21 @@ int main(void)
 	GameObjectTemplate myEntity(scene);
 	GameObject entity6 = scene->CreateEntity("Entity6");
 
-	Transform t(vector3(1),
-				quaternion(1, 1, 1, 1),
-				vector3(1));
+	Transform t(Vector3(1),
+				Quaternion(1, 1, 1, 1),
+				Vector3(1));
 
 	entity6->AddComponent<Transform>(t);
-	entity4->AddComponent<Transform>(vector3(1,2,4), quaternion(0.3,-0.9, 0, 1), vector3(1,3,2));
+	entity4->AddComponent<Transform>(Vector3(1,2,4), Quaternion(0.3,-0.9, 0, 1), Vector3(1,3,2));
 	Transform *ref = myEntity.entity->GetComponent<Transform>();
 
 	if (entity4->HasComponent<Transform>())
 	{
 		ref->setPosition().x = 24;
 
-		ref->rotate(vector3(90, 0, 0));
-		printMatrix(ref->getModelMatrix());
+		ref->rotate(Vector3(90, 0, 0));
+		Matrix4 mat = ref->getModelMatrix();
+		printMatrix(mat);
 		try {
 			std::cout << entity4->GetID() << scene->GetEntityByID(1)->GetName() << std::endl;
 		}
@@ -150,7 +150,7 @@ int main(void)
 
 	Shader s(a.c_str(), RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
 	s.use();
-	s.setUniform("a", vector3(1.0f, 0.3f, 0.0f));
+	s.setUniform("a", Vector3(1.0f, 0.3f, 0.0f));
 
 	while ( !glfwWindowShouldClose(window) )
 	{

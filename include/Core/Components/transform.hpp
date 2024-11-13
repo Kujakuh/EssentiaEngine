@@ -7,9 +7,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <Core/ECS/IComponent.hpp>
-
-struct Transform : Essentia::IComponent
+namespace Essentia
 {
+    struct Transform : Essentia::IComponent
+    {
     private:
         glm::vec3 position;
         glm::quat rotation;
@@ -18,22 +19,24 @@ struct Transform : Essentia::IComponent
         bool needsUpdate;
 
     public:
-        Transform(): 
+        Transform() :
             position(0.0f, 0.0f, 0.0f),
             rotation(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)),
             scale(1.0f, 1.0f, 1.0f),
             modelMatrix(1.0f),
             needsUpdate(false) {}
 
-        Transform(const glm::vec3& pos, const glm::quat& rot, const glm::vec3& scl):
+        Transform(const glm::vec3& pos, const glm::quat& rot, const glm::vec3& scl) :
             position(pos),
             rotation(rot),
             scale(scl),
             modelMatrix(1.0f),
-            needsUpdate(true) 
-            {updateMatrix();}
+            needsUpdate(true)
+        {
+            updateMatrix();
+        }
 
-        void setPosition(const glm::vec3& pos) 
+        void setPosition(const glm::vec3& pos)
         {
             position = pos;
             needsUpdate = true;
@@ -74,9 +77,9 @@ struct Transform : Essentia::IComponent
         {
             if (needsUpdate)
             {
-                modelMatrix =   glm::translate(glm::mat4(1.0f), position) *
-                                glm::mat4_cast(rotation) *
-                                glm::scale(glm::mat4(1.0f), scale);
+                modelMatrix = glm::translate(glm::mat4(1.0f), position) *
+                    glm::mat4_cast(rotation) *
+                    glm::scale(glm::mat4(1.0f), scale);
 
                 needsUpdate = false;
             }
@@ -95,6 +98,7 @@ struct Transform : Essentia::IComponent
             rotation = rotationZ * rotationY * rotationX * rotation;
             needsUpdate = true;
         }
-};
+    };
+}
 
 #endif // !TRANSFORM_H
