@@ -9,7 +9,7 @@
 using namespace Essentia;
 
 #include "SceneTemplate.cpp"
-#include "EntityTemplate.cpp"
+#include "GameObjectTemplate.cpp"
 
 constexpr int _WIDTH = 500;
 constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
@@ -41,7 +41,7 @@ int main(void)
 	scene->DestroyEntity(entity1);
 	//entity1->AddComponent<Transform>();
 	GameObject entity4 = scene->CreateEntity("Entity4");
-	EntityTemplate myEntity(scene);
+	GameObjectTemplate myEntity(scene);
 	GameObject entity6 = scene->CreateEntity("Entity6");
 
 	Transform t(vector3(1),
@@ -58,7 +58,10 @@ int main(void)
 
 		ref->rotate(vector3(90, 0, 0));
 		printMatrix(ref->getModelMatrix());
-		std::cout << entity4->GetID() << scene->GetEntityByName("MyCustomEntity")->GetID() << std::endl;
+		try {
+			std::cout << entity4->GetID() << scene->GetEntityByID(1)->GetName() << std::endl;
+		}
+		catch (std::runtime_error e) { std::cout << e.what() << "\n"; }
 		ref->updateMatrix();
 		printMatrix(ref->getModelMatrix());
 	}

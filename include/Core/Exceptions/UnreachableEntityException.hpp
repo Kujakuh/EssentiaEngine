@@ -8,9 +8,9 @@ namespace Essentia
 {
     class UnreachableEntityException : public std::runtime_error
     {
-    public:
-        UnreachableEntityException(const std::string& message)
-            : std::runtime_error("Unreachable entity. Cannot perform requested operation: " + message) {}
+        public:
+            UnreachableEntityException(const std::string& message)
+                : std::runtime_error("Unreachable entity. Cannot perform requested operation: " + message) {}
     };
 }
 

@@ -16,7 +16,15 @@ namespace Essentia
         return name; 
     }
 
-    std::unordered_map<std::type_index, std::shared_ptr<IComponent>> Entity::getComponents() {return components;}
+    std::unordered_map<std::type_index, std::weak_ptr<IComponent>> Entity::GetComponents()
+    {
+        std::unordered_map<std::type_index, std::weak_ptr<IComponent>> weakComponents;
+        for (const auto& component : components)
+        {
+            weakComponents[component.first] = component.second;
+        }
+        return weakComponents;
+    }
 
     void Entity::Destroy()
     {
