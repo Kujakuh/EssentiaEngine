@@ -9,17 +9,14 @@
 
 namespace Essentia
 {
-    // Declaración de la función customTerminate
     void customTerminate();
 
     class TerminateHandler
     {
-    public:
-        // Constructor estático que configura el manejador de terminación
-        TerminateHandler();
+        public:
+            TerminateHandler();
 
-        // Instancia estática que asegura que el manejador se registre al inicio
-        static TerminateHandler instance;
+            static TerminateHandler instance;
     };
 }
 

@@ -5,7 +5,6 @@
 #include <Core/shader.hpp>
 #include <iostream>
 
-#include <DebugTools>
 #include <EssentiaEngine>
 using namespace Essentia;
 
@@ -59,7 +58,7 @@ int main(void)
 
 		ref->rotate(vector3(90, 0, 0));
 		printMatrix(ref->getModelMatrix());
-		std::cout << entity4->GetID() << scene->GetEntityByID(1)->GetName() << std::endl;
+		std::cout << entity4->GetID() << scene->GetEntityByName("MyCustomEntity")->GetID() << std::endl;
 		ref->updateMatrix();
 		printMatrix(ref->getModelMatrix());
 	}

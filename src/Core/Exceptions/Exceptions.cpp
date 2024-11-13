@@ -21,12 +21,10 @@ namespace Essentia
         std::terminate();
     }
 
-    // Constructor estático que configura el manejador de terminación
     TerminateHandler::TerminateHandler()
     {
         std::set_terminate(customTerminate);
     }
 
-    // Inicialización estática de la instancia
     TerminateHandler TerminateHandler::instance;
 }

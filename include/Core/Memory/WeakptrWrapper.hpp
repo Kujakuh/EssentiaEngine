@@ -9,19 +9,19 @@ namespace Essentia
 {
     template<typename T>
     class WeakptrWrapper {
-    public:
-        WeakptrWrapper(std::weak_ptr<T> weakPtr) : weakPtr_(weakPtr) {}
+        public:
+            WeakptrWrapper(std::weak_ptr<T> weakPtr) : weakPtr_(weakPtr) {}
 
-        T* operator->() {
-            auto sharedPtr = weakPtr_.lock();
-            if (!sharedPtr) {
-                throw std::runtime_error("Invalid access to expired pointer");
+            T* operator->() {
+                auto sharedPtr = weakPtr_.lock();
+                if (!sharedPtr) {
+                    throw std::runtime_error("Invalid access to expired pointer");
+                }
+                return sharedPtr.get();
             }
-            return sharedPtr.get();
-        }
 
-    private:
-        std::weak_ptr<T> weakPtr_;
+        private:
+            std::weak_ptr<T> weakPtr_;
     };
 }
 
