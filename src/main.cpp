@@ -7,6 +7,7 @@
 
 #include <EssentiaEngine>
 
+
 #include "SceneTemplate.cpp"
 #include "GameObjectTemplate.cpp"
 

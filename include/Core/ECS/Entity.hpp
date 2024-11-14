@@ -2,7 +2,7 @@
 #define ENTITY_H
 
 #include <string>
-#include <unordered_map>
+#include <flat_hash_map>
 #include <memory>
 #include <typeindex>
 #include <typeinfo>
@@ -19,7 +19,7 @@ namespace Essentia
         private:
             int id;
             std::string name;
-            std::unordered_map<std::type_index, std::shared_ptr<IComponent>> components;
+            ska::flat_hash_map<std::type_index, std::shared_ptr<IComponent>> components;
             bool isAlive;
 
         public:
@@ -27,7 +27,7 @@ namespace Essentia
 
             int GetID() const;
             const std::string& GetName() const;
-            std::unordered_map<std::type_index, std::weak_ptr<IComponent>> GetComponents();
+            ska::flat_hash_map<std::type_index, std::weak_ptr<IComponent>> GetComponents();
             void Destroy();
 
         public:
