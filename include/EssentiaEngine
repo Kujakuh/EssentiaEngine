@@ -3,6 +3,9 @@
 
 #include <Core/Essentia_ECS>
 #include <Core/Exceptions/Exceptions.hpp>
+#include <Core/EventSystem/EventSystem.hpp>
+#include <Core/EventSystem/EventListener.hpp>
+
 
 #include <DebugTools>
 

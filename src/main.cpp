@@ -28,7 +28,6 @@ int main(void)
 {
 	SceneManager* sceneManager = SceneManager::GetInstance();
 
-	// Crear una escena
 	SceneTemplate *scene = new SceneTemplate();
 	sceneManager->ChangeScene(scene);
 
@@ -47,6 +46,8 @@ int main(void)
 				Quaternion(1, 1, 1, 1),
 				Vector3(1));
 
+	EventSystem<INTERNAL_EVENT>::getInstance().emit(A);
+
 	entity6->AddComponent<Transform>(t);
 	entity4->AddComponent<Transform>(Vector3(1,2,4), Quaternion(0.3,-0.9, 0, 1), Vector3(1,3,2));
 	Transform *ref = myEntity.entity->GetComponent<Transform>();
@@ -64,6 +65,8 @@ int main(void)
 		catch (std::runtime_error e) { std::cout << e.what() << "\n"; }
 		ref->updateMatrix();
 		printMatrix(ref->getModelMatrix());
+		EventSystem<INTERNAL_EVENT>::getInstance().emit(A);
+
 	}
 	std::vector<GameObject> ents = scene->GetEntitiesWith<Transform>();
 	std::cout << ents.size() << ents.at(0)->GetName() << std::endl;

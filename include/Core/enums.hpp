@@ -12,5 +12,8 @@ enum SH_TYPE
 	FRAGMENT,
 	GEOMETRY
 };
+enum INTERNAL_EVENT {
+	A
+};
 
 #endif // !ENUMS_H
