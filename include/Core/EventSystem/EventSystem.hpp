@@ -45,7 +45,7 @@ namespace Essentia
                     throw std::runtime_error("ERROR: Only INTERNAL_EVENT types can be emitted via this method.");
                 
                 for (auto* listener : instance().listeners)
-                    listener->onEvent(eventType);
+                    listener->onSysEvent(eventType);
             }
 
         friend class Scene;

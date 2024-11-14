@@ -11,7 +11,10 @@ class GameObjectTemplate : EventListener
             EventSystem<INTERNAL_EVENT>::addListener(this);
         }
 
-        void onSysEvent(INTERNAL_EVENT event) override {}
+        void onSysEvent(INTERNAL_EVENT event) override 
+        {
+            if (event == SYS_START) std::cout << "Sys Event Raised" << "\n";
+        }
 
         void onEvent(int event) override {}
 };
