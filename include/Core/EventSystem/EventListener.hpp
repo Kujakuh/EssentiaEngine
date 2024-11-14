@@ -3,15 +3,18 @@
 
 #include <Core/enums.hpp>
 
-class EventListener
+namespace Essentia
 {
-    public:
-        virtual void onEvent(INTERNAL_EVENT event) {}
+    class EventListener
+    {
+        public:
+            virtual void onEvent(INTERNAL_EVENT event) {}
 
-        template<typename T>
-        void onEvent(T event) {}
+            template<typename T>
+            void onEvent(T event) {}
 
-        virtual ~EventListener() = default;
-};
+            virtual ~EventListener() = default;
+    };
+}
 
 #endif //!EVENT_LISTENER_H

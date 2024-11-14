@@ -9,11 +9,11 @@ class GameObjectTemplate : EventListener
 
         GameObjectTemplate(Essentia::Scene* scene) : entity(scene->CreateEntity("MyCustomGameObject"))
         {
-            EventSystem<INTERNAL_EVENT>::getInstance().addListener(this);
+            EventSystem<INTERNAL_EVENT>::addListener(this);
         }
 
         void onEvent(INTERNAL_EVENT event) override {
-            if (event == A) std::cout << "TEST EVENT SYSTEM LISTENERS" << "\n";
+            if (event == SYS_START) std::cout << "TEST EVENT SYSTEM LISTENERS" << "\n";
         }
     
 };

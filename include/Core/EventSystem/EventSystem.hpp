@@ -5,30 +5,55 @@
 
 #include <type_traits>
 #include <unordered_set>
+#include <stdexcept>
 
-template<typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
-class EventSystem
+namespace Essentia
 {
-    public:
-        static EventSystem& getInstance()
-        {
-            static EventSystem instance;
-            return instance;
-        }
+    template<typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
+    class EventSystem
+    {
+        public:
+            static void addListener(EventListener* listener) { instance().listeners.insert(listener); }
+            static void removeListener(EventListener* listener) { instance().listeners.erase(listener); }
 
-        void addListener(EventListener* listener) { listeners.insert(listener); }
+            static void emit(T eventType)
+            {
+                if constexpr (std::is_same_v<T, INTERNAL_EVENT>) {
+                    if (!instance().allowInternalEvents) {
+                        throw std::runtime_error("ERROR: Event emission for system events is disabled in the current context.");
+                    }
+                }
 
-        void removeListener(EventListener* listener) { listeners.erase(listener); }
+                for (auto* listener : instance().listeners)
+                    listener->onEvent(eventType);
+            }
 
-        void emit(T eventType)
-        {
-            for (auto* listener : listeners)
-                listener->onEvent(eventType);
-        }
+        private:
+            EventSystem() = default;
+            std::unordered_set<EventListener*> listeners;
 
-    private:
-        EventSystem() = default;
-        std::unordered_set<EventListener*> listeners;
-};
+            static EventSystem& instance()
+            {
+                static EventSystem instance;
+                return instance;
+            }
+
+            static void emitInternalEvent(T eventType)
+            {
+                if constexpr (!std::is_same_v<T, INTERNAL_EVENT>) {
+                    throw std::runtime_error("ERROR: Only INTERNAL_EVENT types can be emitted via this method.");
+                }
+
+                for (auto* listener : instance().listeners)
+                    listener->onEvent(eventType);
+            }
+
+        friend class Scene;
+        friend class Entity;
+        friend class EntityManager;
+        friend class SceneManager;
+        friend class SystemDispatcher;
+    };
+}
 
 #endif //!EVENT_SYS_H

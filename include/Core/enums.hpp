@@ -13,7 +13,7 @@ enum SH_TYPE
 	GEOMETRY
 };
 enum INTERNAL_EVENT {
-	A
+	SYS_START
 };
 
 #endif // !ENUMS_H

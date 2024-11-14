@@ -6,6 +6,7 @@
 #include <Core/ECS/EntityManager.hpp>
 #include <Core/ECS/SystemDispatcher.hpp>
 #include <Core/Memory/WeakptrWrapper.hpp>
+#include <Core/EventSystem/EventSystem.hpp>
 
 namespace Essentia
 {
