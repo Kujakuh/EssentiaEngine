@@ -1,5 +1,4 @@
 #include <EssentiaEngine>
-using namespace Essentia;
 
 class GameObjectTemplate : EventListener
 {
@@ -12,8 +11,7 @@ class GameObjectTemplate : EventListener
             EventSystem<INTERNAL_EVENT>::addListener(this);
         }
 
-        void onEvent(INTERNAL_EVENT event) override {
-            if (event == SYS_START) std::cout << "TEST EVENT SYSTEM LISTENERS" << "\n";
-        }
-    
+        void onSysEvent(INTERNAL_EVENT event) override {}
+
+        void onEvent(int event) override {}
 };

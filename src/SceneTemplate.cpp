@@ -1,6 +1,5 @@
 #include <iostream>
 #include <EssentiaEngine>
-using namespace Essentia;
 
 class SceneTemplate : public Scene
 {

@@ -8,10 +8,8 @@ namespace Essentia
     class EventListener
     {
         public:
-            virtual void onEvent(INTERNAL_EVENT event) {}
-
-            template<typename T>
-            void onEvent(T event) {}
+            virtual void onSysEvent(INTERNAL_EVENT event) {}
+            virtual void onEvent(int event) {}
 
             virtual ~EventListener() = default;
     };

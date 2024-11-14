@@ -23,6 +23,10 @@ using GameObject = Essentia::WeakptrWrapper<Essentia::Entity>;
 using Scene = Essentia::Scene;
 using SceneManager = Essentia::SceneManager;
 
+template <typename T>
+using EventSystem = Essentia::EventSystem<T>;
+using EventListener = Essentia::EventListener;
+
 using Transform = Essentia::Transform;
 
 

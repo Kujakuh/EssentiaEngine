@@ -12,16 +12,20 @@ namespace Essentia
     template<typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
     class EventSystem
     {
+        private:
+            EventSystem() = default;
+            std::unordered_set<EventListener*> listeners;
+
         public:
             static void addListener(EventListener* listener) { instance().listeners.insert(listener); }
             static void removeListener(EventListener* listener) { instance().listeners.erase(listener); }
 
             static void emit(T eventType)
             {
-                if constexpr (std::is_same_v<T, INTERNAL_EVENT>) {
-                    if (!instance().allowInternalEvents) {
+                if constexpr (std::is_same_v<T, INTERNAL_EVENT>)
+                {
+                    if (!instance().allowInternalEvents)
                         throw std::runtime_error("ERROR: Event emission for system events is disabled in the current context.");
-                    }
                 }
 
                 for (auto* listener : instance().listeners)
@@ -29,9 +33,6 @@ namespace Essentia
             }
 
         private:
-            EventSystem() = default;
-            std::unordered_set<EventListener*> listeners;
-
             static EventSystem& instance()
             {
                 static EventSystem instance;
@@ -40,10 +41,9 @@ namespace Essentia
 
             static void emitInternalEvent(T eventType)
             {
-                if constexpr (!std::is_same_v<T, INTERNAL_EVENT>) {
+                if constexpr (!std::is_same_v<T, INTERNAL_EVENT>) 
                     throw std::runtime_error("ERROR: Only INTERNAL_EVENT types can be emitted via this method.");
-                }
-
+                
                 for (auto* listener : instance().listeners)
                     listener->onEvent(eventType);
             }
