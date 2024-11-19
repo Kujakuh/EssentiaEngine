@@ -12,8 +12,24 @@ enum SH_TYPE
 	FRAGMENT,
 	GEOMETRY
 };
-enum INTERNAL_EVENT {
+enum INTERNAL_EVENT
+{
 	SYS_START
+};
+enum TEX_TYPE
+{
+	TEX_DIFF,
+	TEX_SPEC,
+	TEX_NORM,
+	TEX_HEIGHT,
+	TEX_CUBEMAP
+};
+enum FILTERS {
+	WRAP_S,
+	WRAP_R,
+	WRAP_T,
+	MIN_F,
+	MAG_F
 };
 
 #endif // !ENUMS_H

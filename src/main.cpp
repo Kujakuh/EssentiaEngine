@@ -7,7 +7,6 @@
 
 #include <EssentiaEngine>
 
-
 #include "SceneTemplate.cpp"
 #include "GameObjectTemplate.cpp"
 
@@ -151,6 +150,14 @@ int main(void)
 	Shader s(a.c_str(), RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
 	s.use();
 	s.setUniform("a", Vector3(1.0f, 0.3f, 0.0f));
+
+	ska::flat_hash_map<FILTERS, GLenum> filters;
+	filters[FILTERS::MIN_F] = GL_LINEAR;
+	filters[FILTERS::MAG_F] = GL_LINEAR;
+	filters[FILTERS::WRAP_S] = GL_REPEAT;
+	filters[FILTERS::WRAP_T] = GL_REPEAT;
+
+	TextureHandle texture = TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, 1, filters, TEX_TYPE::TEX_DIFF);
 
 	while ( !glfwWindowShouldClose(window) )
 	{

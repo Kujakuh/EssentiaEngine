@@ -5,6 +5,9 @@
 #include <Core/Exceptions/Exceptions.hpp>
 #include <Core/EventSystem/EventSystem.hpp>
 #include <Core/EventSystem/EventListener.hpp>
+#include <Core/Graphics/Texture.hpp>
+#include <Core/Graphics/Vertex.hpp>
+#include <Core/Graphics/TextureManager.hpp>
 
 
 #include <DebugTools>
@@ -29,5 +32,8 @@ using EventListener = Essentia::EventListener;
 
 using Transform = Essentia::Transform;
 
+using TextureHandle = std::shared_ptr<Essentia::Texture>;
+using Vertex = Essentia::Vertex;
+using TextureManager = Essentia::TextureManager;
 
 #endif //!ESSENTIA_IMPORTS_H
