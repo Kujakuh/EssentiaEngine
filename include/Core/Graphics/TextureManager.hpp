@@ -15,24 +15,23 @@
 
 namespace Essentia
 {
-    class TextureManager {
-    private:
-        // Caché estática para almacenar las texturas
-        static std::unordered_map<std::string, std::shared_ptr<Texture>> textureCache;
+    class TextureManager
+    {
+        private:
+            static std::unordered_map<std::string, std::shared_ptr<Texture>> textureCache;
+            TextureManager() {}
 
-        TextureManager() {}
+        public:
+            static std::shared_ptr<Texture> getTexture(const std::string& texturePath, GLenum textureType, int textureUnit,
+                const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type, bool flip = true);
 
-    public:
-        static std::shared_ptr<Texture> getTexture(const std::string& texturePath, GLenum textureType, int textureUnit,
-            const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type, bool flip = true);
+            static std::shared_ptr<Texture> getCubemapTexture(const std::vector<std::string>& faces, GLenum textureType, int textureUnit,
+                const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type);
 
-        static std::shared_ptr<Texture> getCubemapTexture(const std::vector<std::string>& faces, GLenum textureType, int textureUnit,
-            const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type);
+            static void clearCache();
 
-        static void clearCache();
-
-    private:
-        static std::string generateCubemapKey(const std::vector<std::string>& faces);
+        private:
+            static std::string generateCubemapKey(const std::vector<std::string>& faces);
     };
 
 }

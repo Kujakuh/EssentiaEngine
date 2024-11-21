@@ -6,10 +6,13 @@
 #define LOC_TEX_COORD 1
 #define LOC_NORMAL 2
 
-static const char* DS_TOSTRING[] = { "FILE_PATH", "STR_DATA" };
-static const char* ST_TOSTRING[] = { "VERTEX", "FRAGMENT", "GEOMETRY" };
+namespace Essentia 
+{
+	static const char* DS_TOSTRING[] = { "FILE_PATH", "STR_DATA" };
+	static const char* ST_TOSTRING[] = { "VERTEX", "FRAGMENT", "GEOMETRY" };
 
-// USER VALUES
-static const int MAX_BONE_INFLUENCE = 4;
+	// USER VALUES
+	static const int MAX_BONE_INFLUENCE = 4;
+}
 
 #endif // !VALUES_H

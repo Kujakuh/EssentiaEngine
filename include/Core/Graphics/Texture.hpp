@@ -11,7 +11,7 @@
 
 namespace Essentia
 {
-    class Texture 
+    class Texture
     {
         private:
             GLuint ID = 0;
