@@ -26,12 +26,12 @@ namespace Essentia
     {
         switch (texType)
         {
-            case TEX_DIFF: return "Diffuse";
-            case TEX_SPEC: return "Specular";
-            case TEX_NORM: return "Normal";
-            case TEX_HEIGHT: return "Height";
-
-            default: return "Unknown";
+            case TEX_TYPE::TEX_DIFF: return "Diffuse";
+            case TEX_TYPE::TEX_SPEC: return "Specular";
+            case TEX_TYPE::TEX_NORM: return "Normal";
+            case TEX_TYPE::TEX_HEIGHT: return "Height";
+            case TEX_TYPE::TEX_CUBEMAP: return "Cubemap";
+            default: return "Undefined";
         }
     }
 
@@ -118,7 +118,6 @@ namespace Essentia
 
         glGenTextures(1, &ID);
         bind();
-        applyFilters();
 
         GLenum format = GL_RGB;
         if (nrChannels == 1) format = GL_RED;
@@ -126,6 +125,7 @@ namespace Essentia
 
         glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(type);
+        applyFilters();
 
         stbi_image_free(data);
         unbind();
@@ -140,7 +140,7 @@ namespace Essentia
         }
 
         glGenTextures(1, &ID);
-        bind();
+        glBindTexture(type, ID);
 
         for (size_t i = 0; i < faces.size(); ++i)
         {
@@ -155,12 +155,12 @@ namespace Essentia
             {
                 std::cerr << "ERROR::TEXTURE::CUBEMAP::FAILED_TO_LOAD " << faces[i] << std::endl;
                 stbi_image_free(data);
-                unbind();
+                glBindTexture(type, 0);
                 return;
             }
         }
 
         applyFilters();
-        unbind();
+        glBindTexture(type, 0);
     }
 }

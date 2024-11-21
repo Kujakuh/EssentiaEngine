@@ -2,7 +2,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <Core/shader.hpp>
 #include <iostream>
 
 #include <EssentiaEngine>
@@ -129,9 +128,9 @@ int main(void)
 #pragma endregion 
 
 	float vertices[] = {
-	-0.5f, -0.5f, 0.0f,
-	 0.5f, -0.5f, 0.0f,
-	 0.0f,  0.5f, 0.0f
+	-0.5f, -0.5f, 0.0f,  0.0f, 0.0f,
+	 0.5f, -0.5f, 0.0f,  1.0f, 0.0f,
+	 0.0f,  0.5f, 0.0f,  0.5f, 1.0f
 	};
 
 	GLuint VAO, VBO;
@@ -142,22 +141,26 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(LOC_POSITION, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(LOC_POSITION, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(LOC_POSITION);
+
+	glVertexAttribPointer(LOC_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(LOC_TEX_COORD);
 
 	std::string a = std::string(RESOURCES_PATH) + "Shaders/vertex.vert";
-
-	Shader s(a.c_str(), RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
-	s.use();
-	s.setUniform("a", Vector3(1.0f, 0.3f, 0.0f));
-
 	ska::flat_hash_map<FILTERS, GLenum> filters;
 	filters[FILTERS::MIN_F] = GL_LINEAR;
 	filters[FILTERS::MAG_F] = GL_LINEAR;
 	filters[FILTERS::WRAP_S] = GL_REPEAT;
 	filters[FILTERS::WRAP_T] = GL_REPEAT;
 
-	TextureHandle texture = TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, 1, filters, TEX_TYPE::TEX_DIFF);
+	TextureHandle texture = TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF);
+	TextureHandle texture2 = TextureManager::getTexture(RESOURCES_PATH "Textures/2.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF);
+	Shader s(a.c_str(), RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
+	texture2->bind();
+	texture->bind();
+	s.use();
+	s.setUniform("Tex", texture2->getTextureUnit());
 
 	while ( !glfwWindowShouldClose(window) )
 	{
