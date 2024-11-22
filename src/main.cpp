@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <vector>
 
 #include <EssentiaEngine>
 
@@ -35,7 +36,7 @@ int main(void)
 	scene->DestroyEntity(entity3);
 	scene->DestroyEntity(entity2);
 	scene->DestroyEntity(entity1);
-	//entity1->AddComponent<Transform>();
+
 	GameObject entity4 = scene->CreateEntity("Entity4");
 	GameObjectTemplate myEntity(scene);
 	GameObject entity6 = scene->CreateEntity("Entity6");
@@ -127,27 +128,6 @@ int main(void)
 	glEnable(GL_MULTISAMPLE);
 #pragma endregion 
 
-	float vertices[] = {
-	-0.5f, -0.5f, 0.0f,  0.0f, 0.0f,
-	 0.5f, -0.5f, 0.0f,  1.0f, 0.0f,
-	 0.0f,  0.5f, 0.0f,  0.5f, 1.0f
-	};
-
-	GLuint VAO, VBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(LOC_POSITION, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(LOC_POSITION);
-
-	glVertexAttribPointer(LOC_TEX_COORD, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3*sizeof(float)));
-	glEnableVertexAttribArray(LOC_TEX_COORD);
-
-	std::string a = std::string(RESOURCES_PATH) + "Shaders/vertex.vert";
 	ska::flat_hash_map<FILTERS, GLenum> filters;
 	filters[FILTERS::MIN_F] = GL_LINEAR;
 	filters[FILTERS::MAG_F] = GL_LINEAR;
@@ -155,21 +135,37 @@ int main(void)
 	filters[FILTERS::WRAP_T] = GL_REPEAT;
 
 	TextureHandle texture = TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF);
-	TextureHandle texture2 = TextureManager::getTexture(RESOURCES_PATH "Textures/2.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF);
-	Shader s(a.c_str(), RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
-	texture2->bind();
-	texture->bind();
-	s.use();
-	s.setUniform("Tex", texture2->getTextureUnit());
+	TextureHandle testure = TextureManager::getTexture(RESOURCES_PATH "Textures/2.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF);
 
+	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
+
+	std::vector<Vertex> meshVertices = 
+	{
+		Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f)),
+		Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f)),
+		Vertex(glm::vec3(0.5f,  0.5f, 0.0f), glm::vec2(1.0f, 1.0f)),
+		Vertex(glm::vec3(-0.5f,  0.5f, 0.0f), glm::vec2(0.0f, 1.0f))
+	};
+
+	Mesh mesh(
+		s, 
+		meshVertices, 
+		{ 0, 1, 2,
+		  0, 2, 3 },
+		{
+			{"container", texture},
+			{"face", testure}
+		}
+	);
+	mesh.initShader();
+	
 	while ( !glfwWindowShouldClose(window) )
 	{
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glBindVertexArray(0);
+		
+		mesh.shader.setUniform("time", (float) glfwGetTime());
+		mesh.render();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

@@ -26,11 +26,11 @@ namespace Essentia
     {
         switch (texType)
         {
-            case TEX_TYPE::TEX_DIFF: return "Diffuse";
-            case TEX_TYPE::TEX_SPEC: return "Specular";
-            case TEX_TYPE::TEX_NORM: return "Normal";
-            case TEX_TYPE::TEX_HEIGHT: return "Height";
-            case TEX_TYPE::TEX_CUBEMAP: return "Cubemap";
+            case TEX_TYPE::TEX_DIFF: return "diffuse";
+            case TEX_TYPE::TEX_SPEC: return "specular";
+            case TEX_TYPE::TEX_NORM: return "normal";
+            case TEX_TYPE::TEX_HEIGHT: return "height";
+            case TEX_TYPE::TEX_CUBEMAP: return "cubemap";
             default: return "Undefined";
         }
     }

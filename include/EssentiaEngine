@@ -9,7 +9,7 @@
 #include <Core/Graphics/Texture.hpp>
 #include <Core/Graphics/Vertex.hpp>
 #include <Core/Graphics/TextureManager.hpp>
-
+#include <Core/Graphics/Mesh.hpp>
 
 #include <DebugTools>
 
@@ -37,5 +37,6 @@ using TextureHandle = std::shared_ptr<Essentia::Texture>;
 using Vertex = Essentia::Vertex;
 using Shader = Essentia::Shader;
 using TextureManager = Essentia::TextureManager;
+using Mesh = Essentia::Mesh;
 
 #endif //!ESSENTIA_IMPORTS_H

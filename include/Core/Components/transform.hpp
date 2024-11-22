@@ -10,7 +10,7 @@
 
 namespace Essentia
 {
-    struct Transform : Essentia::IComponent
+    struct Transform : IComponent
     {
         private:
             glm::vec3 position;
