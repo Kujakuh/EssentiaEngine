@@ -134,11 +134,6 @@ int main(void)
 	filters[FILTERS::WRAP_S] = GL_REPEAT;
 	filters[FILTERS::WRAP_T] = GL_REPEAT;
 
-	TextureHandle texture = TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF);
-	TextureHandle testure = TextureManager::getTexture(RESOURCES_PATH "Textures/2.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF);
-
-	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
-
 	std::vector<Vertex> meshVertices = 
 	{
 		Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f)),
@@ -147,16 +142,19 @@ int main(void)
 		Vertex(glm::vec3(-0.5f,  0.5f, 0.0f), glm::vec2(0.0f, 1.0f))
 	};
 
+	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
+
 	Mesh mesh(
 		s, 
 		meshVertices, 
 		{ 0, 1, 2,
 		  0, 2, 3 },
 		{
-			{"container", texture},
-			{"face", testure}
+			{"container", TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF)},
+			{"face", TextureManager::getTexture(RESOURCES_PATH "Textures/2.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF)}
 		}
 	);
+
 	mesh.initShader();
 	
 	while ( !glfwWindowShouldClose(window) )

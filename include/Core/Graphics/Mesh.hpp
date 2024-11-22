@@ -26,8 +26,8 @@ namespace Essentia
                 : vertices(vert), indices(ind), textures(tex), shader(sh) { setupMesh(); }
 
             void render();
-            void initShader() { shader.use(); }
-            void disableShader() { shader.disable(); }
+            void initShader() const { shader.use(); }
+            void disableShader() const { shader.disable(); }
 
         private:
             unsigned int VBO, EBO;
