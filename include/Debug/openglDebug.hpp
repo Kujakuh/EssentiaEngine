@@ -2,6 +2,8 @@
 #define DEBUG_UTILS_H
 
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <string>
 
 void GLAPIENTRY glDebugOutput(	GLenum source,
 								GLenum type,
@@ -12,5 +14,6 @@ void GLAPIENTRY glDebugOutput(	GLenum source,
 								const void *userParam);
 
 GLenum glCheckError_(const char* file, int line);
+void showFPS(GLFWwindow* window);
 
 #endif // !DEBUG_UTILS_H

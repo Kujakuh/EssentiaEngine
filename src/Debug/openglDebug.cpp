@@ -85,6 +85,34 @@ void GLAPIENTRY glDebugOutput(GLenum source,
 
 }
 
+void showFPS(GLFWwindow* window) {
+    static double previousTime = 0.0;
+    static int frameCount = 0;
+
+    // Obtiene el tiempo actual
+    double currentTime = glfwGetTime();
+    double elapsedTime = currentTime - previousTime;
+
+    // Incrementa el contador de frames
+    frameCount++;
+
+    // Si ha pasado un segundo
+    if (elapsedTime >= 1.0) {
+        // Calcula los FPS
+        double fps = frameCount / elapsedTime;
+
+        // Construye el nuevo título con los FPS
+        std::string title = "Essentia - FPS: " + std::to_string((int)fps);
+
+        // Actualiza el título de la ventana
+        glfwSetWindowTitle(window, title.c_str());
+
+        // Reinicia el contador de frames y el tiempo previo
+        frameCount = 0;
+        previousTime = currentTime;
+    }
+}
+
 #define glCheckError() glCheckError_(__FILE__, __LINE__)
 
 #endif // !DEBUG_UTILS_S
