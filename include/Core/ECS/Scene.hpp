@@ -3,10 +3,12 @@
 
 #include <vector>
 #include <memory>
+
 #include <Core/ECS/EntityManager.hpp>
 #include <Core/ECS/SystemDispatcher.hpp>
 #include <Core/Memory/WeakptrWrapper.hpp>
 #include <Core/EventSystem/EventSystem.hpp>
+#include <Core/Memory/WeakptrWrapper.hpp>
 
 namespace Essentia
 {
@@ -41,7 +43,7 @@ namespace Essentia
 
         public:
             template <typename... Components>
-            decltype(auto) GetEntitiesWith() {return entityManager.GetEntitiesWith<Components...>();}
+            std::vector<Essentia::WeakptrWrapper<Entity>> GetEntitiesWith() {return entityManager.GetEntitiesWith<Components...>();}
     };
 }
 
