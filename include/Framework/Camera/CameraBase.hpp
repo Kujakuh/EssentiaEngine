@@ -40,6 +40,7 @@ namespace Essentia
 
             float sensitivity = 0.01;
 
+            void setFront(glm::vec3 _front);
             virtual glm::mat4 getViewMatrix() const = 0;
 
             glm::vec3 getFront() const;

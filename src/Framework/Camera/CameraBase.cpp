@@ -27,6 +27,8 @@ namespace Essentia
         }
     }
 
+    void CameraBase::setFront(glm::vec3 _front) { front = _front; }
+
     glm::vec3 CameraBase::getFront() const { return front; }
     glm::vec3 CameraBase::getRight() const { return right; }
     glm::vec3 CameraBase::getUp() const { return up; }
