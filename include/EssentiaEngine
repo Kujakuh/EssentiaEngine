@@ -27,6 +27,7 @@ using Quaternion = glm::quat;
 using Color = glm::vec4;
 
 using GameObject = Essentia::WeakptrWrapper<Essentia::Entity>;
+using Entity = Essentia::Entity;
 using Scene = Essentia::Scene;
 using SceneManager = Essentia::SceneManager;
 
@@ -41,6 +42,7 @@ using Vertex = Essentia::Vertex;
 using Shader = Essentia::Shader;
 using TextureManager = Essentia::TextureManager;
 using Mesh = Essentia::Mesh;
+
 using CameraBase = Essentia::CameraBase;
 using Camera2D = Essentia::CameraOrtho;
 using Camera3D = Essentia::CameraPerspective;

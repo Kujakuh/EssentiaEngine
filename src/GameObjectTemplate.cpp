@@ -3,12 +3,12 @@
 class GameObjectTemplate : EventListener
 {
     public:
-
         GameObject entity;
 
         GameObjectTemplate(Essentia::Scene* scene) : entity(scene->CreateEntity("MyCustomGameObject"))
         {
             EventSystem<INTERNAL_EVENT>::addListener(this);
+            entity->onUpdate = [this]() {Update();};
         }
 
         void onSysEvent(INTERNAL_EVENT event) override 
@@ -17,4 +17,5 @@ class GameObjectTemplate : EventListener
         }
 
         void onEvent(int event) override {}
+        void Update() {}
 };

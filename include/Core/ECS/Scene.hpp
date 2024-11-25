@@ -17,7 +17,7 @@ namespace Essentia
         protected:
             EntityManager entityManager;
             bool running = false;
-            SystemDispatcher* systemDispatcher;
+            SystemDispatcher systemDispatcher;
 
         public:
             virtual ~Scene() = default;
@@ -40,8 +40,8 @@ namespace Essentia
             virtual void onDestroy();
             virtual void onUpdate();
 
-            virtual void inputOnInit(const std::vector<Entity*>& entities = {}, const std::vector<std::string>& arguments = {});
-            virtual void outputOnDestroy(std::vector<Entity*>& entities, std::vector<std::string>& arguments);
+            virtual void onInit(const std::vector<Entity*>& entities, const std::vector<std::string>& arguments);
+            virtual void onDestroy(std::vector<Entity*>& entities, std::vector<std::string>& arguments);
 
         public:
             template <typename... Components>

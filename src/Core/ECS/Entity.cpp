@@ -2,7 +2,10 @@
 
 namespace Essentia
 {
-    Entity::Entity(int id, const std::string& name) : id(id), name(name), isAlive(true) {}
+    Entity::Entity(int id, const std::string& name) : id(id), name(name), isAlive(true) 
+    {
+        onUpdate = [this]() {this->defaultUpdate();};
+    }
 
     int Entity::GetID() const 
     {

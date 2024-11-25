@@ -7,14 +7,22 @@ class SceneTemplate : public Scene
 		SceneTemplate() {
 
 		}
-		
-	private:
+
 		void onInit() override
 		{
 			std::cout << "Scene Init" << '\n';
 		}
+		void onInit(const std::vector<Entity*>& entities, const std::vector<std::string>& arguments) override {}
 
+		void onDestroy() override {}
+		void onDestroy(std::vector<Entity*>& entities, std::vector<std::string>& arguments) override {}
+
+		void onUpdate() override {}
+
+		void RegisterSystems() override 
+		{
+			//systemDispatcher->RegisterSystem();
+		}
 };
-
 
 

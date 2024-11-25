@@ -29,7 +29,7 @@ namespace Essentia
 
         if (isRunning())
         {
-            systemDispatcher->Dispatch(entityManager);
+            systemDispatcher.Dispatch(entityManager);
             onUpdate();
         }
     }
@@ -56,18 +56,18 @@ namespace Essentia
             running = true;
             RegisterSystems();
             onInit();
-            inputOnInit(entities, arguments);
+            onInit(entities, arguments);
         }
         else if (!active && running)
         {
             running = false;
             onDestroy();
-            outputOnDestroy(entities, arguments);
+            onDestroy(entities, arguments);
         }
     }
 
-    void Scene::inputOnInit(const std::vector<Entity*>& entities, const std::vector<std::string>& arguments) {}
-    void Scene::outputOnDestroy(std::vector<Entity*>& entities, std::vector<std::string>& arguments) {}
+    void Scene::onInit(const std::vector<Entity*>& entities, const std::vector<std::string>& arguments) {}
+    void Scene::onDestroy(std::vector<Entity*>& entities, std::vector<std::string>& arguments) {}
     void Scene::onInit() {}
     void Scene::onDestroy() {}
     void Scene::onUpdate() {}

@@ -31,7 +31,7 @@ namespace Essentia
             ska::flat_hash_map<std::type_index, std::weak_ptr<IComponent>> GetComponents();
             void Destroy();
 
-            virtual void onUpdate() {};
+            std::function<void()> onUpdate;
 
         public:
             template <typename T, typename... Args>
@@ -63,6 +63,8 @@ namespace Essentia
 
                 return components.find(typeid(T)) != components.end();
             }
+
+            void defaultUpdate() {}
 
             friend class EntityManager;
     };
