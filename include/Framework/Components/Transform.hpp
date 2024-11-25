@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <Core/ECS/IComponent.hpp>
+#include <Shared/enums.hpp>
 
 namespace Essentia
 {
@@ -102,6 +103,16 @@ namespace Essentia
                 rotation = glm::normalize(rotationY * rotationX * rotationZ * rotation);
 
                 needsUpdate = true;
+            }
+
+            bool areAligned(const glm::vec3& a, const glm::vec3& b, float epsilon = 0.001f)
+            {
+                glm::vec3 normA = glm::normalize(a);
+                glm::vec3 normB= glm::normalize(b);
+
+                float dotProduct = glm::dot(normA, normB);
+
+                return glm::epsilonEqual(dotProduct, 1.0f, epsilon);
             }
     };
 }

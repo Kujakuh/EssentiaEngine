@@ -33,19 +33,24 @@ namespace Essentia
             return;
         }
 
-        // Calcular el desplazamiento del ratón
         float deltaX = static_cast<float>(xpos - lastX);
         float deltaY = static_cast<float>(lastY - ypos);
 
-        // Actualizar las posiciones anteriores
         lastX = xpos;
         lastY = ypos;
 
         deltaX *= sensitivity*5;
         deltaY *= sensitivity*5;
 
-        transform->rotate(glm::vec3(deltaY, deltaX, 0.0f), getRight(), glm::vec3(0,1,0), getFront());
+        transform->rotate(glm::vec3(deltaY, deltaX, 0.0f), getRight(), glm::vec3(0, 1, 0), getFront());
         transform->updateMatrix();
         updateCameraVectors();
+
+        if (transform->areAligned(front, worldUp) || transform->areAligned(front, -worldUp))
+        {
+            transform->rotate(glm::vec3(-deltaY, 0.0f, 0.0f), getRight(), glm::vec3(0, 1, 0), getFront());
+            transform->updateMatrix();
+            updateCameraVectors();
+        }
     }
 }
