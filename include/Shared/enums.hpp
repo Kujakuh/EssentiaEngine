@@ -41,5 +41,11 @@ enum CAMERA_DIR
 	UP,
 	DOWN,
 };
+enum KEY_STATE
+{
+	IDLE = 0,
+	PRESSED = 1,
+	RELEASED = 2
+};
 
 #endif // !ENUMS_H

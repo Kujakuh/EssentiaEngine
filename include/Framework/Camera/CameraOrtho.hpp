@@ -1,7 +1,7 @@
 #ifndef CAMERA_ORTHO_H
 #define CAMERA_ORTHO_H
 
-#include <Core/Systems/CameraBase.hpp>
+#include <Framework/Camera/CameraBase.hpp>
 
 namespace Essentia
 {

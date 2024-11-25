@@ -1,4 +1,4 @@
-#include <Core/Systems/CameraPerspective.hpp>
+#include <Framework/Camera/CameraPerspective.hpp>
 
 namespace Essentia
 {

@@ -1,4 +1,4 @@
-#include <Core/Systems/CameraBase.hpp>
+#include <Framework/Camera/CameraBase.hpp>
 
 namespace Essentia
 {

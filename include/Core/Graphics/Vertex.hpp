@@ -2,7 +2,7 @@
 #define VERTEX_H
 
 #include <glm/glm.hpp>
-#include <Core/values.hpp>
+#include <Shared/values.hpp>
 
 namespace Essentia
 {

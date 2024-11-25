@@ -20,7 +20,6 @@ constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
 
 //extern "C"{}
 
-static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 int main(void)
@@ -90,6 +89,8 @@ int main(void)
         return -1;
     }
 	glfwMakeContextCurrent(window);
+	InputManager::Initialize(window);
+	InputManager::SetActiveInstance(window);
 
 
 	// Define and init render window and rescaling
@@ -110,8 +111,6 @@ int main(void)
 
     glEnable(GL_DEPTH_TEST);
 	//glfwSwapInterval(1);
-
-	glfwSetKeyCallback(window, key_callback);
 
     glfwSetWindowAspectRatio(window, 16, 9);
 
@@ -216,15 +215,23 @@ int main(void)
 	
 	while ( !glfwWindowShouldClose(window) )
 	{
+		InputManager::GetActiveInstance()->Update();
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		showFPS(window);
-		ref->rotate(Vector3(0.0024f * (float)glfwGetTime(), 0.0015f * (float)glfwGetTime(), 0.003 * (float)glfwGetTime()));
-		ref->updateMatrix();
+		if (InputManager::IsKeyPressed(KEY_SPACE) || InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT))
+		{
+			ref->rotate(Vector3(0.0024f * (float)glfwGetTime(), 0.0015f * (float)glfwGetTime(), 0.003 * (float)glfwGetTime()));
+			ref->updateMatrix();
+		}
 		mesh.shader.setUniform("model", ref->getModelMatrix());
 		mesh.shader.setUniform("time", (float) glfwGetTime());
 		mesh.render();
+
+		if (InputManager::IsKeyPressed(KEY_ESCAPE)) glfwSetWindowShouldClose(window, true);
+
+		scene->Update();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -233,13 +240,6 @@ int main(void)
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
-}
-
-
-static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)

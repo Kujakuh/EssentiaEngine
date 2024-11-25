@@ -7,7 +7,7 @@
 #include <string>
 #include <iostream>
 
-#include <Core/enums.hpp>
+#include <Shared/enums.hpp>
 
 namespace Essentia
 {

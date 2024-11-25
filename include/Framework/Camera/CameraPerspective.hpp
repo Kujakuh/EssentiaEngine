@@ -1,7 +1,7 @@
 #ifndef CAMERA_PERSPECTIVE_H
 #define CAMERA_PERSPECTIVE_H
 
-#include <Core/Systems/CameraBase.hpp>
+#include <Framework/Camera/CameraBase.hpp>
 
 namespace Essentia
 {

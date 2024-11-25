@@ -15,7 +15,7 @@
 #include <Core/ECS/Entity.hpp>
 #include <Core/ECS/Scene.hpp>
 #include <Core/ECS/EntityManager.hpp>
-#include <Core/Components/Transform.hpp>
+#include <Framework/Components/Transform.hpp>
 #include <Core/Memory/WeakptrWrapper.hpp>
 
 namespace Essentia

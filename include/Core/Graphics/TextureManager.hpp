@@ -12,7 +12,7 @@
 #include <stb_image/stb_image.h>
 
 #include <Core/Graphics/Texture.hpp>
-#include <Core/enums.hpp>
+#include <Shared/enums.hpp>
 
 namespace Essentia
 {

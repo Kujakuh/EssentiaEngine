@@ -9,7 +9,7 @@
 #include <iostream>
 
 #include <Core/ECS/IComponent.hpp>
-#include <Core/Components/components.hpp>
+#include <Framework/Components/components.hpp>
 #include <Core/Exceptions/Exceptions.hpp>
 
 namespace Essentia

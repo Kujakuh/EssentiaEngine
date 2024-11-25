@@ -1,4 +1,4 @@
-#include <Core/Systems/CameraOrtho.hpp>
+#include <Framework/Camera/CameraOrtho.hpp>
 
 namespace Essentia
 {

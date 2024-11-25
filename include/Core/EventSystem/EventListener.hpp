@@ -1,7 +1,7 @@
 #ifndef EVENT_LISTENER_H
 #define EVENT_LISTENER_H
 
-#include <Core/enums.hpp>
+#include <Shared/enums.hpp>
 
 namespace Essentia
 {

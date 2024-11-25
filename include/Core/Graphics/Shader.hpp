@@ -31,8 +31,8 @@
 #include <fstream>
 #include <sstream>
 
-#include <Core/enums.hpp>
-#include <Core/values.hpp>
+#include <Shared/enums.hpp>
+#include <Shared/values.hpp>
 
 namespace Essentia
 {
