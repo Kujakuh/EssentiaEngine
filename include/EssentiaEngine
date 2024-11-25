@@ -10,6 +10,9 @@
 #include <Core/Graphics/Vertex.hpp>
 #include <Core/Graphics/TextureManager.hpp>
 #include <Core/Graphics/Mesh.hpp>
+#include <Core/Systems/CameraBase.hpp>
+#include <Core/Systems/CameraOrtho.hpp>
+#include <Core/Systems/CameraPerspective.hpp>
 
 #include <DebugTools>
 
@@ -38,5 +41,8 @@ using Vertex = Essentia::Vertex;
 using Shader = Essentia::Shader;
 using TextureManager = Essentia::TextureManager;
 using Mesh = Essentia::Mesh;
+using CameraBase = Essentia::CameraBase;
+using Camera2D = Essentia::CameraOrtho;
+using Camera3D = Essentia::CameraPerspective;
 
 #endif //!ESSENTIA_IMPORTS_H

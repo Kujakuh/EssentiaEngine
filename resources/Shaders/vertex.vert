@@ -5,9 +5,12 @@ layout (location = 2) in vec2 tex;
 
 out vec2 outTexCord;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
 void main()
 {
-	outTexCord = tex;
-	gl_Position = vec4(pos, 1);
-
+    gl_Position = projection * view * model * vec4(pos, 1.0);
+    outTexCord = vec2(tex.x, tex.y);
 }

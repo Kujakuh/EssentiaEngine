@@ -51,9 +51,9 @@ int main(void)
 
 	if (entity4->HasComponent<Transform>())
 	{
-		ref->setPosition().x = 24;
+		ref->setPosition().x = 1;
 
-		ref->rotate(Vector3(90, 0, 0));
+		ref->rotate(Vector3(40, 30, 0));
 		Matrix4 mat = ref->getModelMatrix();
 		printMatrix(mat);
 		try {
@@ -109,7 +109,7 @@ int main(void)
 	// glViewport(0, 0, _WIDTH, _HEIGHT);
 
     glEnable(GL_DEPTH_TEST);
-	glfwSwapInterval(1);
+	//glfwSwapInterval(1);
 
 	glfwSetKeyCallback(window, key_callback);
 
@@ -134,21 +134,69 @@ int main(void)
 	filters[FILTERS::WRAP_S] = GL_REPEAT;
 	filters[FILTERS::WRAP_T] = GL_REPEAT;
 
-	std::vector<Vertex> meshVertices = 
+	std::vector<Vertex> meshVertices =
 	{
-		Vertex(Vector3(-0.5f, -0.5f,  0.0f), Vector2(0.0f, 0.0f)),
-		Vertex(Vector3( 0.5f, -0.5f,  0.0f), Vector2(1.0f, 0.0f)),
-		Vertex(Vector3( 0.5f,  0.5f,  0.0f), Vector2(1.0f, 1.0f)),
-		Vertex(Vector3(-0.5f,  0.5f,  0.0f), Vector2(0.0f, 1.0f))
+		// Front face
+		Vertex(Vector3(-0.5f, -0.5f,  0.5f), Vector2(0.0f, 0.0f)),
+		Vertex(Vector3(0.5f, -0.5f,  0.5f), Vector2(1.0f, 0.0f)),
+		Vertex(Vector3(0.5f,  0.5f,  0.5f), Vector2(1.0f, 1.0f)),
+		Vertex(Vector3(-0.5f,  0.5f,  0.5f), Vector2(0.0f, 1.0f)),
+
+		// Back face
+		Vertex(Vector3(-0.5f, -0.5f, -0.5f), Vector2(0.0f, 0.0f)),
+		Vertex(Vector3(0.5f, -0.5f, -0.5f), Vector2(1.0f, 0.0f)),
+		Vertex(Vector3(0.5f,  0.5f, -0.5f), Vector2(1.0f, 1.0f)),
+		Vertex(Vector3(-0.5f,  0.5f, -0.5f), Vector2(0.0f, 1.0f)),
+
+		// Left face
+		Vertex(Vector3(-0.5f, -0.5f, -0.5f), Vector2(0.0f, 0.0f)),
+		Vertex(Vector3(-0.5f, -0.5f,  0.5f), Vector2(1.0f, 0.0f)),
+		Vertex(Vector3(-0.5f,  0.5f,  0.5f), Vector2(1.0f, 1.0f)),
+		Vertex(Vector3(-0.5f,  0.5f, -0.5f), Vector2(0.0f, 1.0f)),
+
+		// Right face
+		Vertex(Vector3(0.5f, -0.5f, -0.5f), Vector2(0.0f, 0.0f)),
+		Vertex(Vector3(0.5f, -0.5f,  0.5f), Vector2(1.0f, 0.0f)),
+		Vertex(Vector3(0.5f,  0.5f,  0.5f), Vector2(1.0f, 1.0f)),
+		Vertex(Vector3(0.5f,  0.5f, -0.5f), Vector2(0.0f, 1.0f)),
+
+		// Bottom face
+		Vertex(Vector3(-0.5f, -0.5f, -0.5f), Vector2(0.0f, 0.0f)),
+		Vertex(Vector3(0.5f, -0.5f, -0.5f), Vector2(1.0f, 0.0f)),
+		Vertex(Vector3(0.5f, -0.5f,  0.5f), Vector2(1.0f, 1.0f)),
+		Vertex(Vector3(-0.5f, -0.5f,  0.5f), Vector2(0.0f, 1.0f)),
+
+		// Top face
+		Vertex(Vector3(-0.5f,  0.5f, -0.5f), Vector2(0.0f, 0.0f)),
+		Vertex(Vector3(0.5f,  0.5f, -0.5f), Vector2(1.0f, 0.0f)),
+		Vertex(Vector3(0.5f,  0.5f,  0.5f), Vector2(1.0f, 1.0f)),
+		Vertex(Vector3(-0.5f,  0.5f,  0.5f), Vector2(0.0f, 1.0f))
 	};
+
+	// Definir los índices
+	std::vector<GLuint> indices =
+	{
+		// Front face
+		0, 1, 2,  0, 2, 3,
+		// Back face
+		4, 5, 6,  4, 6, 7,
+		// Left face
+		8, 9, 10, 8, 10, 11,
+		// Right face
+		12, 13, 14, 12, 14, 15,
+		// Bottom face
+		16, 17, 18, 16, 18, 19,
+		// Top face
+		20, 21, 22, 20, 22, 23
+	};
+
 
 	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
 
 	Mesh mesh(
 		s, 
 		meshVertices, 
-		{ 0, 1, 2,
-		  0, 2, 3 },
+		indices,
 		{
 			{"container", TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF)},
 			{"face", TextureManager::getTexture(RESOURCES_PATH "Textures/2.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF)}
@@ -156,6 +204,15 @@ int main(void)
 	);
 
 	mesh.initShader();
+
+	Camera3D camera("CAM", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
+	//Camera2D camera("2D Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -1.0f, 1.0f);
+
+	camera.transform->setPosition().z = 3;
+	camera.transform->updateMatrix();
+
+	mesh.shader.setUniform("projection", camera.getProjectionMatrix());
+	mesh.shader.setUniform("view", camera.getViewMatrix());
 	
 	while ( !glfwWindowShouldClose(window) )
 	{
@@ -163,7 +220,9 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		showFPS(window);
-		
+		ref->rotate(Vector3(0.0024f * (float)glfwGetTime(), 0.0015f * (float)glfwGetTime(), 0.003 * (float)glfwGetTime()));
+		ref->updateMatrix();
+		mesh.shader.setUniform("model", ref->getModelMatrix());
 		mesh.shader.setUniform("time", (float) glfwGetTime());
 		mesh.render();
 

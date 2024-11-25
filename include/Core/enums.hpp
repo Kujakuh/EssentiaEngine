@@ -24,12 +24,22 @@ enum TEX_TYPE
 	TEX_HEIGHT,
 	TEX_CUBEMAP
 };
-enum FILTERS {
+enum FILTERS
+{
 	WRAP_S,
 	WRAP_R,
 	WRAP_T,
 	MIN_F,
 	MAG_F
+};
+enum CAMERA_DIR
+{
+	FORWARD,
+	BACKWARD,
+	LEFT,
+	RIGHT,
+	UP,
+	DOWN,
 };
 
 #endif // !ENUMS_H

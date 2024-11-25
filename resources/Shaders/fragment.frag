@@ -1,6 +1,7 @@
 #version 460 core
 
 out vec4 FragColor;
+
 in vec2 outTexCord;
 
 uniform sampler2D container;
@@ -9,5 +10,5 @@ uniform float time;
 
 void main()
 {
-	FragColor = mix(texture(container, outTexCord), texture(face, outTexCord), 0.15) * sin(time/5);
+	FragColor = mix(texture(container, outTexCord), texture(face, outTexCord), 0.2);
 }
