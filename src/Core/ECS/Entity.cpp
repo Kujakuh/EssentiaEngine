@@ -16,6 +16,8 @@ namespace Essentia
         return name; 
     }
 
+    bool Entity::IsAlive() const { return isAlive; }
+
     ska::flat_hash_map<std::type_index, std::weak_ptr<IComponent>> Entity::GetComponents()
     {
         ska::flat_hash_map<std::type_index, std::weak_ptr<IComponent>> weakComponents;

@@ -20,8 +20,19 @@ namespace Essentia
         }
     }
 
-
     bool Scene::isRunning() const {return running;}
+
+    void Scene::Update()
+    {
+        for (WeakptrWrapper<Entity> entity : entityManager.GetEntitiesWith())
+            if (entity->IsAlive()) entity->onUpdate();
+
+        if (isRunning())
+        {
+            systemDispatcher->Dispatch(entityManager);
+            onUpdate();
+        }
+    }
 
     void Scene::SetActive(bool active)
     {
@@ -59,6 +70,6 @@ namespace Essentia
     void Scene::outputOnDestroy(std::vector<Entity*>& entities, std::vector<std::string>& arguments) {}
     void Scene::onInit() {}
     void Scene::onDestroy() {}
+    void Scene::onUpdate() {}
     void Scene::RegisterSystems() {}
-
 }

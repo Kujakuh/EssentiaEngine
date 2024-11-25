@@ -30,6 +30,7 @@ namespace Essentia
 
             void SetActive(bool active);
             void SetActive(bool active, std::vector<Entity*> entities, std::vector<std::string> arguments);
+            void Update();
             bool isRunning() const;
 
         protected:
@@ -37,6 +38,7 @@ namespace Essentia
 
             virtual void onInit();
             virtual void onDestroy();
+            virtual void onUpdate();
 
             virtual void inputOnInit(const std::vector<Entity*>& entities = {}, const std::vector<std::string>& arguments = {});
             virtual void outputOnDestroy(std::vector<Entity*>& entities, std::vector<std::string>& arguments);

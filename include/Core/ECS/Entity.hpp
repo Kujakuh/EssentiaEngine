@@ -27,8 +27,11 @@ namespace Essentia
 
             int GetID() const;
             const std::string& GetName() const;
+            bool IsAlive() const;
             ska::flat_hash_map<std::type_index, std::weak_ptr<IComponent>> GetComponents();
             void Destroy();
+
+            virtual void onUpdate() {};
 
         public:
             template <typename T, typename... Args>

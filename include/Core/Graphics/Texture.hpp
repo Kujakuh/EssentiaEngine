@@ -51,5 +51,4 @@ namespace Essentia
     };
 }
 
-
 #endif // !TEXTURE_H
