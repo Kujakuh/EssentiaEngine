@@ -114,6 +114,7 @@ int main(void)
 	glfwSwapInterval(1);
 
     glfwSetWindowAspectRatio(window, 16, 9);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 #pragma region ENABLE OUTPUT DEBUG
 
@@ -210,6 +211,8 @@ int main(void)
 
 	mesh.shader.setUniform("projection", camera.getProjectionMatrix());
 
+	camera.sensitivity = 0.05f;
+
 	while ( !glfwWindowShouldClose(window) )
 	{
 		InputManager::GetActiveInstance()->Update();
@@ -232,10 +235,12 @@ int main(void)
 		mesh.shader.setUniform("time", (float) glfwGetTime());
 		mesh.render();
 
-		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition().x -= 0.05;
-		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition().x += 0.05;
-		if (InputManager::IsKeyPressed(KEY_S)) camera.transform->setPosition().z += 0.05;
-		if (InputManager::IsKeyPressed(KEY_W)) camera.transform->setPosition().z -= 0.05;
+		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity;
+		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity;
+		if (InputManager::IsKeyPressed(KEY_S)) camera.transform->setPosition() -= camera.getFront() * camera.sensitivity;
+		if (InputManager::IsKeyPressed(KEY_W)) camera.transform->setPosition() += camera.getFront() * camera.sensitivity;
+
+		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

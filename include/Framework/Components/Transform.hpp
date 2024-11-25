@@ -87,16 +87,20 @@ namespace Essentia
             }
 
         public:
-            void rotate(const glm::vec3& eulerAngles)
+            void rotate(const glm::vec3& eulerAngles,
+                const glm::vec3& customAxisX = glm::vec3(1.0f, 0.0f, 0.0f),
+                const glm::vec3& customAxisY = glm::vec3(0.0f, 1.0f, 0.0f),
+                const glm::vec3& customAxisZ = glm::vec3(0.0f, 0.0f, 1.0f))
             {
                 if (eulerAngles == glm::vec3(0.0f)) return;
 
                 glm::vec3 radians = glm::radians(eulerAngles);
-                glm::quat rotationX = glm::angleAxis(radians.x, glm::vec3(1, 0, 0));
-                glm::quat rotationY = glm::angleAxis(radians.y, glm::vec3(0, 1, 0));
-                glm::quat rotationZ = glm::angleAxis(radians.z, glm::vec3(0, 0, 1));
+                glm::quat rotationX = glm::angleAxis(radians.x, customAxisX);
+                glm::quat rotationY = glm::angleAxis(radians.y, customAxisY);
+                glm::quat rotationZ = glm::angleAxis(radians.z, customAxisZ);
 
-                rotation = rotationZ * rotationY * rotationX * rotation;
+                rotation = glm::normalize(rotationY * rotationX * rotationZ * rotation);
+
                 needsUpdate = true;
             }
     };

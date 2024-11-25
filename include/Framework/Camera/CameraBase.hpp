@@ -25,11 +25,10 @@ namespace Essentia
         protected:
             Scene* scene;
 
-            glm::vec3 front;        // Dirección hacia donde apunta la cámara
-            glm::vec3 worldUp;      // Vector Up global
-            glm::vec3 right;        // Vector de la derecha (calculado)
-            glm::vec3 up;           // Vector Up relativo a la cámara (calculado)
-
+            glm::vec3 front;
+            glm::vec3 worldUp;
+            glm::vec3 right;
+            glm::vec3 up;
 
             void updateCameraVectors();
 
@@ -39,9 +38,14 @@ namespace Essentia
             WeakptrWrapper<Entity> entity;
             Transform* transform;
 
-            virtual glm::mat4 getViewMatrix() const = 0; // Cada tipo de cámara tendrá su implementación
+            float sensitivity = 0.01;
+
+            virtual glm::mat4 getViewMatrix() const = 0;
 
             glm::vec3 getFront() const;
+            glm::vec3 getRight() const;
+            glm::vec3 getUp() const;
+            glm::vec3 getWUp() const;
             glm::vec3 getPosition() const;
     };
 }

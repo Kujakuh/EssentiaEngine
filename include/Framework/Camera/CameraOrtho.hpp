@@ -8,12 +8,12 @@ namespace Essentia
     class CameraOrtho : public CameraBase
     {
         private:
-            float left;          // Límite izquierdo
-            float right;         // Límite derecho
-            float bottom;        // Límite inferior
-            float top;           // Límite superior
-            float nearPlane;     // Plano cercano
-            float farPlane;      // Plano lejano
+            float left;
+            float right;
+            float bottom;
+            float top;
+            float nearPlane;
+            float farPlane;
 
         public:
             CameraOrtho(const std::string& name, Scene* bindScene,

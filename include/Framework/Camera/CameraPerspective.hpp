@@ -13,6 +13,10 @@ namespace Essentia
             float nearPlane;     // Plano cercano
             float farPlane;      // Plano lejano
 
+            double lastX = 0.0;
+            double lastY = 0.0;
+            bool firstMouse = true; // Manejo del primer movimiento del ratón
+
         public:
             CameraPerspective(const std::string& name, Scene* bindScene,
                                float fov, float aspectRatio, float nearPlane, float farPlane);
@@ -24,8 +28,9 @@ namespace Essentia
             void setAspectRatio(float newAspectRatio);
             void setNearPlane(float newNearPlane);
             void setFarPlane(float newFarPlane);
-    };
 
+            void processMouseMovement(double xpos, double ypos);
+    };
 }
 
 #endif // CAMERA_PERSPECTIVE_H

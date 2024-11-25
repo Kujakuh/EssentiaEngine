@@ -22,4 +22,31 @@ namespace Essentia
     void CameraPerspective::setAspectRatio(float newAspectRatio) { aspectRatio = newAspectRatio; }
     void CameraPerspective::setNearPlane(float newNearPlane) { nearPlane = newNearPlane; }
     void CameraPerspective::setFarPlane(float newFarPlane) { farPlane = newFarPlane; }
+
+    void CameraPerspective::processMouseMovement(double xpos, double ypos)
+    {
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+            return;
+        }
+
+        // Calcular el desplazamiento del ratón
+        float deltaX = static_cast<float>(xpos - lastX);
+        float deltaY = static_cast<float>(lastY - ypos);
+
+        // Actualizar las posiciones anteriores
+        lastX = xpos;
+        lastY = ypos;
+
+
+        deltaX *= sensitivity*5;
+        deltaY *= sensitivity*5;
+
+        transform->rotate(glm::vec3(deltaY, deltaX, 0.0f), getRight(), glm::vec3(0,1,0), getFront());
+        transform->updateMatrix();
+        updateCameraVectors();
+    }
 }

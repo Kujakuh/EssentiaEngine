@@ -28,6 +28,9 @@ namespace Essentia
     }
 
     glm::vec3 CameraBase::getFront() const { return front; }
+    glm::vec3 CameraBase::getRight() const { return right; }
+    glm::vec3 CameraBase::getUp() const { return up; }
+    glm::vec3 CameraBase::getWUp() const { return worldUp; }
 
     glm::vec3 CameraBase::getPosition() const
     {
