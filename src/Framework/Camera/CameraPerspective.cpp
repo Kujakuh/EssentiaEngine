@@ -41,7 +41,6 @@ namespace Essentia
         lastX = xpos;
         lastY = ypos;
 
-
         deltaX *= sensitivity*5;
         deltaY *= sensitivity*5;
 

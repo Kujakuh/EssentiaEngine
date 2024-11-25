@@ -8,14 +8,14 @@ namespace Essentia
     class CameraPerspective : public CameraBase
     {
         private:
-            float fov;           // Campo de visión
-            float aspectRatio;   // Relación de aspecto
-            float nearPlane;     // Plano cercano
-            float farPlane;      // Plano lejano
+            float fov;
+            float aspectRatio;
+            float nearPlane;
+            float farPlane;
 
             double lastX = 0.0;
             double lastY = 0.0;
-            bool firstMouse = true; // Manejo del primer movimiento del ratón
+            bool firstMouse = true;
 
         public:
             CameraPerspective(const std::string& name, Scene* bindScene,
