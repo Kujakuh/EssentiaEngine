@@ -110,7 +110,8 @@ int main(void)
 	// glViewport(0, 0, _WIDTH, _HEIGHT);
 
     glEnable(GL_DEPTH_TEST);
-	//glfwSwapInterval(1);
+	// VSYNC
+	glfwSwapInterval(1);
 
     glfwSetWindowAspectRatio(window, 16, 9);
 
@@ -207,31 +208,35 @@ int main(void)
 	Camera3D camera("CAM", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
 	//Camera2D camera("2D Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -1.0f, 1.0f);
 
-	camera.transform->setPosition().z = 3;
-	camera.transform->updateMatrix();
-
-	mesh.shader.setUniform("projection", camera.getProjectionMatrix());
-	mesh.shader.setUniform("view", camera.getViewMatrix());
-	
 	while ( !glfwWindowShouldClose(window) )
 	{
 		InputManager::GetActiveInstance()->Update();
+
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		showFPS(window);
 		if (InputManager::IsKeyPressed(KEY_SPACE) || InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT))
 		{
-			ref->rotate(Vector3(0.0024f * (float)glfwGetTime(), 0.0015f * (float)glfwGetTime(), 0.003 * (float)glfwGetTime()));
+			ref->rotate(Vector3(0.024f * (float)glfwGetTime(), 0.015f * (float)glfwGetTime(), 0.03 * (float)glfwGetTime()));
 			ref->updateMatrix();
 		}
+
 		mesh.shader.setUniform("model", ref->getModelMatrix());
+		mesh.shader.setUniform("projection", camera.getProjectionMatrix());
+		mesh.shader.setUniform("view", camera.getViewMatrix());
+
 		mesh.shader.setUniform("time", (float) glfwGetTime());
 		mesh.render();
 
 		if (InputManager::IsKeyPressed(KEY_ESCAPE)) glfwSetWindowShouldClose(window, true);
 
 		scene->Update();
+
+		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition().x -= 0.05;
+		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition().x += 0.05;
+		if (InputManager::IsKeyPressed(KEY_S)) camera.transform->setPosition().z += 0.05;
+		if (InputManager::IsKeyPressed(KEY_W)) camera.transform->setPosition().z -= 0.05;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
