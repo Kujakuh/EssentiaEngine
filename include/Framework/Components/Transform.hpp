@@ -34,9 +34,7 @@ namespace Essentia
                 scale(scl),
                 modelMatrix(1.0f),
                 needsUpdate(true)
-            {
-                updateMatrix();
-            }
+            { updateMatrix(); }
 
             void setPosition(const glm::vec3& pos)
             {
@@ -87,7 +85,6 @@ namespace Essentia
                 }
             }
 
-        public:
             void rotate(const glm::vec3& eulerAngles,
                 const glm::vec3& customAxisX = glm::vec3(1.0f, 0.0f, 0.0f),
                 const glm::vec3& customAxisY = glm::vec3(0.0f, 1.0f, 0.0f),

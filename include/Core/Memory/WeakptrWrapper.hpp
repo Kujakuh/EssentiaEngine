@@ -7,10 +7,13 @@
 
 namespace Essentia
 {
+    class Entity;
+
     template<typename T>
     class WeakptrWrapper {
         public:
             WeakptrWrapper(std::weak_ptr<T> weakPtr) : weakPtr_(weakPtr) {}
+            WeakptrWrapper() : weakPtr_() {}
 
             T* operator->() {
                 auto sharedPtr = weakPtr_.lock();

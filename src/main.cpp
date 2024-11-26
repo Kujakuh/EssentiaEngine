@@ -40,6 +40,9 @@ int main(void)
 	GameObjectTemplate myEntity(scene);
 	GameObject entity6 = scene->CreateEntity("Entity6");
 
+	myEntity.entity->AddChild(entity4);
+	myEntity.entity->AddChild(entity6);
+
 	Transform t(Vector3(1),
 				Quaternion(1, 1, 1, 1),
 				Vector3(1));
@@ -63,7 +66,7 @@ int main(void)
 		printMatrix(ref->getModelMatrix());
 
 	}
-	std::vector<GameObject> ents = scene->GetEntitiesWith<Transform>();
+	std::vector<GameObject> ents = myEntity.entity->GetChildren();
 	std::cout << ents.size() << ents.at(0)->GetName() << std::endl;
 
 
