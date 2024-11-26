@@ -194,8 +194,18 @@ int main(void)
 		20, 21, 22, 20, 22, 23
 	};
 
+	std::vector<std::string> faces
+	{
+			RESOURCES_PATH "Textures/right.jpg",
+			RESOURCES_PATH "Textures/left.jpg",
+			RESOURCES_PATH "Textures/top.jpg",
+			RESOURCES_PATH "Textures/bottom.jpg",
+			RESOURCES_PATH "Textures/front.jpg",
+			RESOURCES_PATH "Textures/back.jpg"
+	};
 
 	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
+	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
 
 	Mesh mesh(
 		s, 
@@ -207,12 +217,30 @@ int main(void)
 		}
 	);
 
-	mesh.initShader();
+	filters[FILTERS::WRAP_S] = GL_CLAMP_TO_EDGE;
+	filters[FILTERS::WRAP_T] = GL_CLAMP_TO_EDGE;
+	filters[FILTERS::WRAP_R] = GL_CLAMP_TO_EDGE;
 
+	Mesh cubemap(
+		cube,
+		meshVertices,
+		indices,
+		{
+			{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, filters, TEX_CUBEMAP)}
+		}
+	);
 	Camera3D camera("CAM", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
+
+	cubemap.initShader();
+	cubemap.shader.setUniform("projection", camera.getProjectionMatrix());
+	cubemap.disableShader();
+
+	mesh.initShader();
+	mesh.shader.setUniform("projection", camera.getProjectionMatrix());
+	mesh.disableShader();
+
 	//Camera2D camera("2D Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -1.0f, 1.0f);
 
-	mesh.shader.setUniform("projection", camera.getProjectionMatrix());
 
 	camera.sensitivity = 0.05f;
 
@@ -232,11 +260,19 @@ int main(void)
 			ref->updateMatrix();
 		}
 
+		glDepthMask(GL_FALSE);
+		cubemap.initShader();
+		cubemap.shader.setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
+		cubemap.render();
+		cubemap.disableShader();
+		glDepthMask(GL_TRUE);
+
+		mesh.initShader();
 		mesh.shader.setUniform("model", ref->getModelMatrix());
 		mesh.shader.setUniform("view", camera.getViewMatrix());
-
 		mesh.shader.setUniform("time", (float) glfwGetTime());
 		mesh.render();
+		mesh.disableShader();
 
 		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity;
 		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity;

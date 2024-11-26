@@ -12,12 +12,12 @@ namespace Essentia
     }
 
     Texture::Texture(const std::vector<std::string>& faces, GLenum textureType, int textureUnit,
-        const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type)
+        const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type, bool flip)
         : type(textureType), textureUnit(textureUnit), wrapFilters(filters), texType(type)
     {
         if (type != TEX_TYPE::TEX_CUBEMAP)
             throw std::invalid_argument("Invalid constructor for non-cubemap texture.");
-        loadCubemap(faces);
+        loadCubemap(faces, flip);
     }
 
     Texture::~Texture() {if (ID != 0) glDeleteTextures(1, &ID);}
@@ -131,7 +131,7 @@ namespace Essentia
         unbind();
     }
 
-    void Texture::loadCubemap(const std::vector<std::string>& faces)
+    void Texture::loadCubemap(const std::vector<std::string>& faces, bool flip)
     {
         if (ID != 0)
         {
@@ -144,6 +144,11 @@ namespace Essentia
 
         for (size_t i = 0; i < faces.size(); ++i)
         {
+            if (flip && i != 1 && i != 3)
+                stbi_set_flip_vertically_on_load(true);
+            else
+                stbi_set_flip_vertically_on_load(false);
+
             unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
             if (data)
             {
@@ -163,4 +168,5 @@ namespace Essentia
         applyFilters();
         glBindTexture(type, 0);
     }
+
 }

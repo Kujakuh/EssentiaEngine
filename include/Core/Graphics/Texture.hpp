@@ -24,7 +24,7 @@ namespace Essentia
 
         public:
             Texture(const std::vector<std::string>& faces, GLenum textureType, int textureUnit,
-                const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type);
+                const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type, bool flip = false);
 
             Texture(const char* texturePath, GLenum textureType, int textureUnit,
                 const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type, bool flip = true);
@@ -47,7 +47,7 @@ namespace Essentia
             void unbind() const;
 
             void loadFromFile(const char* texturePath, bool flip = true);
-            void loadCubemap(const std::vector<std::string>& faces);
+            void loadCubemap(const std::vector<std::string>& faces, bool flip);
     };
 }
 
