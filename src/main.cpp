@@ -226,7 +226,8 @@ int main(void)
 		meshVertices,
 		indices,
 		{
-			{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, filters, TEX_CUBEMAP)}
+			//{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, filters, TEX_CUBEMAP)}
+			{"skybox", TextureManager::getTexture(RESOURCES_PATH "Textures/sunset.jpg", GL_TEXTURE_CUBE_MAP, filters, TEX_TYPE::TEX_CUBEMAP)}
 		}
 	);
 	Camera3D camera("CAM", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
@@ -260,12 +261,12 @@ int main(void)
 			ref->updateMatrix();
 		}
 
-		glDepthMask(GL_FALSE);
+		glDepthFunc(GL_LEQUAL);
 		cubemap.initShader();
 		cubemap.shader.setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
 		cubemap.render();
 		cubemap.disableShader();
-		glDepthMask(GL_TRUE);
+		glDepthFunc(GL_LESS);
 
 		mesh.initShader();
 		mesh.shader.setUniform("model", ref->getModelMatrix());

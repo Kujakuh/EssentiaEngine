@@ -10,5 +10,5 @@ uniform float time;
 
 void main()
 {
-	FragColor = mix(texture(container, outTexCord), texture(face, outTexCord), 0.2);
+	FragColor = mix(texture(container, outTexCord), texture(face, outTexCord), 0);
 }

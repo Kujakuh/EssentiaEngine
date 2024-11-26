@@ -6,6 +6,7 @@
 #include <flat_hash_map>
 #include <string>
 #include <iostream>
+#include <cmath>
 
 #include <Shared/enums.hpp>
 
@@ -20,7 +21,11 @@ namespace Essentia
             ska::flat_hash_map<FILTERS, GLenum> wrapFilters;
             int width = 0, height = 0, nrChannels = 0;
 
+            float* hdriData;
+
             TEX_TYPE texType;
+
+            void flipVertically(unsigned char* data, int width, int height, int nrChannels);
 
         public:
             Texture(const std::vector<std::string>& faces, GLenum textureType, int textureUnit,
@@ -28,7 +33,6 @@ namespace Essentia
 
             Texture(const char* texturePath, GLenum textureType, int textureUnit,
                 const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type, bool flip = true);
-
 
             ~Texture();
 
@@ -48,6 +52,7 @@ namespace Essentia
 
             void loadFromFile(const char* texturePath, bool flip = true);
             void loadCubemap(const std::vector<std::string>& faces, bool flip);
+            void loadHDRIToCubemap(const std::string& hdriPath, unsigned int cubemapResolution = 512, bool linearFilter = true, bool flip = true);
     };
 }
 

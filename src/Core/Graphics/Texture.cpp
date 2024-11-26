@@ -1,4 +1,5 @@
 #include <Core/Graphics/Texture.hpp>
+#include <Core/Graphics/HdriCubemap/hdriCubemap.hpp>
 
 namespace Essentia
 {
@@ -7,8 +8,9 @@ namespace Essentia
         : type(textureType), textureUnit(textureUnit), wrapFilters(filters), texType(type)
     {
         if (type == TEX_TYPE::TEX_CUBEMAP)
-            throw std::invalid_argument("Invalid constructor for cubemap texture.");
-        loadFromFile(texturePath, flip);
+            loadHDRIToCubemap(texturePath, 1024);
+        else
+            loadFromFile(texturePath, flip);
     }
 
     Texture::Texture(const std::vector<std::string>& faces, GLenum textureType, int textureUnit,
@@ -167,6 +169,60 @@ namespace Essentia
 
         applyFilters();
         glBindTexture(type, 0);
+    }
+
+    void Texture::loadHDRIToCubemap(const std::string& hdriPath, unsigned int cubemapResolution, bool linearFilter, bool flip) {
+
+        if (ID != 0) 
+        {
+            glDeleteTextures(1, &ID);
+            ID = 0;
+        }
+        try 
+        {
+            HdriToCubemap<unsigned char> cubemap(hdriPath, cubemapResolution, linearFilter);
+
+            this->width = cubemap.getCubemapResolution();
+            this->height = cubemap.getCubemapResolution();
+            this->nrChannels = cubemap.getNumChannels();
+
+            glGenTextures(1, &ID);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
+
+            std::vector<unsigned char*> data = {
+                cubemap.getRight(),
+                cubemap.getLeft(),
+                cubemap.getUp(),
+                cubemap.getDown(),
+                cubemap.getFront(),
+                cubemap.getBack()
+            };
+
+            for (int i = 0; i < 6; ++i) 
+            {
+                flipVertically(data[i], cubemapResolution, cubemapResolution, nrChannels);
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, cubemapResolution, cubemapResolution, 0, GL_RGB, GL_UNSIGNED_BYTE, data[i]);
+            }
+
+            applyFilters();
+            glBindTexture(type, 0);
+        }
+        catch (const std::exception& e) { std::cerr << "ERROR::TEXTURE::HDRI_TO_CUBEMAP::" << e.what() << std::endl; }
+    }
+
+    void Texture::flipVertically(unsigned char* data, int width, int height, int nrChannels) {
+        int rowSize = width * nrChannels;
+        std::vector<unsigned char> rowBuffer(rowSize);
+
+        for (int y = 0; y < height / 2; ++y) {
+            unsigned char* topRow = data + y * rowSize;
+            unsigned char* bottomRow = data + (height - y - 1) * rowSize;
+
+            // Intercambia las filas
+            std::copy(bottomRow, bottomRow + rowSize, rowBuffer.data());
+            std::copy(topRow, topRow + rowSize, bottomRow);
+            std::copy(rowBuffer.data(), rowBuffer.data() + rowSize, topRow);
+        }
     }
 
 }
