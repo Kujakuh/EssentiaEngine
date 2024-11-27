@@ -52,8 +52,8 @@ namespace Essentia
                     adjustedVertices,
                     getDefaultSquareIndices(),
                 {
-                    //{getTextureName(texturePath), texture}
-                    {"container", texture}
+                    {getTextureName(texturePath), texture}
+                    //{"container", texture}
                 }
 
                 );
@@ -71,8 +71,8 @@ namespace Essentia
                     adjustedVertices,
                     getDefaultSquareIndices(),
                     {
-                        //{getTextureName(texturePath), texture}
-                        {"container", texture}
+                        {getTextureName(TextureManager::getTexturePath(texture)), texture}
+                        //{"container", texture}
                     }
 
                 );

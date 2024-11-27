@@ -201,14 +201,14 @@ int main(void)
 
 	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
 	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
-	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
+	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
 	Mesh mesh(
 		s, 
 		meshVertices, 
 		indices,
 		{
 			{"container", gg},
-			{"face", TextureManager::getTexture(RESOURCES_PATH "Textures/2.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF)}
+			{"face", TextureManager::getTexture(RESOURCES_PATH "Textures/face.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF)}
 		}
 	);
 
