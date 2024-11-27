@@ -18,8 +18,6 @@ namespace Essentia
 	static const char* TT_TOSTRING[] = { "TEX_DIFF", "TEX_SPEC", "TEX_NORM", "TEX_HEIGHT", "TEX_CUBEMAP" };
 	static const char* F_TOSTRING[]  = { "WRAP_S", "WRAP_R", "WRAP_T", "MIN_F", "MAG_F" };
 
-
-	// USER VALUES
 	static const int MAX_BONE_INFLUENCE = 4;
 }
 

@@ -13,6 +13,7 @@
 
 #include <Core/Graphics/Texture.hpp>
 #include <Shared/enums.hpp>
+#include <Shared/user_values.hpp>
 
 namespace Essentia
 {
@@ -28,13 +29,15 @@ namespace Essentia
 
         public:
             static std::shared_ptr<Texture> getTexture(const std::string& texturePath, GLenum textureType,
-                const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type, bool flip = true);
+                TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters, bool flip = true);
 
             static std::shared_ptr<Texture> getCubemapTexture(const std::vector<std::string>& faces, GLenum textureType,
-                const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type);
+                TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters);
 
             static void clearCache();
             static void releaseUnit(int unit);
+
+            static std::string getTexturePath(const std::shared_ptr<Texture>& texture);
 
         private:
             static int allocateUnit();

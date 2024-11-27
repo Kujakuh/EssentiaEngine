@@ -57,6 +57,14 @@ namespace Essentia
         for (const auto& pair : textures) pair.second->unbind();
     }
 
+    void Mesh::updateVertices(const std::vector<Vertex>& newVertices)
+    {
+        vertices = newVertices;
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+    }
+
     void Mesh::render()
     {
         glBindVertexArray(VAO);

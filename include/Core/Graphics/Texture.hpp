@@ -36,10 +36,14 @@ namespace Essentia
 
             ~Texture();
 
+            int hdriRes = 0;
+
             std::string getTextureTypeString() const;
             GLuint getID() const;
             int getTextureUnit() const;
             GLenum getFilter(FILTERS key) const;
+            int getWidth() const;
+            int getHeight() const;
 
             bool filterExists(FILTERS key) const;
 
@@ -52,7 +56,7 @@ namespace Essentia
 
             void loadFromFile(const char* texturePath, bool flip = true);
             void loadCubemap(const std::vector<std::string>& faces, bool flip);
-            void loadHDRIToCubemap(const std::string& hdriPath, unsigned int cubemapResolution = 512, bool linearFilter = true, bool flip = true);
+            void loadHDRIToCubemap(const std::string& hdriPath, unsigned int cubemapResolution = 1024, bool linearFilter = true, bool flip = true);
     };
 }
 

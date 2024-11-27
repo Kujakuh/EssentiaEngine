@@ -8,7 +8,8 @@ namespace Essentia
         : type(textureType), textureUnit(textureUnit), wrapFilters(filters), texType(type)
     {
         if (type == TEX_TYPE::TEX_CUBEMAP)
-            loadHDRIToCubemap(texturePath, 1024);
+            if (hdriRes != 0) loadHDRIToCubemap(texturePath, hdriRes);
+            else loadHDRIToCubemap(texturePath);
         else
             loadFromFile(texturePath, flip);
     }
@@ -47,6 +48,8 @@ namespace Essentia
         std::cerr << "ERROR::TEXTURE::FILTER_KEY_NOT_FOUND" << std::endl;
         return 0;
     }
+    int Texture::getWidth() const { return width; }
+    int Texture::getHeight() const { return height; }
 
     void Texture::modifyFilters(const ska::flat_hash_map<FILTERS, GLenum>& newFilters)
     {

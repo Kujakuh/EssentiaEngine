@@ -28,6 +28,7 @@ namespace Essentia
             void render();
             void initShader() const { shader.use(); }
             void disableShader() const { shader.disable(); }
+            void updateVertices(const std::vector<Vertex>& newVertices);
 
         private:
             unsigned int VBO, EBO;

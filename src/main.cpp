@@ -10,7 +10,7 @@
 #include "SceneTemplate.cpp"
 #include "GameObjectTemplate.cpp"
 
-constexpr int _WIDTH = 500;
+constexpr int _WIDTH = 900;
 constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
 
 #ifndef LIBRARY_EXPORTS
@@ -24,6 +24,7 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 int main(void)
 {
+	Essentia::init();
 	SceneManager* sceneManager = SceneManager::GetInstance();
 
 	SceneTemplate *scene = new SceneTemplate();
@@ -132,12 +133,6 @@ int main(void)
 	glEnable(GL_MULTISAMPLE);
 #pragma endregion 
 
-	ska::flat_hash_map<FILTERS, GLenum> filters;
-	filters[FILTERS::MIN_F] = GL_LINEAR;
-	filters[FILTERS::MAG_F] = GL_LINEAR;
-	filters[FILTERS::WRAP_S] = GL_REPEAT;
-	filters[FILTERS::WRAP_T] = GL_REPEAT;
-
 	std::vector<Vertex> meshVertices =
 	{
 		// Front face
@@ -212,22 +207,20 @@ int main(void)
 		meshVertices, 
 		indices,
 		{
-			{"container", TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF)},
-			{"face", TextureManager::getTexture(RESOURCES_PATH "Textures/2.png", GL_TEXTURE_2D, filters, TEX_TYPE::TEX_DIFF)}
+			{"container", TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF)},
+			{"face", TextureManager::getTexture(RESOURCES_PATH "Textures/2.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF)}
 		}
 	);
 
-	filters[FILTERS::WRAP_S] = GL_CLAMP_TO_EDGE;
-	filters[FILTERS::WRAP_T] = GL_CLAMP_TO_EDGE;
-	filters[FILTERS::WRAP_R] = GL_CLAMP_TO_EDGE;
+	TextureHandle tx = TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
 
 	Mesh cubemap(
 		cube,
 		meshVertices,
 		indices,
 		{
-			//{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, filters, TEX_CUBEMAP)}
-			{"skybox", TextureManager::getTexture(RESOURCES_PATH "Textures/sunset.jpg", GL_TEXTURE_CUBE_MAP, filters, TEX_TYPE::TEX_CUBEMAP)}
+			//{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, filters, TEX_CUBEMAP)},
+			{"skybox", tx}
 		}
 	);
 	Camera3D camera("CAM", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
@@ -244,6 +237,10 @@ int main(void)
 
 
 	camera.sensitivity = 0.05f;
+	ref->setScale(Vector3(5, 5, 1));
+	ref->updateMatrix();
+
+	myEntity.entity->AddComponent<Sprite>(tx, cube);
 
 	while ( !glfwWindowShouldClose(window) )
 	{

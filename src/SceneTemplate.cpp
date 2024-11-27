@@ -19,9 +19,9 @@ class SceneTemplate : public Scene
 
 		void onUpdate() override {}
 
-		void RegisterSystems() override 
+		void RegisterSystems() override
 		{
-			//systemDispatcher->RegisterSystem();
+			systemDispatcher.RegisterSystem(std::make_shared<Essentia::Renderer2D>());
 		}
 };
 

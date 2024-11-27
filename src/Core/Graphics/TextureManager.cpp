@@ -41,7 +41,7 @@ namespace Essentia
     }
 
     std::shared_ptr<Texture> TextureManager::getTexture(const std::string& texturePath, GLenum textureType,
-        const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type, bool flip)
+        TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters,  bool flip)
     {
         detectMaxTextureUnits();
         auto it = textureCache.find(texturePath);
@@ -58,7 +58,7 @@ namespace Essentia
     }
 
     std::shared_ptr<Texture> TextureManager::getCubemapTexture(const std::vector<std::string>& faces, GLenum textureType,
-        const ska::flat_hash_map<FILTERS, GLenum>& filters, TEX_TYPE type)
+        TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters)
     {
         detectMaxTextureUnits();
         std::string key = generateCubemapKey(faces);
@@ -83,6 +83,14 @@ namespace Essentia
             TextureManager::releaseUnit(texture->getTextureUnit());
         }
         textureCache.clear();
+    }
+
+    std::string TextureManager::getTexturePath(const std::shared_ptr<Texture>& texture)
+    {
+        for (const auto& pair : textureCache)
+            if (pair.second == texture) return pair.first;
+
+        throw std::runtime_error("Texture not found in cache.");
     }
 
     std::string TextureManager::generateCubemapKey(const std::vector<std::string>& faces)

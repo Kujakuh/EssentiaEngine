@@ -11,12 +11,16 @@
 #include <Core/Graphics/TextureManager.hpp>
 #include <Core/Graphics/Mesh.hpp>
 #include <Framework/Components/components.hpp>
+#include <Framework/Systems/systems.hpp>
 #include <Framework/Camera/CameraBase.hpp>
 #include <Framework/Camera/CameraOrtho.hpp>
 #include <Framework/Camera/CameraPerspective.hpp>
 #include <Framework/Input/InputManager.hpp>
 
 #include <DebugTools>
+
+#include <Shared/values.hpp>
+#include <Shared/user_values.hpp>
 
 using Vector2 = glm::vec2;
 using Vector3 = glm::vec3;
@@ -38,6 +42,7 @@ using EventSystem = Essentia::EventSystem<T>;
 using EventListener = Essentia::EventListener;
 
 using Transform = Essentia::Transform;
+using Sprite = Essentia::Sprite;
 
 using TextureHandle = std::shared_ptr<Essentia::Texture>;
 using Vertex = Essentia::Vertex;
