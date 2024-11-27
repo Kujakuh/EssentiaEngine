@@ -48,7 +48,7 @@ int main(void)
 				Quaternion(1, 1, 1, 1),
 				Vector3(1));
 
-	entity6->AddComponent<Transform>(t);
+	entity6->AddComponent<Transform>();
 	entity4->AddComponent<Transform>(Vector3(1,2,4), Quaternion(0.3,-0.9, 0, 1), Vector3(1,3,2));
 	Transform *ref = myEntity.entity->GetComponent<Transform>();
 
@@ -235,44 +235,40 @@ int main(void)
 	mesh.shader.setUniform("projection", camera.getProjectionMatrix());
 	mesh.disableShader();
 
-
-
 	camera.sensitivity = 0.05f;
 	ref->setScale(Vector3(5, 5, 1));
 	ref->updateMatrix();
 
 	entity6->AddComponent<Sprite>(gg, s);
-
+	bool wireframeMode = false;
 	while ( !glfwWindowShouldClose(window) )
 	{
 		InputManager::GetActiveInstance()->Update();
 		showFPS(window);
-
-		scene->Update();
-		Sprite* test = entity6->GetComponent<Sprite>();
-		
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//if (InputManager::IsKeyPressed(KEY_SPACE) || InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT))
-		//{
-		//	ref->rotate(Vector3(0.024f * (float)glfwGetTime(), 0.015f * (float)glfwGetTime(), 0.03 * (float)glfwGetTime()));
-		//	ref->updateMatrix();
-		//}
+		scene->Update();
 
-		//glDepthFunc(GL_LEQUAL);
-		//cubemap.initShader();
-		//cubemap.shader.setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
-		////cubemap.render();
-		//cubemap.disableShader();
-		//glDepthFunc(GL_LESS);
+		if (InputManager::IsKeyPressed(KEY_SPACE) || InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT))
+		{
+			ref->rotate(Vector3(0.024f * (float)glfwGetTime(), 0.015f * (float)glfwGetTime(), 0.03 * (float)glfwGetTime()));
+			ref->updateMatrix();
+		}
 
-		//mesh.initShader();
-		//mesh.shader.setUniform("model", ref->getModelMatrix());
-		//mesh.shader.setUniform("view", camera.getViewMatrix());
-		//mesh.shader.setUniform("time", (float) glfwGetTime());
-		////mesh.render();
-		//mesh.disableShader();
+		glDepthFunc(GL_LEQUAL);
+		cubemap.initShader();
+		cubemap.shader.setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
+		cubemap.render();
+		cubemap.disableShader();
+		glDepthFunc(GL_LESS);
+
+		mesh.initShader();
+		mesh.shader.setUniform("model", ref->getModelMatrix());
+		mesh.shader.setUniform("view", camera.getViewMatrix());
+		mesh.shader.setUniform("time", (float) glfwGetTime());
+		mesh.render();
+		mesh.disableShader();
 
 		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity;
 		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity;
@@ -285,6 +281,11 @@ int main(void)
 		glfwPollEvents();
 
 		if (InputManager::IsKeyPressed(KEY_ESCAPE)) glfwSetWindowShouldClose(window, true);
+		if (InputManager::IsKeyPressed(KEY_TAB)) {
+			wireframeMode = !wireframeMode;
+			if (wireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 	}
 
 	glfwDestroyWindow(window);
