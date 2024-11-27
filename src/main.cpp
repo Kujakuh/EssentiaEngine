@@ -201,13 +201,13 @@ int main(void)
 
 	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
 	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
-
+	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
 	Mesh mesh(
 		s, 
 		meshVertices, 
 		indices,
 		{
-			{"container", TextureManager::getTexture(RESOURCES_PATH "Textures/1.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF)},
+			{"container", gg},
 			{"face", TextureManager::getTexture(RESOURCES_PATH "Textures/2.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF)}
 		}
 	);
@@ -224,6 +224,8 @@ int main(void)
 		}
 	);
 	Camera3D camera("CAM", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
+	//Camera2D camera("2D Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -1.0f, 1.0f);
+	scene->RegisterSystems(Essentia::Renderer2D(&camera));
 
 	cubemap.initShader();
 	cubemap.shader.setUniform("projection", camera.getProjectionMatrix());
@@ -233,14 +235,13 @@ int main(void)
 	mesh.shader.setUniform("projection", camera.getProjectionMatrix());
 	mesh.disableShader();
 
-	//Camera2D camera("2D Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -1.0f, 1.0f);
 
 
 	camera.sensitivity = 0.05f;
 	ref->setScale(Vector3(5, 5, 1));
 	ref->updateMatrix();
 
-	myEntity.entity->AddComponent<Sprite>(tx, cube);
+	entity6->AddComponent<Sprite>(gg, s);
 
 	while ( !glfwWindowShouldClose(window) )
 	{
@@ -248,29 +249,30 @@ int main(void)
 		showFPS(window);
 
 		scene->Update();
-
+		Sprite* test = entity6->GetComponent<Sprite>();
+		
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		if (InputManager::IsKeyPressed(KEY_SPACE) || InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT))
-		{
-			ref->rotate(Vector3(0.024f * (float)glfwGetTime(), 0.015f * (float)glfwGetTime(), 0.03 * (float)glfwGetTime()));
-			ref->updateMatrix();
-		}
+		//if (InputManager::IsKeyPressed(KEY_SPACE) || InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT))
+		//{
+		//	ref->rotate(Vector3(0.024f * (float)glfwGetTime(), 0.015f * (float)glfwGetTime(), 0.03 * (float)glfwGetTime()));
+		//	ref->updateMatrix();
+		//}
 
-		glDepthFunc(GL_LEQUAL);
-		cubemap.initShader();
-		cubemap.shader.setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
-		cubemap.render();
-		cubemap.disableShader();
-		glDepthFunc(GL_LESS);
+		//glDepthFunc(GL_LEQUAL);
+		//cubemap.initShader();
+		//cubemap.shader.setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
+		////cubemap.render();
+		//cubemap.disableShader();
+		//glDepthFunc(GL_LESS);
 
-		mesh.initShader();
-		mesh.shader.setUniform("model", ref->getModelMatrix());
-		mesh.shader.setUniform("view", camera.getViewMatrix());
-		mesh.shader.setUniform("time", (float) glfwGetTime());
-		mesh.render();
-		mesh.disableShader();
+		//mesh.initShader();
+		//mesh.shader.setUniform("model", ref->getModelMatrix());
+		//mesh.shader.setUniform("view", camera.getViewMatrix());
+		//mesh.shader.setUniform("time", (float) glfwGetTime());
+		////mesh.render();
+		//mesh.disableShader();
 
 		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity;
 		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity;

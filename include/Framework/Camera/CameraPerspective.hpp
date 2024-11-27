@@ -22,7 +22,7 @@ namespace Essentia
                                float fov, float aspectRatio, float nearPlane, float farPlane);
 
             glm::mat4 getViewMatrix() const override;
-            glm::mat4 getProjectionMatrix() const;
+            glm::mat4 getProjectionMatrix() const override;
 
             void setFov(float newFov);
             void setAspectRatio(float newAspectRatio);

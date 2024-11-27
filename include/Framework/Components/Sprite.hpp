@@ -47,15 +47,17 @@ namespace Essentia
 
                 auto adjustedVertices = getAspectRatioAdjustedVertices(aspectRatio);
 
-                mesh = std::make_shared<Mesh>(
+                Mesh _mesh(
                     shader,
                     adjustedVertices,
                     getDefaultSquareIndices(),
-                    std::unordered_map<std::string, std::shared_ptr<Texture>>
-                    { 
-                        {getTextureName(texturePath), texture}
-                    }
+                {
+                    //{getTextureName(texturePath), texture}
+                    {"container", texture}
+                }
+
                 );
+                mesh = std::make_shared<Mesh>(_mesh);
             }
 
             Sprite(std::shared_ptr<Texture> texture, Shader& shader)
@@ -64,15 +66,17 @@ namespace Essentia
 
                 auto adjustedVertices = getAspectRatioAdjustedVertices(aspectRatio);
 
-                mesh = std::make_shared<Mesh>(
+                Mesh _mesh(
                     shader,
                     adjustedVertices,
                     getDefaultSquareIndices(),
-                    std::unordered_map<std::string, std::shared_ptr<Texture>>
-                    { 
-                        { getTextureName(TextureManager::getTexturePath(texture)), texture}
+                    {
+                        //{getTextureName(texturePath), texture}
+                        {"container", texture}
                     }
+
                 );
+                mesh = std::make_shared<Mesh>(_mesh);
             }
 
             void setTexture(const std::string& texturePath, Shader& shader, bool flip = true)

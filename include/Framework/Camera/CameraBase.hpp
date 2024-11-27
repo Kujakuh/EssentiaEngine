@@ -42,6 +42,7 @@ namespace Essentia
 
             void setFront(glm::vec3 _front);
             virtual glm::mat4 getViewMatrix() const = 0;
+            virtual glm::mat4 getProjectionMatrix() const = 0;
 
             glm::vec3 getFront() const;
             glm::vec3 getRight() const;
