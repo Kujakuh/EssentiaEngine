@@ -133,62 +133,6 @@ int main(void)
 	glEnable(GL_MULTISAMPLE);
 #pragma endregion 
 
-	std::vector<Vertex> meshVertices =
-	{
-		// Front face
-		Vertex(Vector3(-0.5f, -0.5f,  0.5f), Vector2(0.0f, 0.0f)),
-		Vertex(Vector3(0.5f, -0.5f,  0.5f), Vector2(1.0f, 0.0f)),
-		Vertex(Vector3(0.5f,  0.5f,  0.5f), Vector2(1.0f, 1.0f)),
-		Vertex(Vector3(-0.5f,  0.5f,  0.5f), Vector2(0.0f, 1.0f)),
-
-		// Back face
-		Vertex(Vector3(-0.5f, -0.5f, -0.5f), Vector2(0.0f, 0.0f)),
-		Vertex(Vector3(0.5f, -0.5f, -0.5f), Vector2(1.0f, 0.0f)),
-		Vertex(Vector3(0.5f,  0.5f, -0.5f), Vector2(1.0f, 1.0f)),
-		Vertex(Vector3(-0.5f,  0.5f, -0.5f), Vector2(0.0f, 1.0f)),
-
-		// Left face
-		Vertex(Vector3(-0.5f, -0.5f, -0.5f), Vector2(0.0f, 0.0f)),
-		Vertex(Vector3(-0.5f, -0.5f,  0.5f), Vector2(1.0f, 0.0f)),
-		Vertex(Vector3(-0.5f,  0.5f,  0.5f), Vector2(1.0f, 1.0f)),
-		Vertex(Vector3(-0.5f,  0.5f, -0.5f), Vector2(0.0f, 1.0f)),
-
-		// Right face
-		Vertex(Vector3(0.5f, -0.5f, -0.5f), Vector2(0.0f, 0.0f)),
-		Vertex(Vector3(0.5f, -0.5f,  0.5f), Vector2(1.0f, 0.0f)),
-		Vertex(Vector3(0.5f,  0.5f,  0.5f), Vector2(1.0f, 1.0f)),
-		Vertex(Vector3(0.5f,  0.5f, -0.5f), Vector2(0.0f, 1.0f)),
-
-		// Bottom face
-		Vertex(Vector3(-0.5f, -0.5f, -0.5f), Vector2(0.0f, 0.0f)),
-		Vertex(Vector3(0.5f, -0.5f, -0.5f), Vector2(1.0f, 0.0f)),
-		Vertex(Vector3(0.5f, -0.5f,  0.5f), Vector2(1.0f, 1.0f)),
-		Vertex(Vector3(-0.5f, -0.5f,  0.5f), Vector2(0.0f, 1.0f)),
-
-		// Top face
-		Vertex(Vector3(-0.5f,  0.5f, -0.5f), Vector2(0.0f, 0.0f)),
-		Vertex(Vector3(0.5f,  0.5f, -0.5f), Vector2(1.0f, 0.0f)),
-		Vertex(Vector3(0.5f,  0.5f,  0.5f), Vector2(1.0f, 1.0f)),
-		Vertex(Vector3(-0.5f,  0.5f,  0.5f), Vector2(0.0f, 1.0f))
-	};
-
-	// Definir los índices
-	std::vector<GLuint> indices =
-	{
-		// Front face
-		0, 1, 2,  0, 2, 3,
-		// Back face
-		4, 5, 6,  4, 6, 7,
-		// Left face
-		8, 9, 10, 8, 10, 11,
-		// Right face
-		12, 13, 14, 12, 14, 15,
-		// Bottom face
-		16, 17, 18, 16, 18, 19,
-		// Top face
-		20, 21, 22, 20, 22, 23
-	};
-
 	std::vector<std::string> faces
 	{
 			RESOURCES_PATH "Textures/right.jpg",
@@ -201,23 +145,24 @@ int main(void)
 
 	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
 	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
+
 	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
+	TextureHandle tx = TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
+
 	Mesh mesh(
 		s, 
-		meshVertices, 
-		indices,
+		Essentia::cubeVertices, 
+		Essentia::cubeIndices,
 		{
 			{"container", gg},
 			{"face", TextureManager::getTexture(RESOURCES_PATH "Textures/face.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF)}
 		}
 	);
 
-	TextureHandle tx = TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
-
 	Mesh cubemap(
 		cube,
-		meshVertices,
-		indices,
+		Essentia::cubeVertices,
+		Essentia::cubeIndices,
 		{
 			//{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, filters, TEX_CUBEMAP)},
 			{"skybox", tx}
@@ -242,6 +187,9 @@ int main(void)
 	ref->updateMatrix();
 
 	entity6->AddComponent<Sprite>(gg, s);
+	entity6->GetComponent<Transform>()->setScale().x = 5;
+	entity6->GetComponent<Transform>()->setScale().y = 5;
+
 	bool wireframeMode = false;
 	while ( !glfwWindowShouldClose(window) )
 	{
@@ -252,16 +200,17 @@ int main(void)
 
 		scene->Update();
 
-		if (InputManager::IsKeyPressed(KEY_SPACE) || InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT))
+		if (InputManager::IsKeyPressed(KEY_SPACE))
 		{
 			ref->rotate(Vector3(0.024f * (float)glfwGetTime(), 0.015f * (float)glfwGetTime(), 0.03 * (float)glfwGetTime()));
 			ref->updateMatrix();
 		}
+		if(InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		glDepthFunc(GL_LEQUAL);
 		cubemap.initShader();
 		cubemap.shader.setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
-		//cubemap.render();
+		cubemap.render();
 		cubemap.disableShader();
 		glDepthFunc(GL_LESS);
 
@@ -269,7 +218,7 @@ int main(void)
 		mesh.shader.setUniform("model", ref->getModelMatrix());
 		mesh.shader.setUniform("view", camera.getViewMatrix());
 		mesh.shader.setUniform("time", (float) glfwGetTime());
-		//mesh.render();
+		mesh.render();
 		mesh.disableShader();
 
 		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity;
@@ -282,8 +231,9 @@ int main(void)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
-		if (InputManager::IsKeyPressed(KEY_ESCAPE)) glfwSetWindowShouldClose(window, true);
-		if (InputManager::IsKeyPressed(KEY_TAB)) {
+		if (InputManager::IsKeyPressed(KEY_ESCAPE)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);;
+		if (InputManager::IsKeyPressed(KEY_TAB)) 
+		{
 			wireframeMode = !wireframeMode;
 			if (wireframeMode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
