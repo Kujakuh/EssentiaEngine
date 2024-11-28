@@ -223,8 +223,10 @@ int main(void)
 			{"skybox", tx}
 		}
 	);
-	Camera3D camera("CAM", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
-	//Camera2D camera("2D Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -1.0f, 1.0f);
+
+	//CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
+	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);
+	Camera2D camera("Camera", scene, 45.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
 	scene->RegisterSystems(Essentia::Renderer2D(&camera));
 
 	cubemap.initShader();
@@ -259,7 +261,7 @@ int main(void)
 		glDepthFunc(GL_LEQUAL);
 		cubemap.initShader();
 		cubemap.shader.setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
-		cubemap.render();
+		//cubemap.render();
 		cubemap.disableShader();
 		glDepthFunc(GL_LESS);
 
@@ -267,7 +269,7 @@ int main(void)
 		mesh.shader.setUniform("model", ref->getModelMatrix());
 		mesh.shader.setUniform("view", camera.getViewMatrix());
 		mesh.shader.setUniform("time", (float) glfwGetTime());
-		mesh.render();
+		//mesh.render();
 		mesh.disableShader();
 
 		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity;

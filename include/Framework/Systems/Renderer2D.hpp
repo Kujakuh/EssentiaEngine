@@ -22,11 +22,13 @@ namespace Essentia
                     entity->GetComponent<Transform>()->updateMatrix();
 
                     entity->GetComponent<Sprite>()->mesh->initShader();
+
                     entity->GetComponent<Sprite>()->mesh->shader.setUniform("model", entity->GetComponent<Transform>()->getModelMatrix());
                     entity->GetComponent<Sprite>()->mesh->shader.setUniform("view", camera->getViewMatrix());
                     entity->GetComponent<Sprite>()->mesh->shader.setUniform("projection", camera->getProjectionMatrix());
 
                     entity->GetComponent<Sprite>()->mesh->render();
+
                     entity->GetComponent<Sprite>()->mesh->disableShader();
                 }
             }

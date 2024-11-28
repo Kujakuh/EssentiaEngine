@@ -15,6 +15,7 @@
 #include <Framework/Camera/CameraBase.hpp>
 #include <Framework/Camera/CameraOrtho.hpp>
 #include <Framework/Camera/CameraPerspective.hpp>
+#include <Framework/Camera/Camera2D.hpp>
 #include <Framework/Input/InputManager.hpp>
 
 #include <DebugTools>
@@ -51,8 +52,9 @@ using TextureManager = Essentia::TextureManager;
 using Mesh = Essentia::Mesh;
 
 using CameraBase = Essentia::CameraBase;
-using Camera2D = Essentia::CameraOrtho;
-using Camera3D = Essentia::CameraPerspective;
+using CameraOrtho = Essentia::CameraOrtho;
+using CameraPerspective = Essentia::CameraPerspective;
+using Camera2D = Essentia::Camera2D;
 
 using InputManager = Essentia::InputManager;
 
