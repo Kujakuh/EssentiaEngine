@@ -277,7 +277,7 @@ int main(void)
 		if (InputManager::IsKeyPressed(KEY_S)) camera.transform->setPosition() -= camera.getFront() * camera.sensitivity;
 		if (InputManager::IsKeyPressed(KEY_W)) camera.transform->setPosition() += camera.getFront() * camera.sensitivity;
 
-		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
+		//camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

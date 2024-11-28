@@ -45,6 +45,8 @@ using EventListener = Essentia::EventListener;
 using Transform = Essentia::Transform;
 using Sprite = Essentia::Sprite;
 
+using Renderer2D = Essentia::Renderer2D;
+
 using TextureHandle = std::shared_ptr<Essentia::Texture>;
 using Vertex = Essentia::Vertex;
 using Shader = Essentia::Shader;

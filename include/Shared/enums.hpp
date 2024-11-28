@@ -47,5 +47,10 @@ enum KEY_STATE
 	PRESSED = 1,
 	RELEASED = 2
 };
+enum SORT_ORDER
+{
+	Z_ORDER,
+	Y_ORDER
+};
 
 #endif // !ENUMS_H
