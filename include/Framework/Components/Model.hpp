@@ -33,7 +33,7 @@ namespace Essentia
                 std::vector<std::string> paths;
 
                 for (const auto& mesh : meshes)
-                    for (const auto& texturePair : mesh->getTextures())
+                    for (const auto& texturePair : mesh->textures)
                         if (texturePair.second) paths.push_back(TextureManager::getTexturePath(texturePair.second));
 
                 return paths;
