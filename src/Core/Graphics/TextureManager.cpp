@@ -2,105 +2,133 @@
 
 namespace Essentia
 {
-    std::unordered_map<std::string, std::shared_ptr<Texture>> TextureManager::textureCache;
-    std::set<int> TextureManager::availableUnits;
     int TextureManager::maxTextureUnits = 0;
+    std::unordered_map<GLuint, std::set<int>> TextureManager::availableUnitsPerShader;
+    std::unordered_map<GLuint, std::unordered_map<std::string, std::shared_ptr<Texture>>> TextureManager::textureCachePerShader;
 
     void TextureManager::detectMaxTextureUnits()
     {
-        if (maxTextureUnits == 0)
+        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
+    }
+
+    void TextureManager::initializeForShader(GLuint shaderID)
+    {
+        if (maxTextureUnits == 0) detectMaxTextureUnits();
+
+        if (availableUnitsPerShader.find(shaderID) == availableUnitsPerShader.end())
         {
-            glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
-            availableUnits.clear();
+            auto& units = availableUnitsPerShader[shaderID];
             for (int i = 0; i < maxTextureUnits; ++i)
             {
-                availableUnits.insert(i);
+                units.insert(i);
             }
         }
     }
 
-    int TextureManager::allocateUnit()
+    int TextureManager::allocateUnit(GLuint shaderID)
     {
-        detectMaxTextureUnits();
-        if (availableUnits.empty())
-        {
-            throw std::runtime_error("No available texture units!");
-        }
+        initializeForShader(shaderID);
 
-        int unit = *availableUnits.begin();
-        availableUnits.erase(unit);
+        auto& units = availableUnitsPerShader[shaderID];
+        if (units.empty())
+        {
+            throw std::runtime_error("No available texture units for shader ID " + std::to_string(shaderID));
+        }
+        int unit = *units.begin();
+        units.erase(units.begin());
         return unit;
     }
 
-    void TextureManager::releaseUnit(int unit)
-    {
-        if (unit >= 0 && unit < maxTextureUnits)
-        {
-            availableUnits.insert(unit);
-        }
-    }
-
     std::shared_ptr<Texture> TextureManager::getTexture(const std::string& texturePath, GLenum textureType,
-        TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters,  bool flip)
+        TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters, bool flip)
     {
-        detectMaxTextureUnits();
-        auto it = textureCache.find(texturePath);
-        if (it != textureCache.end())
+        GLint shaderID = 0;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &shaderID);
+
+        initializeForShader(shaderID);
+
+        auto& shaderCache = textureCachePerShader[shaderID];
+
+        auto it = shaderCache.find(texturePath);
+        if (it != shaderCache.end())
         {
             return it->second;
         }
 
-        int textureUnit = allocateUnit();
-        std::shared_ptr<Texture> newTexture = std::make_shared<Texture>(
-            texturePath.c_str(), textureType, textureUnit, filters, type, flip);
-        textureCache[texturePath] = newTexture;
-        return newTexture;
+        // Cargar una nueva textura
+        int unit = allocateUnit(shaderID);
+        auto texture = std::make_shared<Texture>(texturePath.c_str(), textureType, unit, filters, type, flip);
+        shaderCache[texturePath] = texture;
+
+        return texture;
     }
 
     std::shared_ptr<Texture> TextureManager::getCubemapTexture(const std::vector<std::string>& faces, GLenum textureType,
         TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters)
     {
-        detectMaxTextureUnits();
-        std::string key = generateCubemapKey(faces);
+        GLint shaderID = 0;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &shaderID);
 
-        auto it = textureCache.find(key);
-        if (it != textureCache.end())
+        initializeForShader(shaderID);
+
+        std::string key = generateCubemapKey(faces);
+        auto& shaderCache = textureCachePerShader[shaderID];
+
+        auto it = shaderCache.find(key);
+        if (it != shaderCache.end())
         {
             return it->second;
         }
 
-        int textureUnit = allocateUnit();
-        std::shared_ptr<Texture> newTexture = std::make_shared<Texture>(
-            faces, textureType, textureUnit, filters, type);
-        textureCache[key] = newTexture;
-        return newTexture;
+        // Cargar un nuevo cubemap
+        int unit = allocateUnit(shaderID);
+        auto texture = std::make_shared<Texture>(faces, textureType, unit, filters, type);
+        shaderCache[key] = texture;
+
+        return texture;
     }
 
     void TextureManager::clearCache()
     {
-        for (auto& [_, texture] : textureCache)
+        for (auto& [shaderID, shaderCache] : textureCachePerShader)
         {
-            TextureManager::releaseUnit(texture->getTextureUnit());
+            auto& units = availableUnitsPerShader[shaderID];
+
+            for (const auto& [path, texture] : shaderCache)
+            {
+                units.insert(texture->getTextureUnit());
+            }
+
+            shaderCache.clear();
         }
-        textureCache.clear();
+    }
+
+    void TextureManager::releaseUnit(int unit)
+    {
+        for (auto& [shaderID, units] : availableUnitsPerShader)
+        {
+            units.insert(unit);
+        }
     }
 
     std::string TextureManager::getTexturePath(const std::shared_ptr<Texture>& texture)
     {
-        for (const auto& pair : textureCache)
-            if (pair.second == texture) return pair.first;
-
-        throw std::runtime_error("Texture not found in cache.");
+        for (const auto& [shaderID, shaderCache] : textureCachePerShader)
+        {
+            for (const auto& [path, tex] : shaderCache)
+            {
+                if (tex == texture) return path;
+            }
+        }
+        return {};
     }
 
     std::string TextureManager::generateCubemapKey(const std::vector<std::string>& faces)
     {
-        std::string key;
+        std::string key = "cubemap:";
         for (const auto& face : faces)
-        {
-            key += face;
-        }
+            key += face + ";";
+
         return key;
     }
 }
-

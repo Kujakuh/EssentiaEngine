@@ -151,9 +151,8 @@ int main(void)
 	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
 	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
 
+	s.use();
 	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
-	TextureHandle tx = TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
-
 	Mesh mesh(
 		std::make_shared<Shader>(s),
 		Essentia::cubeVertices, 
@@ -163,16 +162,20 @@ int main(void)
 			{"face", TextureManager::getTexture(RESOURCES_PATH "Textures/face.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF)}
 		}
 	);
+	s.disable();
 
+	cube.use();
+	TextureHandle tx = Essentia::TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
 	Mesh cubemap(
 		std::make_shared<Shader>(cube),
 		Essentia::cubeVertices,
 		Essentia::cubeIndices,
 		{
-			//{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, filters, TEX_CUBEMAP)},
-			{"skybox", tx}
+			{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP, Essentia::defaultFilters)}
+			//{"skybox", tx}
 		}
 	);
+	cube.disable();
 
 	//CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
 	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);

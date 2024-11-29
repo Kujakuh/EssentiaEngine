@@ -4,8 +4,8 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
-#include <stdexcept>
 #include <set>
+#include <vector>
 
 #include <flat_hash_map>
 #include <glad/glad.h>
@@ -20,9 +20,13 @@ namespace Essentia
     class TextureManager
     {
         private:
-            static std::unordered_map<std::string, std::shared_ptr<Texture>> textureCache;
-            static std::set<int> availableUnits;
             static int maxTextureUnits;
+
+            // Unidades de textura disponibles por shader
+            static std::unordered_map<GLuint, std::set<int>> availableUnitsPerShader;
+
+            // Caché de texturas por shader
+            static std::unordered_map<GLuint, std::unordered_map<std::string, std::shared_ptr<Texture>>> textureCachePerShader;
 
             TextureManager() {}
             static void detectMaxTextureUnits();
@@ -39,11 +43,14 @@ namespace Essentia
 
             static std::string getTexturePath(const std::shared_ptr<Texture>& texture);
 
+            // Gestión por shader
+            static void initializeForShader(GLuint shaderID);
+
         private:
-            static int allocateUnit();
+            static int allocateUnit(GLuint shaderID);
             static std::string generateCubemapKey(const std::vector<std::string>& faces);
     };
 
 }
 
-#endif //!TEXTURE_MANAGER_H
+#endif // !TEXTURE_MANAGER_H

@@ -38,13 +38,9 @@ namespace Essentia
 	class Shader
 	{
 		private:
-
-			// Shader program ID
 			GLuint ID;
 
 		public:
-
-			// The constructor will read and compile both shaders
 			Shader(const char* vertexPath, const char* fragmentPath, DATA_SOURCE dataSource);
 			Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, DATA_SOURCE dataSource);
 

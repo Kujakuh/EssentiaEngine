@@ -28,7 +28,9 @@ namespace Essentia
     {
         shaderGenerator.addTextureUniform(getTextureName(texturePath));
         initializeShader();
+        shader->use();
         texture = TextureManager::getTexture(texturePath, GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters, flip);
+        shader->disable();
         int width = texture->getWidth();
         int height = texture->getHeight();
         float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
@@ -63,14 +65,18 @@ namespace Essentia
     void Sprite::setTexture(const std::string& texturePath, bool flip)
     {
         shaderGenerator.removeTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
+        shader->use();
         texture = TextureManager::getTexture(texturePath, GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters, flip);
+        shader->disable();
         setTextureData(texture);
     }
 
     void Sprite::setTexture(std::shared_ptr<Texture> _texture)
     {
         shaderGenerator.removeTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
+        shader->use();
         texture = TextureManager::getTexture(TextureManager::getTexturePath(_texture), GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
+        shader->disable();
         setTextureData(texture);
     }
 
