@@ -20,14 +20,14 @@ namespace Essentia
             std::vector<GLuint> indices;
             std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
             GLuint VAO;
-            Shader& shader;
+            std::shared_ptr<Shader> shader;
 
-            Mesh(Shader& sh, std::vector<Vertex> vert, std::vector<GLuint> ind, std::unordered_map<std::string, std::shared_ptr<Texture>> tex)
+            Mesh(std::shared_ptr<Shader> sh, std::vector<Vertex> vert, std::vector<GLuint> ind, std::unordered_map<std::string, std::shared_ptr<Texture>> tex)
                 : vertices(vert), indices(ind), textures(tex), shader(sh) { setupMesh(); }
 
             void render();
-            void initShader() const { shader.use(); }
-            void disableShader() const { shader.disable(); }
+            void initShader() const { shader->use(); }
+            void disableShader() const { shader->disable(); }
             void updateVertices(const std::vector<Vertex>& newVertices);
 
         private:

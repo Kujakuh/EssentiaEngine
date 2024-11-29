@@ -46,12 +46,12 @@ namespace Essentia
                     transform->updateMatrix();
                     sprite->mesh->initShader();
 
-                    sprite->mesh->shader.setUniform("model", transform->getModelMatrix());
+                    sprite->mesh->shader->setUniform("model", transform->getModelMatrix());
 
                     if (camera)
                     {
-                        sprite->mesh->shader.setUniform("view", camera->getViewMatrix());
-                        sprite->mesh->shader.setUniform("projection", camera->getProjectionMatrix());
+                        sprite->mesh->shader->setUniform("view", camera->getViewMatrix());
+                        sprite->mesh->shader->setUniform("projection", camera->getProjectionMatrix());
                     }
 
                     sprite->mesh->render();

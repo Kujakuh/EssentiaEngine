@@ -11,6 +11,7 @@
 #include <Core/Graphics/Texture.hpp>
 #include <Core/Graphics/Shader.hpp>
 #include <Core/Graphics/TextureManager.hpp>
+#include <Core/Graphics/ShaderGen.hpp>
 #include <Shared/user_values.hpp>
 
 namespace Essentia
@@ -18,6 +19,9 @@ namespace Essentia
     class Sprite : public IComponent
     {
         private:
+            std::shared_ptr<Shader> shader;
+            ShaderGenerator shaderGenerator;
+
             std::vector<Vertex> getAspectRatioAdjustedVertices(float aspectRatio)
             {
                 float width = 0.5f;
@@ -31,14 +35,28 @@ namespace Essentia
                     {{-width,  height, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}}  // Top-left
                 };
             }
+
             std::vector<GLuint> getDefaultSquareIndices() { return { 0, 1, 2, 2, 3, 0 }; }
+
+            void initializeShader()
+            {
+                std::string vertexCode = shaderGenerator.generateShader2D(SH_TYPE::VERTEX);
+                std::string fragmentCode = shaderGenerator.generateShader2D(SH_TYPE::FRAGMENT);
+                //std::string geometryCode = shaderGenerator.generateShader(SH_TYPE::GEOMETRY);
+
+                shader = std::make_shared<Shader>(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA);
+                //shader = std::make_shared<Shader>(vertexCode.c_str(), fragmentCode.c_str(), geometryCode.c_str(), DATA_SOURCE::STR_DATA);
+            }
 
         public:
             std::shared_ptr<Mesh> mesh;
             std::shared_ptr<Texture> texture;
 
-            Sprite(const std::string& texturePath, Shader& shader, bool flip = true)
+            Sprite(const std::string& texturePath, bool flip = true)
             {
+                shaderGenerator.addTextureUniform(getTextureName(texturePath));
+                initializeShader();
+
                 texture = TextureManager::getTexture(texturePath, GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters, flip);
 
                 int width = texture->getWidth();
@@ -51,18 +69,19 @@ namespace Essentia
                     shader,
                     adjustedVertices,
                     getDefaultSquareIndices(),
-                {
-                    {getTextureName(texturePath), texture}
-                    //{"container", texture}
-                }
-
+                    { {getTextureName(texturePath), texture} }
                 );
                 mesh = std::make_shared<Mesh>(_mesh);
             }
 
-            Sprite(std::shared_ptr<Texture> texture, Shader& shader)
+            Sprite(std::shared_ptr<Texture> _texture)
             {
-                float aspectRatio = static_cast<float>(texture->getWidth()) / static_cast<float>(texture->getHeight());
+                shaderGenerator.addTextureUniform(getTextureName(TextureManager::getTexturePath(_texture)));
+                initializeShader();
+
+                texture = _texture;
+
+                float aspectRatio = static_cast<float>(_texture->getWidth()) / static_cast<float>(_texture->getHeight());
 
                 auto adjustedVertices = getAspectRatioAdjustedVertices(aspectRatio);
 
@@ -70,28 +89,25 @@ namespace Essentia
                     shader,
                     adjustedVertices,
                     getDefaultSquareIndices(),
-                    {
-                        {getTextureName(TextureManager::getTexturePath(texture)), texture}
-                        //{"container", texture}
-                    }
-
+                    { {getTextureName(TextureManager::getTexturePath(_texture)), _texture} }
                 );
                 mesh = std::make_shared<Mesh>(_mesh);
             }
 
-            void setTexture(const std::string& texturePath, Shader& shader, bool flip = true)
+            void setTexture(const std::string& texturePath, bool flip = true)
             {
-                ska::flat_hash_map<FILTERS, GLenum> filters;
-                filters[FILTERS::MIN_F] = GL_LINEAR;
-                filters[FILTERS::MAG_F] = GL_LINEAR;
-                filters[FILTERS::WRAP_S] = GL_REPEAT;
-                filters[FILTERS::WRAP_T] = GL_REPEAT;
-
+                shaderGenerator.removeTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
                 texture = TextureManager::getTexture(texturePath, GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters, flip);
-                setTexture(texture);
+                setTextureData(texture);
+            }
+            void setTexture(std::shared_ptr<Texture> _texture)
+            {
+                shaderGenerator.removeTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
+                texture = TextureManager::getTexture(TextureManager::getTexturePath(_texture), GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
+                setTextureData(texture);
             }
 
-            void setTexture(std::shared_ptr<Texture> texture) 
+            void setTextureData(std::shared_ptr<Texture> texture)
             {
                 int width = texture->getWidth();
                 int height = texture->getHeight();
@@ -99,6 +115,24 @@ namespace Essentia
 
                 auto adjustedVertices = getAspectRatioAdjustedVertices(aspectRatio);
                 mesh->updateVertices(adjustedVertices);
+                mesh->textures = { {getTextureName(TextureManager::getTexturePath(texture)), texture} };
+
+                shaderGenerator.addTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
+                initializeShader();
+
+                mesh->shader = shader;
+            }
+
+            void addCustomShaderFunction(SH_TYPE type, const std::string& functionCode)
+            {
+                shaderGenerator.addCustomFunction(type, functionCode);
+                initializeShader();
+            }
+
+            void addCustomShaderMainCode(SH_TYPE type, const std::string& mainCode)
+            {
+                shaderGenerator.addMainCode(type, mainCode);
+                initializeShader();
             }
 
             std::string getTexturePath() const { return texture ? TextureManager::getTexturePath(texture) : "No Texture"; }
@@ -116,4 +150,4 @@ namespace Essentia
     };
 }
 
-#endif // !SPRITE_H
+#endif // SPRITE_H

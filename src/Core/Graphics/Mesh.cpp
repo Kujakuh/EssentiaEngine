@@ -48,7 +48,7 @@ namespace Essentia
             std::shared_ptr<Texture> texture = pair.second;
 
             texture->bind();
-            shader.setUniform(uniformName.c_str(), texture->getTextureUnit());
+            shader->setUniform(uniformName.c_str(), texture->getTextureUnit());
         }
     }
 

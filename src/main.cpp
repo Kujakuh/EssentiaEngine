@@ -133,6 +133,11 @@ int main(void)
 	glEnable(GL_MULTISAMPLE);
 #pragma endregion 
 
+#pragma region BLEND
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#pragma endregion
+
 	std::vector<std::string> faces
 	{
 			RESOURCES_PATH "Textures/right.jpg",
@@ -150,7 +155,7 @@ int main(void)
 	TextureHandle tx = TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
 
 	Mesh mesh(
-		s, 
+		std::make_shared<Shader>(s),
 		Essentia::cubeVertices, 
 		Essentia::cubeIndices,
 		{
@@ -160,7 +165,7 @@ int main(void)
 	);
 
 	Mesh cubemap(
-		cube,
+		std::make_shared<Shader>(cube),
 		Essentia::cubeVertices,
 		Essentia::cubeIndices,
 		{
@@ -171,24 +176,27 @@ int main(void)
 
 	//CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
 	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);
-	Camera2D camera("Camera", scene, 45.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
+	Camera2D camera("Camera", scene, 90.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
 	scene->RegisterSystems(Essentia::Renderer2D(&camera));
 
 	cubemap.initShader();
-	cubemap.shader.setUniform("projection", camera.getProjectionMatrix());
+	cubemap.shader->setUniform("projection", camera.getProjectionMatrix());
 	cubemap.disableShader();
 
 	mesh.initShader();
-	mesh.shader.setUniform("projection", camera.getProjectionMatrix());
+	mesh.shader->setUniform("projection", camera.getProjectionMatrix());
 	mesh.disableShader();
 
 	camera.sensitivity = 0.05f;
 	ref->setScale(Vector3(5, 5, 1));
+	ref->setPosition().x -= 3;
 	ref->updateMatrix();
 
-	entity6->AddComponent<Sprite>(gg, s);
-	entity6->GetComponent<Transform>()->setScale().x = 5;
-	entity6->GetComponent<Transform>()->setScale().y = 5;
+	entity6->AddComponent<Sprite>(gg);
+	entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/mario.png");
+	entity6->GetComponent<Transform>()->setScale().x = 3;
+	entity6->GetComponent<Transform>()->setScale().y = 3;
+	entity6->GetComponent<Transform>()->setPosition().x = 4;
 
 	bool wireframeMode = false;
 	while ( !glfwWindowShouldClose(window) )
@@ -197,8 +205,6 @@ int main(void)
 		showFPS(window);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		scene->Update();
 
 		if (InputManager::IsKeyPressed(KEY_SPACE))
 		{
@@ -209,15 +215,15 @@ int main(void)
 
 		glDepthFunc(GL_LEQUAL);
 		cubemap.initShader();
-		cubemap.shader.setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
+		cubemap.shader->setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
 		cubemap.render();
 		cubemap.disableShader();
 		glDepthFunc(GL_LESS);
 
 		mesh.initShader();
-		mesh.shader.setUniform("model", ref->getModelMatrix());
-		mesh.shader.setUniform("view", camera.getViewMatrix());
-		mesh.shader.setUniform("time", (float) glfwGetTime());
+		mesh.shader->setUniform("model", ref->getModelMatrix());
+		mesh.shader->setUniform("view", camera.getViewMatrix());
+		mesh.shader->setUniform("time", (float) glfwGetTime());
 		mesh.render();
 		mesh.disableShader();
 
@@ -226,7 +232,14 @@ int main(void)
 		if (InputManager::IsKeyPressed(KEY_S)) camera.transform->setPosition() -= camera.getFront() * camera.sensitivity;
 		if (InputManager::IsKeyPressed(KEY_W)) camera.transform->setPosition() += camera.getFront() * camera.sensitivity;
 
+		if (InputManager::IsKeyPressed(KEY_UP))		entity6->GetComponent<Transform>()->setPosition().y += 0.1;
+		if (InputManager::IsKeyPressed(KEY_DOWN))	entity6->GetComponent<Transform>()->setPosition().y -= 0.1;
+		if (InputManager::IsKeyPressed(KEY_LEFT))	entity6->GetComponent<Transform>()->setPosition().x -= 0.1;
+		if (InputManager::IsKeyPressed(KEY_RIGHT))	entity6->GetComponent<Transform>()->setPosition().x += 0.1;
+
 		//camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
+
+		scene->Update();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
