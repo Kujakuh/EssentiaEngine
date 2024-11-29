@@ -83,7 +83,7 @@ namespace Essentia
 #pragma endregion
 	// -----------------------------------------------------------------------------
 
-	Shader::Shader(const char* vertexPath, const char* fragmentPath, DATA_SOURCE dataSource)
+	Shader::Shader(const char* vertexPath, const char* fragmentPath, DATA_SOURCE dataSource, GLuint shProgramID)
 	{
 		this->ID = 0;
 		GLuint vertexShader, fragmentShader;
@@ -102,19 +102,22 @@ namespace Essentia
 		}
 
 		// Shader program creation and linking
-		this->ID = glCreateProgram();
+		this->ID = (shProgramID != 0) ? shProgramID : glCreateProgram();
 		glAttachShader(this->ID, vertexShader);
 		glAttachShader(this->ID, fragmentShader);
+		currentVertS = vertexShader;
+		currentFragS = fragmentShader;
+		currentGeomS = 0;
 		glLinkProgram(this->ID);
 
 		// Check linking errors
 		linkShaderErrorCheck(this->ID);
 
-		// Free Memory 
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
+		//// Free Memory 
+		//glDeleteShader(vertexShader);
+		//glDeleteShader(fragmentShader);
 	}
-	Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, DATA_SOURCE dataSource)
+	Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, DATA_SOURCE dataSource, GLuint shProgramID)
 	{
 		this->ID = 0;
 		GLuint vertexShader, fragmentShader, geometryShader;
@@ -136,20 +139,114 @@ namespace Essentia
 		}
 
 		// Shader program creation and linking
-		this->ID = glCreateProgram();
+		this->ID = (shProgramID != 0) ? shProgramID : glCreateProgram();
 		glAttachShader(this->ID, vertexShader);
 		glAttachShader(this->ID, fragmentShader);
 		glAttachShader(this->ID, geometryShader);
+		currentVertS = vertexShader;
+		currentFragS = fragmentShader;
+		currentGeomS = geometryShader;
 		glLinkProgram(this->ID);
 
 		// Check linking errors
 		linkShaderErrorCheck(this->ID);
 
-		// Free Memory 
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
-		glDeleteShader(geometryShader);
+		//// Free Memory 
+		//glDeleteShader(vertexShader);
+		//glDeleteShader(fragmentShader);
+		//glDeleteShader(geometryShader);
 	}
+
+	void Shader::recompileProgram(const char* vertexCode, const char* fragmentCode, DATA_SOURCE dataSource)
+	{
+		// Crear nuevos shaders
+		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+		if (dataSource == FILE_PATH)
+		{
+			buildShaderFile(vertexShader, vertexCode, VERTEX);
+			buildShaderFile(fragmentShader, fragmentCode, FRAGMENT);
+		}
+		else if (dataSource == STR_DATA)
+		{
+			compileShader(vertexShader, vertexCode, VERTEX);
+			compileShader(fragmentShader, fragmentCode, FRAGMENT);
+		}
+
+		// Desvincula shaders antiguos del programa si es necesario
+		glDetachShader(this->ID, currentVertS);
+		glDetachShader(this->ID, currentFragS);
+		glDeleteShader(currentVertS);
+		glDeleteShader(currentFragS);
+
+		// Adjunta nuevos shaders al programa actual
+		glAttachShader(this->ID, vertexShader);
+		glAttachShader(this->ID, fragmentShader);
+		currentVertS = vertexShader;
+		currentFragS = fragmentShader;
+		currentGeomS = 0;
+
+		// Relink del programa
+		glLinkProgram(this->ID);
+
+		// Comprobación de errores
+		linkShaderErrorCheck(this->ID);
+	}
+
+	void Shader::recompileProgram(const char* vertexCode, const char* fragmentCode, const char* geometryCode, DATA_SOURCE dataSource)
+	{
+		// Crear nuevos shaders
+		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		GLuint geometryShader = 0;
+
+		// Compilar vertex y fragment shaders
+		if (dataSource == FILE_PATH)
+		{
+			buildShaderFile(vertexShader, vertexCode, VERTEX);
+			buildShaderFile(fragmentShader, fragmentCode, FRAGMENT);
+			geometryShader = glCreateShader(GL_GEOMETRY_SHADER),
+			buildShaderFile(geometryShader, geometryCode, GEOMETRY);
+		}
+		else if (dataSource == STR_DATA)
+		{
+			compileShader(vertexShader, vertexCode, VERTEX);
+			compileShader(fragmentShader, fragmentCode, FRAGMENT);
+			geometryShader = glCreateShader(GL_GEOMETRY_SHADER),
+			compileShader(geometryShader, geometryCode, GEOMETRY);
+		}
+
+		// Desvincular shaders antiguos si es necesario
+		glDetachShader(this->ID, vertexShader);
+		glDetachShader(this->ID, fragmentShader);
+		glDetachShader(this->ID, geometryShader);
+
+		glDeleteShader(currentVertS);
+		glDeleteShader(currentFragS);
+		glDeleteShader(currentGeomS);
+
+		// Adjuntar nuevos shaders al programa actual
+		glAttachShader(this->ID, vertexShader);
+		glAttachShader(this->ID, fragmentShader);
+		glAttachShader(this->ID, geometryShader);
+		currentVertS = vertexShader;
+		currentFragS = fragmentShader;
+		currentGeomS = geometryShader;
+
+		// Relink del programa
+		glLinkProgram(this->ID);
+
+		// Comprobación de errores
+		linkShaderErrorCheck(this->ID);
+
+		//// Limpieza
+		//glDeleteShader(vertexShader);
+		//glDeleteShader(fragmentShader);
+		//if (geometryCode)
+		//	glDeleteShader(geometryShader);
+	}
+
 
 	Shader::~Shader()
 	{
@@ -157,7 +254,7 @@ namespace Essentia
 		glDeleteProgram(this->ID);
 	}
 
-	inline GLuint Shader::getID() const { return this->ID; }
+	GLuint Shader::getID() const{ return this->ID; }
 
 	void Shader::use() const
 	{

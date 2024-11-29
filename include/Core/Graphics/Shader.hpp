@@ -39,14 +39,20 @@ namespace Essentia
 	{
 		private:
 			GLuint ID;
+			GLuint currentVertS;
+			GLuint currentFragS;
+			GLuint currentGeomS;
 
 		public:
-			Shader(const char* vertexPath, const char* fragmentPath, DATA_SOURCE dataSource);
-			Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, DATA_SOURCE dataSource);
+			Shader(const char* vertexPath, const char* fragmentPath, DATA_SOURCE dataSource, GLuint shProgramID = 0);
+			Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, DATA_SOURCE dataSource, GLuint shProgramID = 0);
 
 			~Shader();
 
-			inline GLuint getID() const;
+			void recompileProgram(const char* vertexCode, const char* fragmentCode, DATA_SOURCE dataSource);
+			void recompileProgram(const char* vertexCode, const char* fragmentCode, const char* geometryCode, DATA_SOURCE dataSource);
+
+			GLuint getID() const;
 
 			void compileShader(GLuint shader, const char* shaderCode, SH_TYPE shaderType);
 			void buildShaderFile(GLuint shader, const char* file_path, SH_TYPE shaderType);

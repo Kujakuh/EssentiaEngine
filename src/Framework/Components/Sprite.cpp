@@ -21,7 +21,12 @@ namespace Essentia
     {
         std::string vertexCode = shaderGenerator.generateShader2D(SH_TYPE::VERTEX);
         std::string fragmentCode = shaderGenerator.generateShader2D(SH_TYPE::FRAGMENT);
-        shader = std::make_shared<Shader>(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA);
+        if (shader)
+        {
+            shader->recompileProgram(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA);
+        }
+        else shader = std::make_shared<Shader>(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA);
+        
     }
 
     Sprite::Sprite(const std::string& texturePath, bool flip)

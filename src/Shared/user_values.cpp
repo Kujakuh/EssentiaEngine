@@ -8,8 +8,8 @@ namespace Essentia
 
     void init()
     {
-        defaultFilters[FILTERS::MIN_F] = GL_LINEAR;
-        defaultFilters[FILTERS::MAG_F] = GL_LINEAR;
+        defaultFilters[FILTERS::MIN_F] = GL_NEAREST;
+        defaultFilters[FILTERS::MAG_F] = GL_NEAREST;
         defaultFilters[FILTERS::WRAP_S] = GL_REPEAT;
         defaultFilters[FILTERS::WRAP_T] = GL_REPEAT;
 

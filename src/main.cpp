@@ -152,7 +152,7 @@ int main(void)
 	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
 
 	s.use();
-	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
+	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/box.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
 	Mesh mesh(
 		std::make_shared<Shader>(s),
 		Essentia::cubeVertices, 
@@ -196,6 +196,7 @@ int main(void)
 	ref->updateMatrix();
 
 	entity6->AddComponent<Sprite>(RESOURCES_PATH "Textures/mario.png");
+
 	//entity6->GetComponent<Sprite>()->addCustomShaderMainCode(FRAGMENT, "vec4 gear = vec4(2,4,1,3);");
 	//entity6->GetComponent<Sprite>()->addCustomShaderMainCodeFromFile(FRAGMENT, RESOURCES_PATH "Shaders/test.glsl");
 	//entity6->GetComponent<Sprite>()->addCustomShaderMainCode(FRAGMENT, "FragColor = vec4(1,0.2,0.5,0.6);");
@@ -238,10 +239,25 @@ int main(void)
 		if (InputManager::IsKeyPressed(KEY_S)) camera.transform->setPosition() -= camera.getFront() * camera.sensitivity;
 		if (InputManager::IsKeyPressed(KEY_W)) camera.transform->setPosition() += camera.getFront() * camera.sensitivity;
 
-		if (InputManager::IsKeyPressed(KEY_UP))		entity6->GetComponent<Transform>()->setPosition().y += 0.1;
-		if (InputManager::IsKeyPressed(KEY_DOWN))	entity6->GetComponent<Transform>()->setPosition().y -= 0.1;
-		if (InputManager::IsKeyPressed(KEY_LEFT))	entity6->GetComponent<Transform>()->setPosition().x -= 0.1;
-		if (InputManager::IsKeyPressed(KEY_RIGHT))	entity6->GetComponent<Transform>()->setPosition().x += 0.1;
+		if (InputManager::IsKeyPressed(KEY_UP))
+		{
+			entity6->GetComponent<Transform>()->setPosition().y += 0.1;
+			entity6->GetComponent<Sprite>()->setTexture(gg);
+		}
+		if (InputManager::IsKeyPressed(KEY_DOWN)) 
+		{
+			entity6->GetComponent<Transform>()->setPosition().y -= 0.1;
+			entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/mario.png");
+		}
+		if (InputManager::IsKeyPressed(KEY_LEFT))
+		{
+			entity6->GetComponent<Transform>()->setPosition().x -= 0.1;
+			entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/left.png");
+		}
+		if (InputManager::IsKeyPressed(KEY_RIGHT)) {
+			entity6->GetComponent<Transform>()->setPosition().x += 0.1;
+			entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/right.png");
+		}
 
 		//camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
 
