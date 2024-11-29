@@ -127,16 +127,25 @@ namespace Essentia
             {
                 shaderGenerator.addCustomFunction(type, functionCode);
                 initializeShader();
+                mesh->shader = shader;
             }
 
             void addCustomShaderMainCode(SH_TYPE type, const std::string& mainCode)
             {
                 shaderGenerator.addMainCode(type, mainCode);
                 initializeShader();
+                mesh->shader = shader;
+            }
+
+            void setShader(std::shared_ptr<Shader> _shader)
+            {
+                shader = _shader;
+                mesh->shader = shader;
             }
 
             std::string getTexturePath() const { return texture ? TextureManager::getTexturePath(texture) : "No Texture"; }
             std::shared_ptr<Texture> getTexture() const { return texture; }
+            std::shared_ptr<Shader> getShader() const { return shader; }
 
         private:
             std::string getTextureName(const std::string& path)
