@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <stdexcept>
 
 #include <Core/ECS/IComponent.hpp>
 #include <Core/Graphics/Mesh.hpp>
@@ -12,33 +13,20 @@
 
 namespace Essentia
 {
-    class Model : public IComponent
+    struct Model : public IComponent
     {
         public:
             std::vector<std::shared_ptr<Mesh>> meshes;
 
             Model() = default;
-            Model(const std::vector<std::shared_ptr<Mesh>>& initialMeshes) : meshes(initialMeshes) {}
+            Model(const std::vector<std::shared_ptr<Mesh>>& initialMeshes);
 
-            void addMesh(const std::shared_ptr<Mesh>& mesh) { meshes.push_back(mesh); }
+            void addMesh(const std::shared_ptr<Mesh>& mesh);
 
-            size_t getMeshCount() const { return meshes.size(); }
-            const std::shared_ptr<Mesh>& getMesh(size_t index) const
-            {
-                if (index >= meshes.size()) throw std::out_of_range("Mesh index out of range");
-                return meshes[index];
-            }
-            std::vector<std::string> getTexturePaths() const
-            {
-                std::vector<std::string> paths;
-
-                for (const auto& mesh : meshes)
-                    for (const auto& texturePair : mesh->textures)
-                        if (texturePair.second) paths.push_back(TextureManager::getTexturePath(texturePair.second));
-
-                return paths;
-            }
+            size_t getMeshCount() const;
+            const std::shared_ptr<Mesh>& getMesh(size_t index) const;
+            std::vector<std::string> getTexturePaths() const;
     };
 }
 
-#endif // MODEL_H
+#endif // !MODEL_H

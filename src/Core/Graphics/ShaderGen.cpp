@@ -2,6 +2,18 @@
 
 ShaderGenerator::ShaderGenerator()
 {
+    shaderHeaders2D[VERTEX] = "";
+    shaderHeaders2D[FRAGMENT] = "";
+    shaderHeaders2D[GEOMETRY] = "";
+
+    customFunctions[VERTEX] = {};
+    customFunctions[FRAGMENT] = {};
+    customFunctions[GEOMETRY] = {};
+
+    customMainCode[VERTEX] = "";
+    customMainCode[FRAGMENT] = "";
+    customMainCode[GEOMETRY] = "";
+
     // Header para vertex shader (simple 2D)
     shaderHeaders2D[VERTEX] = R"(
     #version 330 core
@@ -78,7 +90,7 @@ std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
     }
 
     // Add pre-main content (custom functions and others)
-    if (customFunctions.empty())
+    if (customFunctions.at(type).empty())
     {
         if (type == FRAGMENT)
             shader << R"(
@@ -100,7 +112,7 @@ std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
         void main() {
         )";
 
-        if (customMainCode.empty()) {
+        if (customMainCode.at(type).empty()) {
             if (type == FRAGMENT && !textureUniforms.empty())
             {
                 shader << "    FragColor = texture(" << textureUniforms[0] << ", TexCoord);\n";

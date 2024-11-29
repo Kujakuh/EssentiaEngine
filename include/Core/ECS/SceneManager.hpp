@@ -2,6 +2,7 @@
 #define SCENE_MANAGER_H
 
 #include <Core/ECS/Scene.hpp>
+
 #include <memory>
 
 namespace Essentia

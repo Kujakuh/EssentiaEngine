@@ -31,4 +31,4 @@ namespace Essentia
     };
 }
 
-#endif // CAMERA_ORTHO_H
+#endif // !CAMERA_ORTHO_H

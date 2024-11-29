@@ -2,6 +2,7 @@
 #define INPUTMANAGER_H
 
 #include <GLFW/glfw3.h>
+
 #include <unordered_map>
 
 #include <Shared/enums.hpp>
@@ -43,4 +44,4 @@ namespace Essentia
     };
 }
 
-#endif // INPUTMANAGER_H
+#endif // !INPUTMANAGER_H

@@ -192,8 +192,11 @@ int main(void)
 	ref->setPosition().x -= 3;
 	ref->updateMatrix();
 
-	entity6->AddComponent<Sprite>(gg);
-	entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/mario.png");
+	entity6->AddComponent<Sprite>(RESOURCES_PATH "Textures/mario.png");
+	//entity6->GetComponent<Sprite>()->addCustomShaderMainCode(FRAGMENT, "vec4 gear = vec4(2,4,1,3);");
+	//entity6->GetComponent<Sprite>()->addCustomShaderMainCodeFromFile(FRAGMENT, RESOURCES_PATH "Shaders/test.glsl");
+	//entity6->GetComponent<Sprite>()->addCustomShaderMainCode(FRAGMENT, "FragColor = vec4(1,0.2,0.5,0.6);");
+
 	entity6->GetComponent<Transform>()->setScale().x = 3;
 	entity6->GetComponent<Transform>()->setScale().y = 3;
 	entity6->GetComponent<Transform>()->setPosition().x = 4;

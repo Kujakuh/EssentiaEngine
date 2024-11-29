@@ -1,5 +1,5 @@
-#ifndef SHADER_GEN_HPP
-#define SHADER_GEN_HPP
+#ifndef SHADER_GEN_H
+#define SHADER_GEN_H
 
 #include <string>
 #include <algorithm>
@@ -37,4 +37,4 @@ class ShaderGenerator
         std::string generateShader2D(SH_TYPE type) const;
 };
 
-#endif // SHADER_GEN_HPP
+#endif // !SHADER_GEN_H

@@ -1,8 +1,9 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include <string>
 #include <flat_hash_map>
+
+#include <string>
 #include <memory>
 #include <typeindex>
 #include <typeinfo>

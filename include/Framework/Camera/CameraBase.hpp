@@ -52,4 +52,4 @@ namespace Essentia
     };
 }
 
-#endif // CAMERA_BASE_H
+#endif // !CAMERA_BASE_H
