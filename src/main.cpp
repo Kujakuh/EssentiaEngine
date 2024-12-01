@@ -21,7 +21,9 @@ constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
 //extern "C"{}
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
-
+enum dir {
+	left, right, up, down
+};
 int main(void)
 {
 	Essentia::init();
@@ -171,8 +173,8 @@ int main(void)
 		Essentia::cubeVertices,
 		Essentia::cubeIndices,
 		{
-			{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP, Essentia::defaultFilters)}
-			//{"skybox", tx}
+			//{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP, Essentia::defaultFilters)}
+			{"skybox", tx}
 		}
 	);
 	cube.disable();
@@ -206,6 +208,7 @@ int main(void)
 	entity6->GetComponent<Transform>()->setPosition().x = 4;
 
 	bool wireframeMode = false;
+	dir direction = down;
 	while ( !glfwWindowShouldClose(window) )
 	{
 		InputManager::GetActiveInstance()->Update();
@@ -242,21 +245,38 @@ int main(void)
 		if (InputManager::IsKeyPressed(KEY_UP))
 		{
 			entity6->GetComponent<Transform>()->setPosition().y += 0.1;
-			entity6->GetComponent<Sprite>()->setTexture(gg);
+			if (direction != up)
+			{
+				direction = up;
+				entity6->GetComponent<Sprite>()->setTexture(gg);
+			}
 		}
 		if (InputManager::IsKeyPressed(KEY_DOWN)) 
 		{
 			entity6->GetComponent<Transform>()->setPosition().y -= 0.1;
-			entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/mario.png");
+			if (direction != down)
+			{
+				direction = down;
+				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/mario.png");
+			}
 		}
 		if (InputManager::IsKeyPressed(KEY_LEFT))
 		{
 			entity6->GetComponent<Transform>()->setPosition().x -= 0.1;
-			entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/left.png");
+			if (direction != left)
+			{
+				direction = left;
+				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/left.png");
+			}
 		}
-		if (InputManager::IsKeyPressed(KEY_RIGHT)) {
+		if (InputManager::IsKeyPressed(KEY_RIGHT))
+		{
 			entity6->GetComponent<Transform>()->setPosition().x += 0.1;
-			entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/right.png");
+			if (direction != right)
+			{
+				direction = right;
+				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/right.png");
+			}
 		}
 
 		//camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);

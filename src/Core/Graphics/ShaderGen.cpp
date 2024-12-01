@@ -26,10 +26,6 @@ ShaderGenerator::ShaderGenerator()
     uniform mat4 view;
     uniform mat4 projection;
 
-    void main() {
-        gl_Position = projection * view * model * vec4(aPos, 1.0);
-        TexCoord = aTexCoord;
-    }
     )";
 
     // Header para fragment shader (base)
@@ -47,7 +43,6 @@ ShaderGenerator::ShaderGenerator()
     layout(triangle_strip, max_vertices = 4) out;
 
     void main() {
-    }
     )";
 }
 
@@ -68,7 +63,8 @@ void ShaderGenerator::addCustomFunctionFromFile(SH_TYPE type, const std::string&
 {
     customFunctions[type].push_back(loadFromFile(filePath));
 }
-void ShaderGenerator::addMainCode(SH_TYPE type, const std::string& mainCode) {
+void ShaderGenerator::addMainCode(SH_TYPE type, const std::string& mainCode)
+{
     customMainCode[type] += mainCode + "\n";
 }
 void ShaderGenerator::addMainCodeFromFile(SH_TYPE type, const std::string& filePath)
@@ -106,28 +102,30 @@ std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
     }
 
     // Generate main
-    if (type != VERTEX)
-    {
-        shader << R"(
-        void main() {
-        )";
 
-        if (customMainCode.at(type).empty()) {
-            if (type == FRAGMENT && !textureUniforms.empty())
-            {
-                shader << "    FragColor = texture(" << textureUniforms[0] << ", TexCoord);\n";
-            }
-            else if (type == FRAGMENT)
-            {
-                shader << "    FragColor = vec4(1.0);\n";
-            }
-        }
-        else shader << customMainCode.at(type); // Add any custom main code
+    shader << R"(
+    void main() {
+    )";
 
-        shader << R"(
+    if (customMainCode.at(type).empty()) {
+        if (type == FRAGMENT && !textureUniforms.empty())
+        {
+            shader << "    FragColor = texture(" << textureUniforms[0] << ", TexCoord);\n";
         }
-        )";
+        else if (type == FRAGMENT)
+        {
+            shader << "    FragColor = vec4(1.0);\n";
+        }
+        else if (type == VERTEX)
+        {
+            shader << "    gl_Position = projection * view * model * vec4(aPos, 1.0);\n        TexCoord = aTexCoord;\n";
+        }
     }
+    else shader << customMainCode.at(type); // Add any custom main code
+
+    shader << R"(
+    }
+    )";
 
     // ----------------- DEBUG -----------------
     std::cout << shader.str() << "\n";

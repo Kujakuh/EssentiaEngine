@@ -36,14 +36,11 @@ namespace Essentia
         shader->use();
         texture = TextureManager::getTexture(texturePath, GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters, flip);
         shader->disable();
-        int width = texture->getWidth();
-        int height = texture->getHeight();
-        float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-        auto adjustedVertices = getAspectRatioAdjustedVertices(aspectRatio);
+        float aspectRatio = static_cast<float>(texture->getWidth()) / static_cast<float>(texture->getHeight());
 
         Mesh _mesh(
             shader,
-            adjustedVertices,
+            getAspectRatioAdjustedVertices(aspectRatio),
             getDefaultSquareIndices(),
             { {getTextureName(texturePath), texture} }
         );
@@ -56,11 +53,10 @@ namespace Essentia
         initializeShader();
         texture = _texture;
         float aspectRatio = static_cast<float>(_texture->getWidth()) / static_cast<float>(_texture->getHeight());
-        auto adjustedVertices = getAspectRatioAdjustedVertices(aspectRatio);
 
         Mesh _mesh(
             shader,
-            adjustedVertices,
+            getAspectRatioAdjustedVertices(aspectRatio),
             getDefaultSquareIndices(),
             { {getTextureName(TextureManager::getTexturePath(_texture)), _texture} }
         );
@@ -87,11 +83,8 @@ namespace Essentia
 
     void Sprite::setTextureData(std::shared_ptr<Texture> texture)
     {
-        int width = texture->getWidth();
-        int height = texture->getHeight();
-        float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-        auto adjustedVertices = getAspectRatioAdjustedVertices(aspectRatio);
-        mesh->updateVertices(adjustedVertices);
+        float aspectRatio = static_cast<float>(texture->getWidth()) / static_cast<float>(texture->getHeight());
+        mesh->updateVertices(getAspectRatioAdjustedVertices(aspectRatio));
         mesh->textures = { {getTextureName(TextureManager::getTexturePath(texture)), texture} };
         shaderGenerator.addTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
         initializeShader();
