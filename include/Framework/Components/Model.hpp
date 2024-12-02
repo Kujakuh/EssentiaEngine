@@ -38,7 +38,7 @@ namespace Essentia
             std::string dir;
 
             void processNode(aiNode* node, const aiScene* scene);
-            Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+            //Mesh processMesh(aiMesh* mesh, const aiScene* scene);
             std::vector<std::shared_ptr<Texture>> loadMaterials(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName);
     };
 }

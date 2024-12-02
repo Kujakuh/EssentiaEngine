@@ -24,6 +24,7 @@ namespace Essentia
             GLuint VAO;
             std::shared_ptr<Shader> shader;
 
+            Mesh() = default;
             Mesh(std::shared_ptr<Shader> sh, std::vector<Vertex> vert, std::vector<GLuint> ind, std::unordered_map<std::string, std::shared_ptr<Texture>> tex)
                 : vertices(vert), indices(ind), textures(tex), shader(sh) { setupMesh(); }
 

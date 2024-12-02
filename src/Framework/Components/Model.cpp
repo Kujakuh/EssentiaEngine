@@ -50,7 +50,7 @@ namespace Essentia
         for (unsigned int i = 0; i < node->mNumMeshes; i++)
         {
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-            meshes.push_back(std::make_shared<Mesh>(processMesh(mesh, scene)));
+            //meshes.push_back(std::make_shared<Mesh>(processMesh(mesh, scene)));
         }
         for (unsigned int i = 0; i < node->mNumChildren; i++)
             processNode(node->mChildren[i], scene);
@@ -58,8 +58,9 @@ namespace Essentia
 
     Mesh processMesh(aiMesh* mesh, const aiScene* scene)
     {
+        return Mesh();
     }
-    
+     
     std::vector<std::shared_ptr<Texture>> Model::loadMaterials(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName)
     {
         std::vector<std::shared_ptr<Texture>> textures;
@@ -71,5 +72,6 @@ namespace Essentia
 
             std::shared_ptr<Texture> tx = TextureManager::getTexture(file, GL_TEXTURE_2D, typeName, Essentia::defaultFilters3D);
         }
+        return textures;
     }
 }
