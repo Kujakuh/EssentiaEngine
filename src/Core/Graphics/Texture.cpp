@@ -58,7 +58,6 @@ namespace Essentia
 
     void Texture::enableBindless()
     {
-        bind();
         textureHandle = glGetTextureHandleARB(this->ID);
         if (textureHandle) {
             glMakeTextureHandleResidentARB(textureHandle);
@@ -66,7 +65,6 @@ namespace Essentia
         else {
             std::cerr << "ERROR::TEXTURE::BINDLESS_TEXTURE::FAILED_TO_CREATE_HANDLE" << std::endl;
         }
-        unbind();
     }
 
     int Texture::getTextureUnit() const { return textureUnit; }

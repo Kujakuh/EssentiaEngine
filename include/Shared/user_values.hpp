@@ -12,6 +12,7 @@
 namespace Essentia
 {
     extern ska::flat_hash_map<FILTERS, GLenum> defaultFilters;
+    extern ska::flat_hash_map<FILTERS, GLenum> defaultFilters3D;
     extern std::vector<Vertex> cubeVertices;
     extern std::vector<GLuint> cubeIndices;
     extern bool bindlessTexturesMode;

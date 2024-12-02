@@ -98,7 +98,6 @@ int main(void)
 	InputManager::Initialize(window);
 	InputManager::SetActiveInstance(window);
 
-
 	// Define and init render window and rescaling
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
@@ -140,8 +139,6 @@ int main(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #pragma endregion
 
-	Essentia::bindlessTexturesMode = true;
-
 	std::vector<std::string> faces
 	{
 			RESOURCES_PATH "Textures/right.jpg",
@@ -156,7 +153,7 @@ int main(void)
 	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
 
 	s.use();
-	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/box.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
+	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
 	Mesh mesh(
 		std::make_shared<Shader>(s),
 		Essentia::cubeVertices, 
