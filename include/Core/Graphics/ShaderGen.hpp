@@ -11,7 +11,7 @@
 #include <iostream>
 
 #include <Shared/enums.hpp>
-#include <Debug/openglDebug.hpp>
+#include <Shared/user_values.hpp>
 
 class ShaderGenerator
 {

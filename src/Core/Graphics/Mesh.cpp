@@ -47,13 +47,13 @@ namespace Essentia
             const std::string& uniformName = pair.first;
             std::shared_ptr<Texture> texture = pair.second;
 
-            if (!glfwExtensionSupported("GL_ARB_bindless_texture"))
+            if (GLAD_GL_ARB_bindless_texture && bindlessTexturesMode)
+                shader->setUniform(uniformName.c_str(), texture->getHandle());
+            else
             {
                 texture->bind();
                 shader->setUniform(uniformName.c_str(), texture->getTextureUnit());
             }
-            else
-                shader->setUniform(uniformName.c_str(), texture->getHandle());
         }
     }
 

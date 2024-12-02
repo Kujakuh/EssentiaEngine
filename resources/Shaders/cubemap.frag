@@ -5,7 +5,7 @@ out vec4 FragColor;
 
 in vec3 TexCoords;
 
-layout(bindless_sampler) uniform samplerCube skybox;
+uniform samplerCube skybox;
 
 void main()
 {    

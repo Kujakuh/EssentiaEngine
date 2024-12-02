@@ -1,6 +1,5 @@
 #include <Core/Graphics/Texture.hpp>
 #include <Core/Graphics/HdriCubemap/hdriCubemap.hpp>
-#include <Debug/openglDebug.hpp>
 
 namespace Essentia
 {
@@ -14,7 +13,7 @@ namespace Essentia
         else
             loadFromFile(texturePath, flip);
 
-        bindlessSupported = glfwExtensionSupported("GL_ARB_bindless_texture");
+        bindlessSupported = GLAD_GL_ARB_bindless_texture && bindlessTexturesMode;
         if (bindlessSupported) { enableBindless(); }
     }
 
@@ -26,7 +25,7 @@ namespace Essentia
             throw std::invalid_argument("Invalid constructor for non-cubemap texture.");
         loadCubemap(faces, flip);
 
-        bindlessSupported = glfwExtensionSupported("GL_ARB_bindless_texture");
+        bindlessSupported = GLAD_GL_ARB_bindless_texture && bindlessTexturesMode;
         if (bindlessSupported) { enableBindless(); }
     }
 

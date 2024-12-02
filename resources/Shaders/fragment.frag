@@ -5,7 +5,7 @@ out vec4 FragColor;
 
 in vec2 outTexCord;
 
-layout(bindless_sampler) uniform sampler2D container;
+uniform sampler2D container;
 uniform sampler2D face;
 uniform float time;
 

@@ -140,6 +140,8 @@ int main(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #pragma endregion
 
+	Essentia::bindlessTexturesMode = true;
+
 	std::vector<std::string> faces
 	{
 			RESOURCES_PATH "Textures/right.jpg",
@@ -153,44 +155,44 @@ int main(void)
 	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
 	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
 
-	//s.use();
-	//TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/box.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
-	//Mesh mesh(
-	//	std::make_shared<Shader>(s),
-	//	Essentia::cubeVertices, 
-	//	Essentia::cubeIndices,
-	//	{
-	//		{"container", gg},
-	//		{"face", TextureManager::getTexture(RESOURCES_PATH "Textures/face.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF)}
-	//	}
-	//);
-	//s.disable();
+	s.use();
+	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/box.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
+	Mesh mesh(
+		std::make_shared<Shader>(s),
+		Essentia::cubeVertices, 
+		Essentia::cubeIndices,
+		{
+			{"container", gg},
+			{"face", TextureManager::getTexture(RESOURCES_PATH "Textures/face.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF)}
+		}
+	);
+	s.disable();
 
-	//cube.use();
-	//TextureHandle tx = Essentia::TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
-	//Mesh cubemap(
-	//	std::make_shared<Shader>(cube),
-	//	Essentia::cubeVertices,
-	//	Essentia::cubeIndices,
-	//	{
-	//		//{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP, Essentia::defaultFilters)}
-	//		{"skybox", tx}
-	//	}
-	//);
-	//cube.disable();
+	cube.use();
+	TextureHandle tx = Essentia::TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
+	Mesh cubemap(
+		std::make_shared<Shader>(cube),
+		Essentia::cubeVertices,
+		Essentia::cubeIndices,
+		{
+			//{"skybox", TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP, Essentia::defaultFilters)}
+			{"skybox", tx}
+		}
+	);
+	cube.disable();
 
 	//CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
 	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);
 	Camera2D camera("Camera", scene, 90.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
 	scene->RegisterSystems(Essentia::Renderer2D(&camera));
 
-	/*cubemap.initShader();
+	cubemap.initShader();
 	cubemap.shader->setUniform("projection", camera.getProjectionMatrix());
 	cubemap.disableShader();
 
 	mesh.initShader();
 	mesh.shader->setUniform("projection", camera.getProjectionMatrix());
-	mesh.disableShader();*/
+	mesh.disableShader();
 
 	camera.sensitivity = 0.05f;
 	ref->setScale(Vector3(5, 5, 1));
@@ -223,19 +225,19 @@ int main(void)
 		}
 		if(InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		/*glDepthFunc(GL_LEQUAL);
+		glDepthFunc(GL_LEQUAL);
 		cubemap.initShader();
 		cubemap.shader->setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
 		cubemap.render();
 		cubemap.disableShader();
 		glDepthFunc(GL_LESS);
-
+		
 		mesh.initShader();
 		mesh.shader->setUniform("model", ref->getModelMatrix());
 		mesh.shader->setUniform("view", camera.getViewMatrix());
 		mesh.shader->setUniform("time", (float) glfwGetTime());
 		mesh.render();
-		mesh.disableShader();*/
+		mesh.disableShader();
 
 		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity;
 		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity;

@@ -10,6 +10,7 @@
 #include <cmath>
 
 #include <Shared/enums.hpp>
+#include <Shared/user_values.hpp>
 
 namespace Essentia
 {

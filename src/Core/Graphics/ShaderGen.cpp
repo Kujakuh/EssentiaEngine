@@ -2,7 +2,7 @@
 
 ShaderGenerator::ShaderGenerator()
 {
-    if (glfwExtensionSupported("GL_ARB_bindless_texture"))
+    if (GLAD_GL_ARB_bindless_texture && Essentia::bindlessTexturesMode)
     {
         versionNextensionsHeader = R"(
         #version 440 core
@@ -91,12 +91,12 @@ std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
     // Add Texture Uniforms declarations
     if (type == FRAGMENT) 
     {
-        if(!glfwExtensionSupported("GL_ARB_bindless_texture"))
-            for (const auto& uniform : textureUniforms)
-                shader << "uniform sampler2D "  << uniform << ";\n";
-        else
+        if(GLAD_GL_ARB_bindless_texture && Essentia::bindlessTexturesMode)
             for (const auto& uniform : textureUniforms)
                 shader << "layout(bindless_sampler) uniform sampler2D " << uniform << ";\n";
+        else
+            for (const auto& uniform : textureUniforms)
+                shader << "uniform sampler2D "  << uniform << ";\n";
     }
 
     // Add pre-main content (custom functions and others)
