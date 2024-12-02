@@ -11,6 +11,7 @@
 #include <Core/Graphics/Vertex.hpp>
 #include <Core/Graphics/Texture.hpp>
 #include <Core/Graphics/Shader.hpp>
+#include <Debug/openglDebug.hpp>
 
 namespace Essentia
 {

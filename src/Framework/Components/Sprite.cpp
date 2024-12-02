@@ -35,7 +35,6 @@ namespace Essentia
         initializeShader();
         shader->use();
         texture = TextureManager::getTexture(texturePath, GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters, flip);
-        shader->disable();
         float aspectRatio = static_cast<float>(texture->getWidth()) / static_cast<float>(texture->getHeight());
 
         Mesh _mesh(
@@ -45,6 +44,7 @@ namespace Essentia
             { {getTextureName(texturePath), texture} }
         );
         mesh = std::make_shared<Mesh>(_mesh);
+        shader->disable();
     }
 
     Sprite::Sprite(std::shared_ptr<Texture> _texture)
@@ -53,7 +53,7 @@ namespace Essentia
         initializeShader();
         texture = _texture;
         float aspectRatio = static_cast<float>(_texture->getWidth()) / static_cast<float>(_texture->getHeight());
-
+        shader->use();
         Mesh _mesh(
             shader,
             getAspectRatioAdjustedVertices(aspectRatio),
@@ -61,6 +61,7 @@ namespace Essentia
             { {getTextureName(TextureManager::getTexturePath(_texture)), _texture} }
         );
         mesh = std::make_shared<Mesh>(_mesh);
+        shader->disable();
     }
 
     void Sprite::setTexture(const std::string& texturePath, bool flip)

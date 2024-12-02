@@ -26,6 +26,9 @@ namespace Essentia
 
             TEX_TYPE texType;
 
+            bool bindlessSupported = false;
+            GLuint64 textureHandle = 0;
+
             void flipVertically(unsigned char* data, int width, int height, int nrChannels);
 
         public:
@@ -40,7 +43,13 @@ namespace Essentia
             int hdriRes = 0;
 
             std::string getTextureTypeString() const;
+
             GLuint getID() const;
+            GLuint64 getHandle() const;
+            bool isBindless() const;
+
+            void enableBindless();
+
             int getTextureUnit() const;
             GLenum getFilter(FILTERS key) const;
             int getWidth() const;

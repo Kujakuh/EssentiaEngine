@@ -14,6 +14,7 @@
 #include <Core/Graphics/Texture.hpp>
 #include <Shared/enums.hpp>
 #include <Shared/user_values.hpp>
+#include <Debug/openglDebug.hpp>
 
 namespace Essentia
 {

@@ -1,5 +1,6 @@
 #include <Core/Graphics/Texture.hpp>
 #include <Core/Graphics/HdriCubemap/hdriCubemap.hpp>
+#include <Debug/openglDebug.hpp>
 
 namespace Essentia
 {
@@ -12,6 +13,9 @@ namespace Essentia
             else loadHDRIToCubemap(texturePath);
         else
             loadFromFile(texturePath, flip);
+
+        bindlessSupported = glfwExtensionSupported("GL_ARB_bindless_texture");
+        if (bindlessSupported) { enableBindless(); }
     }
 
     Texture::Texture(const std::vector<std::string>& faces, GLenum textureType, int textureUnit,
@@ -21,9 +25,20 @@ namespace Essentia
         if (type != TEX_TYPE::TEX_CUBEMAP)
             throw std::invalid_argument("Invalid constructor for non-cubemap texture.");
         loadCubemap(faces, flip);
+
+        bindlessSupported = glfwExtensionSupported("GL_ARB_bindless_texture");
+        if (bindlessSupported) { enableBindless(); }
     }
 
-    Texture::~Texture() {if (ID != 0) glDeleteTextures(1, &ID);}
+    Texture::~Texture()
+    {
+        if (bindlessSupported && textureHandle != 0) {
+            glMakeTextureHandleNonResidentARB(textureHandle);
+        }
+        if (ID != 0) {
+            glDeleteTextures(1, &ID);
+        }
+    }
 
     std::string Texture::getTextureTypeString() const
     {
@@ -39,6 +54,22 @@ namespace Essentia
     }
 
     GLuint Texture::getID() const { return ID; }
+    GLuint64 Texture::getHandle() const { return textureHandle; }
+    bool Texture::isBindless() const { return bindlessSupported; }
+
+    void Texture::enableBindless()
+    {
+        bind();
+        textureHandle = glGetTextureHandleARB(this->ID);
+        if (textureHandle) {
+            glMakeTextureHandleResidentARB(textureHandle);
+        }
+        else {
+            std::cerr << "ERROR::TEXTURE::BINDLESS_TEXTURE::FAILED_TO_CREATE_HANDLE" << std::endl;
+        }
+        unbind();
+    }
+
     int Texture::getTextureUnit() const { return textureUnit; }
     bool Texture::filterExists(FILTERS key) const {return wrapFilters.find(key) != wrapFilters.end();}
     GLenum Texture::getFilter(FILTERS key) const
@@ -96,13 +127,15 @@ namespace Essentia
 
     void Texture::bind() const
     {
-        glActiveTexture(GL_TEXTURE0 + textureUnit);
+        if (!bindlessSupported)
+            glActiveTexture(GL_TEXTURE0 + textureUnit);
         glBindTexture(texType == TEX_TYPE::TEX_CUBEMAP ? GL_TEXTURE_CUBE_MAP : type, ID);
     }
 
     void Texture::unbind() const
     {
-        glActiveTexture(GL_TEXTURE0 + textureUnit);
+        if (!bindlessSupported) 
+            glActiveTexture(GL_TEXTURE0 + textureUnit);
         glBindTexture(texType == TEX_TYPE::TEX_CUBEMAP ? GL_TEXTURE_CUBE_MAP : type, 0);
     }
 

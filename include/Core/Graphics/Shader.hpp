@@ -72,6 +72,7 @@ namespace Essentia
 			void setUniform(const std::string& name, glm::vec4 value) const;
 			void setUniform(const std::string& name, glm::mat3 value) const;
 			void setUniform(const std::string& name, glm::mat4 value) const;
+			void setUniform(const std::string& name, GLuint64 value) const;
 
 			// Uniform buffer object : shared between shader programs uniform
 			// Setup data with glBufferSubData()

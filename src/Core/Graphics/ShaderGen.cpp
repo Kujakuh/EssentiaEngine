@@ -2,6 +2,19 @@
 
 ShaderGenerator::ShaderGenerator()
 {
+    if (glfwExtensionSupported("GL_ARB_bindless_texture"))
+    {
+        versionNextensionsHeader = R"(
+        #version 440 core
+        #extension GL_ARB_bindless_texture : require
+        )";
+    }
+    else
+    {
+        versionNextensionsHeader = R"(
+        #version 330 core
+        )";
+    }
     shaderHeaders2D[VERTEX] = "";
     shaderHeaders2D[FRAGMENT] = "";
     shaderHeaders2D[GEOMETRY] = "";
@@ -16,7 +29,6 @@ ShaderGenerator::ShaderGenerator()
 
     // Header para vertex shader (simple 2D)
     shaderHeaders2D[VERTEX] = R"(
-    #version 330 core
     layout(location = 0) in vec3 aPos;
     layout(location = 2) in vec2 aTexCoord;
 
@@ -30,7 +42,6 @@ ShaderGenerator::ShaderGenerator()
 
     // Header para fragment shader (base)
     shaderHeaders2D[FRAGMENT] = R"(
-    #version 330 core
     in vec2 TexCoord;
 
     out vec4 FragColor;
@@ -38,7 +49,6 @@ ShaderGenerator::ShaderGenerator()
 
     // Header para geometry shader (si se necesita)
     shaderHeaders2D[GEOMETRY] = R"(
-    #version 330 core
     layout(points) in;
     layout(triangle_strip, max_vertices = 4) out;
 
@@ -75,14 +85,18 @@ void ShaderGenerator::addMainCodeFromFile(SH_TYPE type, const std::string& fileP
 std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
 {
     std::ostringstream shader;
-
+    shader << versionNextensionsHeader << "\n";
     shader << shaderHeaders2D.at(type) << "\n";
 
     // Add Texture Uniforms declarations
     if (type == FRAGMENT) 
     {
-        for (const auto& uniform : textureUniforms)
-            shader << "uniform sampler2D "  << uniform << ";\n";
+        if(!glfwExtensionSupported("GL_ARB_bindless_texture"))
+            for (const auto& uniform : textureUniforms)
+                shader << "uniform sampler2D "  << uniform << ";\n";
+        else
+            for (const auto& uniform : textureUniforms)
+                shader << "layout(bindless_sampler) uniform sampler2D " << uniform << ";\n";
     }
 
     // Add pre-main content (custom functions and others)

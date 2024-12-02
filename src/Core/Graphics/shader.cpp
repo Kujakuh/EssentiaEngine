@@ -311,10 +311,16 @@ namespace Essentia
 	{
 		glUniformMatrix4fv(glGetUniformLocation(this->ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 	}
+	void Shader::setUniform(const std::string& name, GLuint64 value) const
+	{
+		GLuint loc = glGetUniformLocation(this->ID, name.c_str());
+		glUniformHandleui64ARB(loc, value);
+	}
 
 	void Shader::bindUBOToBindingPoint(const GLchar* uniformBufferObjectName, GLuint bindingPointIndex) const
 	{
 		unsigned int ubo_index = glGetUniformBlockIndex(this->ID, uniformBufferObjectName);
 		glUniformBlockBinding(this->ID, ubo_index, bindingPointIndex);
 	}
+	
 }

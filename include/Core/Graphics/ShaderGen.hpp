@@ -11,10 +11,12 @@
 #include <iostream>
 
 #include <Shared/enums.hpp>
+#include <Debug/openglDebug.hpp>
 
 class ShaderGenerator
 {
     private:
+        std::string versionNextensionsHeader;
         std::unordered_map<SH_TYPE, std::string> shaderHeaders2D;
         std::unordered_map<SH_TYPE, std::vector<std::string>> customFunctions;
         std::unordered_map<SH_TYPE, std::string> customMainCode;

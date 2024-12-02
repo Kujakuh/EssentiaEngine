@@ -56,9 +56,18 @@ namespace Essentia
         }
 
         // Cargar una nueva textura
-        int unit = allocateUnit(shaderID);
-        auto texture = std::make_shared<Texture>(texturePath.c_str(), textureType, unit, filters, type, flip);
-        shaderCache[texturePath] = texture;
+        std::shared_ptr<Texture> texture;
+        if (!glfwExtensionSupported("GL_ARB_bindless_texture"))
+        {
+            int unit = allocateUnit(shaderID);
+            texture = std::make_shared<Texture>(texturePath.c_str(), textureType, unit, filters, type, flip);
+            shaderCache[texturePath] = texture;
+        }
+        else
+        {
+            texture = std::make_shared<Texture>(texturePath.c_str(), textureType, 0, filters, type, flip);
+            shaderCache[texturePath] = texture;
+        }
 
         return texture;
     }

@@ -113,6 +113,21 @@ void showFPS(GLFWwindow* window) {
     }
 }
 
+bool isExtensionSupported(const char* extensionName)
+{
+	GLint numExtensions = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+
+	for (GLint i = 0; i < numExtensions; ++i)
+	{
+		const char* ext = (const char*)glGetStringi(GL_EXTENSIONS, i);
+
+		if (strcmp(ext, extensionName) == 0)
+			return true;
+	}
+	return false;
+}
+
 #define glCheckError() glCheckError_(__FILE__, __LINE__)
 
 #endif // !DEBUG_UTILS_S
