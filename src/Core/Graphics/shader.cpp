@@ -313,8 +313,7 @@ namespace Essentia
 	}
 	void Shader::setUniform(const std::string& name, GLuint64 value) const
 	{
-		GLuint loc = glGetUniformLocation(this->ID, name.c_str());
-		glUniformHandleui64ARB(loc, value);
+		glUniformHandleui64ARB(glGetUniformLocation(this->ID, name.c_str()), value);
 	}
 
 	void Shader::bindUBOToBindingPoint(const GLchar* uniformBufferObjectName, GLuint bindingPointIndex) const

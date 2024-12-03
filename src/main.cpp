@@ -178,9 +178,9 @@ int main(void)
 	);
 	cube.disable();
 
-	//CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
+	CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
 	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);
-	Camera2D camera("Camera", scene, 90.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
+	//Camera2D camera("Camera", scene, 90.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
 	scene->RegisterSystems(Essentia::Renderer2D(&camera));
 
 	cubemap.initShader();
@@ -278,7 +278,7 @@ int main(void)
 			}
 		}
 
-		//camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
+		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
 
 		scene->Update();
 

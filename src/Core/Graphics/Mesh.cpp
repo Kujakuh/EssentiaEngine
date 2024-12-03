@@ -40,7 +40,7 @@ namespace Essentia
         glBindVertexArray(0);
     }
 
-    void Mesh::bindTextures()
+    void Mesh::updateTextures()
     {
         for (const auto& pair : textures)
         {
@@ -57,9 +57,23 @@ namespace Essentia
         }
     }
 
+    void Mesh::bindTextures()
+    {
+        if (!GLAD_GL_ARB_bindless_texture || !bindlessTexturesMode) {
+            for (const auto& pair : textures)
+            {
+                const std::string& uniformName = pair.first;
+                std::shared_ptr<Texture> texture = pair.second;
+                texture->bind();
+            }
+        }
+    }
+
     void Mesh::unbindTextures()
     {
-        for (const auto& pair : textures) pair.second->unbind();
+        if (!GLAD_GL_ARB_bindless_texture || !bindlessTexturesMode) {
+            for (const auto& pair : textures) pair.second->unbind();
+        }
     }
 
     void Mesh::updateVertices(const std::vector<Vertex>& newVertices)
@@ -73,6 +87,12 @@ namespace Essentia
     void Mesh::render()
     {
         glBindVertexArray(VAO);
+
+        if (needsUpdate) {
+            updateTextures();
+            needsUpdate = false;
+        }
+
         bindTextures();
 
         glDrawElements(GL_TRIANGLES, static_cast<GLuint>(indices.size()), GL_UNSIGNED_INT, 0);
@@ -81,4 +101,29 @@ namespace Essentia
         glActiveTexture(GL_TEXTURE0);
         unbindTextures();
     }
+
+    void Mesh::SetTexture(const std::string& name, std::shared_ptr<Texture> texture)
+    {
+        if (!texture) {
+            throw std::invalid_argument("La textura no puede ser un puntero nulo.");
+        }
+        textures[name] = texture;
+        needsUpdate = true;
+    }
+
+    std::shared_ptr<Texture> Mesh::GetTexture(const std::string& name) const 
+    {
+        auto it = textures.find(name);
+        if (it != textures.end()) {
+            return it->second;
+        }
+        throw std::out_of_range("La textura con el nombre '" + name + "' no existe.");
+    }
+
+    void Mesh::SetAllTextures(std::unordered_map<std::string, std::shared_ptr<Texture>> newTextures) 
+    { 
+        textures = newTextures;
+        needsUpdate = true;
+    }
+    const std::unordered_map<std::string, std::shared_ptr<Texture>>& Mesh::GetAllTextures() { return textures; }
 }

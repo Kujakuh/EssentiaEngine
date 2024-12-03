@@ -21,7 +21,7 @@ namespace Essentia
 
         for (const auto& mesh : meshes)
         {
-            for (const auto& texturePair : mesh->textures)
+            for (const auto& texturePair : mesh->GetAllTextures())
             {
                 if (texturePair.second) 
                     paths.push_back(TextureManager::getTexturePath(texturePair.second));

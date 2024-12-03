@@ -86,7 +86,7 @@ namespace Essentia
     {
         float aspectRatio = static_cast<float>(texture->getWidth()) / static_cast<float>(texture->getHeight());
         mesh->updateVertices(getAspectRatioAdjustedVertices(aspectRatio));
-        mesh->textures = { {getTextureName(TextureManager::getTexturePath(texture)), texture} };
+        mesh->SetTexture(getTextureName(TextureManager::getTexturePath(texture)), texture);
         shaderGenerator.addTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
         initializeShader();
         mesh->shader = shader;
