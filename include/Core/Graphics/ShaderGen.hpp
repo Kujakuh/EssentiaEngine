@@ -38,7 +38,7 @@ class ShaderGenerator
         void addMainCodeFromFile(SH_TYPE type, const std::string& filePath);
 
         std::string generateShader2D(SH_TYPE type) const;
-        std::string generateShader3D(SH_TYPE type) const;
+        std::string generateShader3D(SH_TYPE type, bool ambientLightOn = true) const;
 };
 
 #endif // !SHADER_GEN_H

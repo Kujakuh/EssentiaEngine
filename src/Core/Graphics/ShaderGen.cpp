@@ -107,43 +107,9 @@ ShaderGenerator::ShaderGenerator()
     };
 
     uniform Light lights[10];
-    uniform int numLights = 0;
+    uniform int lightsNum = 0;
 
-    vec3 dirLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos)
-    {
-        vec3 lightDir = normalize(-light.direction); // Luz viene en la dirección opuesta
-        float diff = max(dot(normal, lightDir), 0.0);
-        vec3 diffuse = light.diffuse * diff;
-        return diffuse;
-    }
-
-    vec3 pointLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos)
-    {
-        vec3 lightDir = normalize(light.position - fragPos);
-        float diff = max(dot(normal, lightDir), 0.0);
-    
-        float distance = length(light.position - fragPos);
-        float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    
-        vec3 diffuse = light.diffuse * diff * attenuation;
-        return diffuse;
-    }
-
-    vec3 spotLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos)
-    {
-        vec3 lightDir = normalize(light.position - fragPos);
-        float diff = max(dot(normal, lightDir), 0.0);
-    
-        float theta = dot(lightDir, normalize(-light.direction));
-        float epsilon = light.innerCutOff - light.outerCutOff;
-        float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
-    
-        float distance = length(light.position - fragPos);
-        float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
-    
-        vec3 diffuse = light.diffuse * diff * intensity * attenuation;
-        return diffuse;
-    }
+    uniform Material material;
 
     vec3 bpSpecularLight(vec3 normal, vec3 lightDir, vec3 viewDir, float shininess)
     {
@@ -152,6 +118,44 @@ ShaderGenerator::ShaderGenerator()
         return spec * vec3(1.0); // Specular color (white for simplicity)
     }
 
+    vec3 dirLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos) {
+        vec3 lightDir = normalize(-light.direction);
+        float diff = max(dot(normal, lightDir), 0.0);
+        vec3 diffuse = light.diffuse * diff * texture(material.diffuse, TexCoord).rgb * objectColor;
+        return diffuse;
+    }
+
+    vec3 pointLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos) {
+        vec3 lightDir = normalize(light.position - fragPos);
+        float diff = max(dot(normal, lightDir), 0.0);
+
+        float distance = length(light.position - fragPos);
+        float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+
+        vec3 diffuse = light.diffuse * diff * attenuation * texture(material.diffuse, TexCoord).rgb * objectColor;
+        vec3 viewDir = normalize(viewPos - fragPos);
+        vec3 specular = bpSpecularLight(normal, lightDir, viewDir, material.shininess) *
+                        texture(material.specular, TexCoord).rgb * attenuation;
+        return diffuse + specular;
+    }
+
+    vec3 spotLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos) {
+        vec3 lightDir = normalize(light.position - fragPos);
+        float diff = max(dot(normal, lightDir), 0.0);
+
+        float theta = dot(lightDir, normalize(-light.direction));
+        float epsilon = light.innerCutOff - light.outerCutOff;
+        float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+
+        float distance = length(light.position - fragPos);
+        float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+
+        vec3 diffuse = light.diffuse * diff * intensity * attenuation * texture(material.diffuse, TexCoord).rgb * objectColor;
+        vec3 viewDir = normalize(viewPos - fragPos);
+        vec3 specular = bpSpecularLight(normal, lightDir, viewDir, material.shininess) *
+                        texture(material.specular, TexCoord).rgb * intensity * attenuation;
+        return diffuse + specular;
+    }
     )";
 }
 
@@ -185,6 +189,8 @@ std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
 {
     std::ostringstream shader;
     shader << versionNextensionsHeader << "\n";
+
+
     shader << shaderHeaders2D.at(type) << "\n";
 
     // Add Texture Uniforms declarations
@@ -245,11 +251,38 @@ std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
     return shader.str();
 }
 
-std::string ShaderGenerator::generateShader3D(SH_TYPE type) const
+std::string ShaderGenerator::generateShader3D(SH_TYPE type, bool ambientLightOn) const
 {
     std::ostringstream shader;
 
     shader << versionNextensionsHeader << "\n";
+    if (type == FRAGMENT) 
+    {
+        if (GLAD_GL_ARB_bindless_texture && Essentia::bindlessTexturesMode)
+        {
+            shader << R"(
+            struct Material {
+                layout(bindless_sampler) sampler2D diffuse;
+                layout(bindless_sampler) sampler2D specular;
+                layout(bindless_sampler) sampler2D normal;
+                layout(bindless_sampler) sampler2D height;
+                float shininess;
+            };
+            )";
+        }
+        else
+        {
+            shader << R"(
+            struct Material {
+                sampler2D diffuse;
+                sampler2D specular;
+                sampler2D normal;
+                sampler2D height;
+                float shininess;
+            };
+            )";
+        }
+    }
     shader << shaderHeaders3D.at(type) << "\n";
 
     // Uniforms de texturas
@@ -258,12 +291,12 @@ std::string ShaderGenerator::generateShader3D(SH_TYPE type) const
         if (GLAD_GL_ARB_bindless_texture && Essentia::bindlessTexturesMode)
         {
             for (const auto& uniform : textureUniforms)
-                shader << "layout(bindless_sampler) uniform sampler2D " << uniform << ";\n";
+                shader << "     layout(bindless_sampler) uniform sampler2D " << uniform << ";\n";
         }
         else
         {
             for (const auto& uniform : textureUniforms)
-                shader << "uniform sampler2D " << uniform << ";\n";
+                shader << "     uniform sampler2D " << uniform << ";\n";
         }
     }
 
@@ -282,64 +315,64 @@ std::string ShaderGenerator::generateShader3D(SH_TYPE type) const
         shader << R"(
         vec3 norm = normalize(Normal);
         vec3 diffuse = vec3(0.0);
-        vec3 ambient = vec3(0.0);
+        vec3 ambient = texture(material.diffuse, TexCoord).rgb;
         vec3 specular = vec3(0.0);
 
         )";
 
-        shader << R"(
-        Light sunLight = Light(
-        vec3(0.0, 0.0, 0.0), // Posición no relevante para luz direccional
-        vec3(0.0, -1.0, 0.0), // Dirección de la luz, emula el sol hacia abajo
-        0.0, // InnerCutOff no necesario para luces direccionales
-        0.0, // OuterCutOff no necesario para luces direccionales
-        vec3(0.3, 0.3, 0.3), // Luz ambiental tenue
-        vec3(1.0, 1.0, 1.0), // Luz difusa fuerte (luz del sol)
-        vec3(1.0, 1.0, 1.0), // Luz especular fuerte
-        1.0, // Constante (luz direccional no cambia con la distancia)
-        0.0, // Linear (sin caída de luz con la distancia)
-        0.0  // Quadratic (sin caída de luz con la distancia)
-        );
+        if(ambientLightOn)
+            shader << R"(
+            Light sunLight = Light(
+            vec3(0.0, 0.0, 0.0), // Posición no relevante para luz direccional
+            vec3(0.0, -1.0, 0.0), // Dirección de la luz, emula el sol hacia abajo
+            0.0, // InnerCutOff no necesario para luces direccionales
+            0.0, // OuterCutOff no necesario para luces direccionales
+            vec3(0.3, 0.3, 0.3), // Luz ambiental tenue
+            vec3(1.0, 1.0, 1.0), // Luz difusa fuerte (luz del sol)
+            vec3(1.0, 1.0, 1.0), // Luz especular fuerte
+            1.0, // Constante (luz direccional no cambia con la distancia)
+            0.0, // Linear (sin caída de luz con la distancia)
+            0.0  // Quadratic (sin caída de luz con la distancia)
+            );
 
-        ambient += sunLight.ambient;
-        diffuse += dirLight(sunLight, FragPos, norm, viewPos);
-        specular += bpSpecularLight(norm, normalize(sunLight.direction), normalize(viewPos - FragPos), 16.0);
-        )";
+            ambient *= sunLight.ambient;
+            diffuse += dirLight(sunLight, FragPos, norm, viewPos);
+            specular += bpSpecularLight(norm, normalize(sunLight.direction), normalize(viewPos - FragPos), 16.0);
+            )";
 
         if (customMainCode.at(type) != "")
         {
+            // Any change that want to be made to the final pixel must be end up being applied to "result" variable
             shader << customMainCode.at(type) << "\n";
         }
 
         shader << R"(
-        for (int i = 0; i < numLights; ++i) {
+        for (int i = 0; i < lightsNum; ++i) {
             Light light = lights[i];
 
             // Luz direccional
             if (length(light.position) == 0.0) {
                 diffuse += dirLight(light, FragPos, norm, viewPos);
-                specular += bpSpecularLight(norm, normalize(light.direction), normalize(viewPos - FragPos), 32.0);
+                ambient += light.ambient;
             }
             // Luz puntual
             else if (light.innerCutOff > 0.0) {
                 diffuse += pointLight(light, FragPos, norm, viewPos);
+                ambient += light.ambient;
             }
             // Luz focal
             else {
                 diffuse += spotLight(light, FragPos, norm, viewPos);
+                ambient += light.ambient;
             }
-        }
-
-        for (int i = 0; i < numLights; ++i) {
-            ambient += lights[i].ambient;
         }
         
         ambient = min(ambient, vec3(0.3));
 
-        vec4 res = vec4(diffuse + ambient, 1.0);
+        vec4 result = vec4(diffuse + ambient, 1.0);
         )";
 
-        if (!textureUniforms.empty())
+       /* if (!textureUniforms.empty())
         {
             if (textureUniforms.size() == 1)
             {
@@ -359,10 +392,10 @@ std::string ShaderGenerator::generateShader3D(SH_TYPE type) const
             res *= texColor;
             )";
         }
-        else shader << "res = objectColor;\n";
+        else shader << "res = objectColor;\n";*/
 
         shader << R"(
-        FragColor = res;
+        FragColor = result;
         )";
     }
     else if (type == VERTEX)

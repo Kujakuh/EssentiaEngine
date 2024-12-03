@@ -34,11 +34,14 @@ namespace Essentia
         texture = TextureManager::getTexture(texturePath, GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters, flip);
         float aspectRatio = static_cast<float>(texture->getWidth()) / static_cast<float>(texture->getHeight());
 
+        Material mat;
+        mat.diffuse = texture;
+
         Mesh _mesh(
             shader,
             getAspectRatioAdjustedVertices(aspectRatio),
             getDefaultSquareIndices(),
-            { {getTextureName(texturePath), texture} }
+            mat
         );
         mesh = std::make_shared<Mesh>(_mesh);
         shader->disable();
@@ -51,12 +54,17 @@ namespace Essentia
         texture = _texture;
         float aspectRatio = static_cast<float>(_texture->getWidth()) / static_cast<float>(_texture->getHeight());
         shader->use();
+
+        Material mat;
+        mat.diffuse = texture;
+
         Mesh _mesh(
             shader,
             getAspectRatioAdjustedVertices(aspectRatio),
             getDefaultSquareIndices(),
-            { {getTextureName(TextureManager::getTexturePath(_texture)), _texture} }
+            mat
         );
+
         mesh = std::make_shared<Mesh>(_mesh);
         shader->disable();
     }
@@ -83,9 +91,9 @@ namespace Essentia
     {
         float aspectRatio = static_cast<float>(texture->getWidth()) / static_cast<float>(texture->getHeight());
         mesh->updateVertices(getAspectRatioAdjustedVertices(aspectRatio));
-        mesh->SetTexture(getTextureName(TextureManager::getTexturePath(texture)), texture);
-        shaderGenerator.addTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
-        initializeShader();
+        mesh->material.diffuse = texture;
+        //shaderGenerator.addTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
+        //initializeShader();
     }
 
     void Sprite::addCustomShaderFunction(SH_TYPE type, const std::string& functionCode)

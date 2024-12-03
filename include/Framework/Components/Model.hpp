@@ -42,7 +42,6 @@ namespace Essentia
 
             size_t getMeshCount() const;
             const std::shared_ptr<Mesh>& getMesh(size_t index) const;
-            std::vector<std::string> getTexturePaths() const;
 
             void loadModel(const std::string& path);
 

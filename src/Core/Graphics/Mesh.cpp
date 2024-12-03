@@ -40,40 +40,71 @@ namespace Essentia
         glBindVertexArray(0);
     }
 
-    void Mesh::updateTextures()
+    void Mesh::updateMaterial()
     {
-        for (const auto& pair : textures)
+        if (!shader) {
+            throw std::runtime_error("No shader assigned to material.");
+        }
+
+        shader->setUniform("material.color", material.color);
+        shader->setUniform("material.shininess", material.shininess);
+
+        if (GLAD_GL_ARB_bindless_texture && bindlessTexturesMode) {
+            if (material.diffuse != nullptr) shader->setUniform("material.specular", material.specular->getHandle());
+            if (material.specular != nullptr) shader->setUniform("material.normal", material.normal->getHandle());
+            if (material.normal != nullptr) shader->setUniform("material.height", material.height->getHandle());
+            if (material.height != nullptr) ;shader->setUniform("material.diffuse", material.diffuse->getHandle());
+        }
+        else 
         {
-            const std::string& uniformName = pair.first;
-            std::shared_ptr<Texture> texture = pair.second;
-
-            if (GLAD_GL_ARB_bindless_texture && bindlessTexturesMode)
-                shader->setUniform(uniformName.c_str(), texture->getHandle());
-            else
+            if (material.diffuse != nullptr)
             {
-                texture->bind();
-                shader->setUniform(uniformName.c_str(), texture->getTextureUnit());
+                material.diffuse->bind();
+                shader->setUniform("material.diffuse", material.diffuse->getTextureUnit());
+                material.height->unbind();
+            }
+            if (material.specular != nullptr)
+            {
+                material.specular->bind();
+                shader->setUniform("material.specular", material.specular->getTextureUnit());
+                material.normal->unbind();
+            }
+            if (material.normal != nullptr)
+            {
+                material.normal->bind();
+                shader->setUniform("material.normal", material.normal->getTextureUnit());
+                material.specular->unbind();
+            }
+            if (material.height != nullptr)
+            {
+                material.height->bind();
+                shader->setUniform("material.height", material.height->getTextureUnit());
+                material.diffuse->unbind();
             }
         }
     }
 
-    void Mesh::bindTextures()
-    {
+    void Mesh::bindMaterial() {
         if (!GLAD_GL_ARB_bindless_texture || !bindlessTexturesMode) {
-            for (const auto& pair : textures)
-            {
-                const std::string& uniformName = pair.first;
-                std::shared_ptr<Texture> texture = pair.second;
-                texture->bind();
-            }
+            if (material.diffuse != nullptr) material.diffuse->bind();
+            if (material.specular != nullptr) material.specular->bind();
+            if (material.normal != nullptr) material.normal->bind();
+            if (material.height != nullptr) material.height->bind();
         }
     }
 
-    void Mesh::unbindTextures()
-    {
+    void Mesh::unbindMaterial() {
         if (!GLAD_GL_ARB_bindless_texture || !bindlessTexturesMode) {
-            for (const auto& pair : textures) pair.second->unbind();
+            glBindTexture(GL_TEXTURE_2D, 0);
         }
+    }
+
+    void Mesh::SetMaterial(const Material& newMaterial) {
+        material = newMaterial;
+    }
+
+    std::weak_ptr<Material> Mesh::GetMaterial() const {
+        return std::make_shared<Material>(material);
     }
 
     void Mesh::updateVertices(const std::vector<Vertex>& newVertices)
@@ -89,41 +120,16 @@ namespace Essentia
         glBindVertexArray(VAO);
 
         if (needsUpdate) {
-            updateTextures();
+            updateMaterial();
             needsUpdate = false;
         }
 
-        bindTextures();
+        bindMaterial();
 
         glDrawElements(GL_TRIANGLES, static_cast<GLuint>(indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         glActiveTexture(GL_TEXTURE0);
-        unbindTextures();
+        unbindMaterial();
     }
-
-    void Mesh::SetTexture(const std::string& name, std::shared_ptr<Texture> texture)
-    {
-        if (!texture) {
-            throw std::invalid_argument("La textura no puede ser un puntero nulo.");
-        }
-        textures[name] = texture;
-        needsUpdate = true;
-    }
-
-    std::shared_ptr<Texture> Mesh::GetTexture(const std::string& name) const 
-    {
-        auto it = textures.find(name);
-        if (it != textures.end()) {
-            return it->second;
-        }
-        throw std::out_of_range("La textura con el nombre '" + name + "' no existe.");
-    }
-
-    void Mesh::SetAllTextures(std::unordered_map<std::string, std::shared_ptr<Texture>> newTextures) 
-    { 
-        textures = newTextures;
-        needsUpdate = true;
-    }
-    const std::unordered_map<std::string, std::shared_ptr<Texture>>& Mesh::GetAllTextures() { return textures; }
 }

@@ -12,6 +12,7 @@
 #include <Core/Graphics/Texture.hpp>
 #include <Core/Graphics/Shader.hpp>
 #include <Debug/openglDebug.hpp>
+#include <Core/Graphics/Material.hpp>
 
 namespace Essentia
 {
@@ -22,28 +23,37 @@ namespace Essentia
             std::vector<GLuint> indices;
             GLuint VAO;
             std::shared_ptr<Shader> shader;
+            Material material;
 
             Mesh() = default;
-            Mesh(std::shared_ptr<Shader> sh, std::vector<Vertex> vert, std::vector<GLuint> ind, std::unordered_map<std::string, std::shared_ptr<Texture>> tex)
-                : vertices(vert), indices(ind), textures(tex), shader(sh) { setupMesh(); needsUpdate = true; }
+            Mesh(std::shared_ptr<Shader> sh, std::vector<Vertex> vert, std::vector<GLuint> ind, Material mat)
+                : vertices(vert), indices(ind), material(mat), shader(sh) { setupMesh(); needsUpdate = true; }
 
             void render();
             void initShader() const { shader->use(); }
             void disableShader() const { shader->disable(); }
             void updateVertices(const std::vector<Vertex>& newVertices);
-            void SetTexture(const std::string& name, std::shared_ptr<Texture> texture);
+
+            /*void SetTexture(const std::string& name, std::shared_ptr<Texture> texture);
             std::shared_ptr<Texture> GetTexture(const std::string& name) const;
             const std::unordered_map<std::string, std::shared_ptr<Texture>>& GetAllTextures();
-            void SetAllTextures(std::unordered_map<std::string, std::shared_ptr<Texture>> newTextures);
+            void SetAllTextures(std::unordered_map<std::string, std::shared_ptr<Texture>> newTextures);*/
+
+            void SetMaterial(const Material& newMaterial);
+            std::weak_ptr<Material> GetMaterial() const;
 
         private:
             unsigned int VBO, EBO;
-            std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
             bool needsUpdate;
 
-            void bindTextures();
+            /*void bindTextures();
             void updateTextures();
-            void unbindTextures();
+            void unbindTextures();*/
+
+            void updateMaterial();
+            void bindMaterial();
+            void unbindMaterial();
+
             void setupMesh();
     };
 }

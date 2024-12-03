@@ -3,11 +3,19 @@
 
 out vec4 FragColor;
 
-in vec3 TexCoords;
+in vec2 TexCoords;
 
-layout(bindless_sampler) uniform samplerCube skybox;
+struct Material {
+    layout(bindless_sampler) sampler2D diffuse;
+    layout(bindless_sampler) sampler2D specular;
+    layout(bindless_sampler) sampler2D normal;
+    layout(bindless_sampler) sampler2D height;
+    float shininess;
+};
+
+uniform Material material;
 
 void main()
 {    
-    FragColor = texture(skybox, TexCoords);
+    FragColor = texture(material.diffuse, TexCoords);
 }

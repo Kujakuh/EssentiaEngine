@@ -10,6 +10,7 @@
 #include <Core/Graphics/Vertex.hpp>
 #include <Core/Graphics/TextureManager.hpp>
 #include <Core/Graphics/Mesh.hpp>
+#include <Core/Graphics/Material.hpp>
 #include <Framework/Components/components.hpp>
 #include <Framework/Systems/systems.hpp>
 #include <Framework/Camera/CameraBase.hpp>
@@ -52,6 +53,7 @@ using Vertex = Essentia::Vertex;
 using Shader = Essentia::Shader;
 using TextureManager = Essentia::TextureManager;
 using Mesh = Essentia::Mesh;
+using Material = Essentia::Material;
 
 using CameraBase = Essentia::CameraBase;
 using CameraOrtho = Essentia::CameraOrtho;

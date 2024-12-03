@@ -16,19 +16,44 @@ namespace Essentia
         return meshes[index];
     }
 
-    std::vector<std::string> Model::getTexturePaths() const
+    void Model::addCustomShaderFunction(SH_TYPE type, const std::string& functionCode)
     {
-        std::vector<std::string> paths;
+        shaderGenerator.addCustomFunction(type, functionCode);
+        initializeShader();
+    }
 
-        for (const auto& mesh : meshes)
-        {
-            for (const auto& texturePair : mesh->GetAllTextures())
-            {
-                if (texturePair.second) 
-                    paths.push_back(TextureManager::getTexturePath(texturePair.second));
-            }
-        }
-        return paths;
+    void Model::addCustomShaderMainCode(SH_TYPE type, const std::string& mainCode)
+    {
+        shaderGenerator.addMainCode(type, mainCode);
+        initializeShader();
+    }
+
+    void Model::addCustomShaderFunctionFromFile(SH_TYPE type, const std::string& filePath)
+    {
+        shaderGenerator.addCustomFunctionFromFile(type, filePath);
+        initializeShader();
+    }
+
+    void Model::addCustomShaderMainCodeFromFile(SH_TYPE type, const std::string& filePath)
+    {
+        shaderGenerator.addMainCodeFromFile(type, filePath);
+        initializeShader();
+    }
+
+    void Model::setShader(std::shared_ptr<Shader> _shader)
+    {
+        shader = _shader;
+        for (auto& mesh : meshes) mesh->shader = shader;
+    }
+    std::shared_ptr<Shader> Model::getShader() const { return shader; }
+
+    void Model::initializeShader()
+    {
+        std::string vertexCode = shaderGenerator.generateShader3D(SH_TYPE::VERTEX);
+        std::string fragmentCode = shaderGenerator.generateShader3D(SH_TYPE::FRAGMENT);
+
+        if (shader) shader->recompileProgram(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA);
+        else setShader(std::make_shared<Shader>(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA));
     }
 
     void Model::loadModel(const std::string& path)
@@ -74,45 +99,5 @@ namespace Essentia
             std::shared_ptr<Texture> tx = TextureManager::getTexture(file, GL_TEXTURE_2D, typeName, Essentia::defaultFilters3D);
         }
         return textures;
-    }
-
-    void Model::addCustomShaderFunction(SH_TYPE type, const std::string& functionCode)
-    {
-        shaderGenerator.addCustomFunction(type, functionCode);
-        initializeShader();
-    }
-
-    void Model::addCustomShaderMainCode(SH_TYPE type, const std::string& mainCode)
-    {
-        shaderGenerator.addMainCode(type, mainCode);
-        initializeShader();
-    }
-
-    void Model::addCustomShaderFunctionFromFile(SH_TYPE type, const std::string& filePath)
-    {
-        shaderGenerator.addCustomFunctionFromFile(type, filePath);
-        initializeShader();
-    }
-
-    void Model::addCustomShaderMainCodeFromFile(SH_TYPE type, const std::string& filePath)
-    {
-        shaderGenerator.addMainCodeFromFile(type, filePath);
-        initializeShader();
-    }
-
-    void Model::setShader(std::shared_ptr<Shader> _shader)
-    {
-        shader = _shader;
-        for (auto& mesh : meshes) mesh->shader = shader;
-    }
-    std::shared_ptr<Shader> Model::getShader() const { return shader; }
-
-    void Model::initializeShader()
-    {
-        std::string vertexCode = shaderGenerator.generateShader3D(SH_TYPE::VERTEX);
-        std::string fragmentCode = shaderGenerator.generateShader3D(SH_TYPE::FRAGMENT);
-
-        if (shader) shader->recompileProgram(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA);
-        else setShader(std::make_shared<Shader>(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA));
     }
 }
