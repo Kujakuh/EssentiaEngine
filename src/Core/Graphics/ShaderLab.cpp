@@ -1,6 +1,6 @@
 #include <Core/Graphics/ShaderGen.hpp>
 
-ShaderGenerator::ShaderGenerator()
+ShaderLab::ShaderLab()
 {
     if (GLAD_GL_ARB_bindless_texture && Essentia::bindlessTexturesMode)
     {
@@ -158,33 +158,33 @@ ShaderGenerator::ShaderGenerator()
     )";
 }
 
-void ShaderGenerator::addTextureUniform(const std::string& textureFileName) 
+void ShaderLab::addTextureUniform(const std::string& textureFileName) 
 {
     textureUniforms.push_back(textureFileName);
 }
-void ShaderGenerator::removeTextureUniform(const std::string& textureUniformName)
+void ShaderLab::removeTextureUniform(const std::string& textureUniformName)
 {
     auto it = std::find(textureUniforms.begin(), textureUniforms.end(), textureUniformName);
     if (it != textureUniforms.end()) textureUniforms.erase(it);
 }
-void ShaderGenerator::addCustomFunction(SH_TYPE type, const std::string& functionCode)
+void ShaderLab::addCustomFunction(SH_TYPE type, const std::string& functionCode)
 {
     customFunctions[type].push_back(functionCode);
 }
-void ShaderGenerator::addCustomFunctionFromFile(SH_TYPE type, const std::string& filePath)
+void ShaderLab::addCustomFunctionFromFile(SH_TYPE type, const std::string& filePath)
 {
     customFunctions[type].push_back(loadFromFile(filePath));
 }
-void ShaderGenerator::addMainCode(SH_TYPE type, const std::string& mainCode)
+void ShaderLab::addMainCode(SH_TYPE type, const std::string& mainCode)
 {
     customMainCode[type] += mainCode + "\n";
 }
-void ShaderGenerator::addMainCodeFromFile(SH_TYPE type, const std::string& filePath)
+void ShaderLab::addMainCodeFromFile(SH_TYPE type, const std::string& filePath)
 {
     customMainCode[type] += loadFromFile(filePath) + "\n";
 }
 
-std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
+std::string ShaderLab::generateShader2D(SH_TYPE type) const
 {
     std::ostringstream shader;
     shader << versionNextensionsHeader << "\n";
@@ -264,7 +264,7 @@ std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
     return shader.str();
 }
 
-std::string ShaderGenerator::generateShader3D(SH_TYPE type, bool ambientLightOn) const
+std::string ShaderLab::generateShader3D(SH_TYPE type, bool ambientLightOn) const
 {
     std::ostringstream shader;
 
@@ -315,7 +315,6 @@ std::string ShaderGenerator::generateShader3D(SH_TYPE type, bool ambientLightOn)
         }
     }
 
-    // Funciones personalizadas
     for (const auto& function : customFunctions.at(type))
     {
         shader << function << "\n";
@@ -355,12 +354,6 @@ std::string ShaderGenerator::generateShader3D(SH_TYPE type, bool ambientLightOn)
             specular += bpSpecularLight(norm, normalize(sunLight.direction), normalize(viewPos - FragPos), 16.0);
             )";
 
-        if (customMainCode.at(type) != "")
-        {
-            // Any change that want to be made to the final pixel must be end up being applied to "result" variable
-            shader << customMainCode.at(type) << "\n";
-        }
-
         shader << R"(
         for (int i = 0; i < lightsNum; ++i) {
             Light light = lights[i];
@@ -387,27 +380,11 @@ std::string ShaderGenerator::generateShader3D(SH_TYPE type, bool ambientLightOn)
         vec4 result = vec4(diffuse + ambient, 1.0);
         )";
 
-       /* if (!textureUniforms.empty())
+        if (customMainCode.at(type) != "")
         {
-            if (textureUniforms.size() == 1)
-            {
-                shader << R"(vec4 texColor = texture()" << textureUniforms[0] << ", TexCoord);\n";
-            }
-            else
-            {
-                shader << R"(vec4 texColor = vec4(1.0);
-                )";
-                for (const auto& uniform : textureUniforms)
-                {
-                    shader << "texColor *= texture(" << uniform << ", TexCoord);\n";
-                }
-            }
-
-            shader << R"(
-            res *= texColor;
-            )";
+            // Any change that want to be made to the final pixel must be end up being applied to "result" variable
+            shader << customMainCode.at(type) << "\n";
         }
-        else shader << "res = material.color;\n";*/
 
         shader << R"(
         FragColor = result;
@@ -444,7 +421,7 @@ std::string ShaderGenerator::generateShader3D(SH_TYPE type, bool ambientLightOn)
 }
 
 
-std::string ShaderGenerator::loadFromFile(const std::string& filePath)
+std::string ShaderLab::loadFromFile(const std::string& filePath)
 {
     std::ifstream file(filePath);
 

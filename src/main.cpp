@@ -154,12 +154,12 @@ int main(void)
 	//Camera2D camera("Camera", scene, 90.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
 	scene->RegisterSystems(Essentia::Renderer2D(&camera));
 
-	ShaderGenerator f;
+	ShaderLab f;
 	Shader s(f.generateShader3D(VERTEX).c_str(), f.generateShader3D(FRAGMENT).c_str(), DATA_SOURCE::STR_DATA);
 	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
 
 	s.use();
-	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
+	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters3D);
 	Material mat1; mat1.diffuse = gg;
 	Mesh mesh(
 		std::make_shared<Shader>(s),

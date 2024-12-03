@@ -21,7 +21,7 @@ namespace Essentia
     {
         private:
             std::shared_ptr<Shader> shader;
-            ShaderGenerator shaderGenerator;
+            ShaderLab shaderLab;
 
             std::vector<Vertex> getAspectRatioAdjustedVertices(float aspectRatio);
             std::vector<GLuint> getDefaultSquareIndices();

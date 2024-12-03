@@ -24,7 +24,7 @@ namespace Essentia
         private:
             std::string dir;
             std::shared_ptr<Shader> shader;
-            ShaderGenerator shaderGenerator;
+            ShaderLab shaderLab;
 
             void initializeShader();
 

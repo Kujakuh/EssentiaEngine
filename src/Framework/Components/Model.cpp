@@ -18,25 +18,25 @@ namespace Essentia
 
     void Model::addCustomShaderFunction(SH_TYPE type, const std::string& functionCode)
     {
-        shaderGenerator.addCustomFunction(type, functionCode);
+        shaderLab.addCustomFunction(type, functionCode);
         initializeShader();
     }
 
     void Model::addCustomShaderMainCode(SH_TYPE type, const std::string& mainCode)
     {
-        shaderGenerator.addMainCode(type, mainCode);
+        shaderLab.addMainCode(type, mainCode);
         initializeShader();
     }
 
     void Model::addCustomShaderFunctionFromFile(SH_TYPE type, const std::string& filePath)
     {
-        shaderGenerator.addCustomFunctionFromFile(type, filePath);
+        shaderLab.addCustomFunctionFromFile(type, filePath);
         initializeShader();
     }
 
     void Model::addCustomShaderMainCodeFromFile(SH_TYPE type, const std::string& filePath)
     {
-        shaderGenerator.addMainCodeFromFile(type, filePath);
+        shaderLab.addMainCodeFromFile(type, filePath);
         initializeShader();
     }
 
@@ -49,8 +49,8 @@ namespace Essentia
 
     void Model::initializeShader()
     {
-        std::string vertexCode = shaderGenerator.generateShader3D(SH_TYPE::VERTEX);
-        std::string fragmentCode = shaderGenerator.generateShader3D(SH_TYPE::FRAGMENT);
+        std::string vertexCode = shaderLab.generateShader3D(SH_TYPE::VERTEX);
+        std::string fragmentCode = shaderLab.generateShader3D(SH_TYPE::FRAGMENT);
 
         if (shader) shader->recompileProgram(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA);
         else setShader(std::make_shared<Shader>(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA));

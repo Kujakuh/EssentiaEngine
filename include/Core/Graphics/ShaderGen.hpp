@@ -13,7 +13,7 @@
 #include <Shared/enums.hpp>
 #include <Shared/user_values.hpp>
 
-class ShaderGenerator
+class ShaderLab
 {
     private:
         std::string versionNextensionsHeader;
@@ -26,7 +26,7 @@ class ShaderGenerator
         std::string loadFromFile(const std::string& filePath);
 
     public:
-        ShaderGenerator();
+        ShaderLab();
 
         void addTextureUniform(const std::string& textureFileName);
         void removeTextureUniform(const std::string& textureUniformName);
