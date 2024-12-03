@@ -18,6 +18,7 @@ class ShaderGenerator
     private:
         std::string versionNextensionsHeader;
         std::unordered_map<SH_TYPE, std::string> shaderHeaders2D;
+        std::unordered_map<SH_TYPE, std::string> shaderHeaders3D;
         std::unordered_map<SH_TYPE, std::vector<std::string>> customFunctions;
         std::unordered_map<SH_TYPE, std::string> customMainCode;
         std::vector<std::string> textureUniforms;
@@ -37,6 +38,7 @@ class ShaderGenerator
         void addMainCodeFromFile(SH_TYPE type, const std::string& filePath);
 
         std::string generateShader2D(SH_TYPE type) const;
+        std::string generateShader3D(SH_TYPE type) const;
 };
 
 #endif // !SHADER_GEN_H

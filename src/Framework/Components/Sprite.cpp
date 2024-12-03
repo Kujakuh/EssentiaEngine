@@ -21,12 +21,9 @@ namespace Essentia
     {
         std::string vertexCode = shaderGenerator.generateShader2D(SH_TYPE::VERTEX);
         std::string fragmentCode = shaderGenerator.generateShader2D(SH_TYPE::FRAGMENT);
-        if (shader)
-        {
-            shader->recompileProgram(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA);
-        }
+
+        if (shader) shader->recompileProgram(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA);
         else shader = std::make_shared<Shader>(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA);
-        
     }
 
     Sprite::Sprite(const std::string& texturePath, bool flip)
@@ -89,35 +86,30 @@ namespace Essentia
         mesh->SetTexture(getTextureName(TextureManager::getTexturePath(texture)), texture);
         shaderGenerator.addTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
         initializeShader();
-        mesh->shader = shader;
     }
 
     void Sprite::addCustomShaderFunction(SH_TYPE type, const std::string& functionCode)
     {
         shaderGenerator.addCustomFunction(type, functionCode);
         initializeShader();
-        mesh->shader = shader;
     }
 
     void Sprite::addCustomShaderMainCode(SH_TYPE type, const std::string& mainCode)
     {
         shaderGenerator.addMainCode(type, mainCode);
         initializeShader();
-        mesh->shader = shader;
     }
 
     void Sprite::addCustomShaderFunctionFromFile(SH_TYPE type, const std::string& filePath)
     {
         shaderGenerator.addCustomFunctionFromFile(type, filePath);
         initializeShader();
-        mesh->shader = shader;
     }
 
     void Sprite::addCustomShaderMainCodeFromFile(SH_TYPE type, const std::string& filePath)
     {
         shaderGenerator.addMainCodeFromFile(type, filePath);
         initializeShader();
-        mesh->shader = shader;
     }
 
     void Sprite::setShader(std::shared_ptr<Shader> _shader)

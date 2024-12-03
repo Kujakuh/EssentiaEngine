@@ -149,7 +149,10 @@ int main(void)
 			RESOURCES_PATH "Textures/back.jpg"
 	};
 
-	Shader s(RESOURCES_PATH "Shaders/vertex.vert", RESOURCES_PATH "Shaders/fragment.frag", FILE_PATH);
+	ShaderGenerator f;
+	f.addTextureUniform("container");
+	//f.addTextureUniform("face");
+	Shader s(f.generateShader3D(VERTEX).c_str(), f.generateShader3D(FRAGMENT).c_str(), DATA_SOURCE::STR_DATA);
 	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
 
 	s.use();
@@ -192,8 +195,8 @@ int main(void)
 	mesh.disableShader();
 
 	camera.sensitivity = 0.05f;
-	ref->setScale(Vector3(5, 5, 1));
 	ref->setPosition().x -= 3;
+	ref->setScale(Vector3(5, 2, 2));
 	ref->updateMatrix();
 
 	entity6->AddComponent<Sprite>(RESOURCES_PATH "Textures/mario.png");
@@ -208,6 +211,7 @@ int main(void)
 
 	bool wireframeMode = false;
 	dir direction = down;
+
 	while ( !glfwWindowShouldClose(window) )
 	{
 		InputManager::GetActiveInstance()->Update();
@@ -232,6 +236,7 @@ int main(void)
 		mesh.initShader();
 		mesh.shader->setUniform("model", ref->getModelMatrix());
 		mesh.shader->setUniform("view", camera.getViewMatrix());
+		mesh.shader->setUniform("viewPos", camera.getPosition());
 		mesh.shader->setUniform("time", (float) glfwGetTime());
 		mesh.render();
 		mesh.disableShader();
