@@ -28,7 +28,6 @@ namespace Essentia
 
     Sprite::Sprite(const std::string& texturePath, bool flip)
     {
-        shaderGenerator.addTextureUniform(getTextureName(texturePath));
         initializeShader();
         shader->use();
         texture = TextureManager::getTexture(texturePath, GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters, flip);
@@ -49,7 +48,6 @@ namespace Essentia
 
     Sprite::Sprite(std::shared_ptr<Texture> _texture)
     {
-        shaderGenerator.addTextureUniform(getTextureName(TextureManager::getTexturePath(_texture)));
         initializeShader();
         texture = _texture;
         float aspectRatio = static_cast<float>(_texture->getWidth()) / static_cast<float>(_texture->getHeight());
@@ -71,7 +69,6 @@ namespace Essentia
 
     void Sprite::setTexture(const std::string& texturePath, bool flip)
     {
-        shaderGenerator.removeTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
         shader->use();
         texture = TextureManager::getTexture(texturePath, GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters, flip);
         shader->disable();
@@ -80,7 +77,6 @@ namespace Essentia
 
     void Sprite::setTexture(std::shared_ptr<Texture> _texture)
     {
-        shaderGenerator.removeTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
         shader->use();
         texture = TextureManager::getTexture(TextureManager::getTexturePath(_texture), GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
         shader->disable();
@@ -91,9 +87,7 @@ namespace Essentia
     {
         float aspectRatio = static_cast<float>(texture->getWidth()) / static_cast<float>(texture->getHeight());
         mesh->updateVertices(getAspectRatioAdjustedVertices(aspectRatio));
-        mesh->material.diffuse = texture;
-        //shaderGenerator.addTextureUniform(getTextureName(TextureManager::getTexturePath(texture)));
-        //initializeShader();
+        mesh->setDiffuse(texture);
     }
 
     void Sprite::addCustomShaderFunction(SH_TYPE type, const std::string& functionCode)

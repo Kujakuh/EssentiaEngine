@@ -149,15 +149,17 @@ int main(void)
 			RESOURCES_PATH "Textures/back.jpg"
 	};
 
+	CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
+	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);
+	//Camera2D camera("Camera", scene, 90.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
+	scene->RegisterSystems(Essentia::Renderer2D(&camera));
+
 	ShaderGenerator f;
-	f.addTextureUniform("container");
-	//f.addTextureUniform("face");
 	Shader s(f.generateShader3D(VERTEX).c_str(), f.generateShader3D(FRAGMENT).c_str(), DATA_SOURCE::STR_DATA);
 	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
 
-	/*s.use();
+	s.use();
 	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
-	s.setUniform("material.diffuse", gg->getHandle());
 	Material mat1; mat1.diffuse = gg;
 	Mesh mesh(
 		std::make_shared<Shader>(s),
@@ -165,6 +167,7 @@ int main(void)
 		Essentia::cubeIndices,
 		mat1
 	);
+	mesh.shader->setUniform("projection", camera.getProjectionMatrix());
 	s.disable();
 
 	cube.use();
@@ -176,20 +179,8 @@ int main(void)
 		Essentia::cubeIndices,
 		mat2
 	);
-	cube.disable();*/
-
-	CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
-	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);
-	//Camera2D camera("Camera", scene, 90.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
-	scene->RegisterSystems(Essentia::Renderer2D(&camera));
-
-	/*cubemap.initShader();
 	cubemap.shader->setUniform("projection", camera.getProjectionMatrix());
-	cubemap.disableShader();
-
-	mesh.initShader();
-	mesh.shader->setUniform("projection", camera.getProjectionMatrix());
-	mesh.disableShader();*/
+	cube.disable();
 
 	camera.sensitivity = 0.05f;
 	ref->setPosition().x -= 3;
@@ -197,10 +188,6 @@ int main(void)
 	ref->updateMatrix();
 
 	entity6->AddComponent<Sprite>(RESOURCES_PATH "Textures/mario.png");
-
-	//entity6->GetComponent<Sprite>()->addCustomShaderMainCode(FRAGMENT, "vec4 gear = vec4(2,4,1,3);");
-	//entity6->GetComponent<Sprite>()->addCustomShaderMainCodeFromFile(FRAGMENT, RESOURCES_PATH "Shaders/test.glsl");
-	//entity6->GetComponent<Sprite>()->addCustomShaderMainCode(FRAGMENT, "FragColor = vec4(1,0.2,0.5,0.6);");
 
 	entity6->GetComponent<Transform>()->setScale().x = 3;
 	entity6->GetComponent<Transform>()->setScale().y = 3;
@@ -223,7 +210,7 @@ int main(void)
 		}
 		if(InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		/*glDepthFunc(GL_LEQUAL);
+		glDepthFunc(GL_LEQUAL);
 		cubemap.initShader();
 		cubemap.shader->setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
 		cubemap.render();
@@ -234,9 +221,8 @@ int main(void)
 		mesh.shader->setUniform("model", ref->getModelMatrix());
 		mesh.shader->setUniform("view", camera.getViewMatrix());
 		mesh.shader->setUniform("viewPos", camera.getPosition());
-		mesh.shader->setUniform("time", (float) glfwGetTime());
 		mesh.render();
-		mesh.disableShader();*/
+		mesh.disableShader();
 
 		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity;
 		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity;

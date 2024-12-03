@@ -50,10 +50,10 @@ namespace Essentia
         shader->setUniform("material.shininess", material.shininess);
 
         if (GLAD_GL_ARB_bindless_texture && bindlessTexturesMode) {
-            if (material.diffuse != nullptr) shader->setUniform("material.specular", material.specular->getHandle());
-            if (material.specular != nullptr) shader->setUniform("material.normal", material.normal->getHandle());
-            if (material.normal != nullptr) shader->setUniform("material.height", material.height->getHandle());
-            if (material.height != nullptr) ;shader->setUniform("material.diffuse", material.diffuse->getHandle());
+            if (material.diffuse != nullptr) shader->setUniform("material.diffuse", material.diffuse->getHandle());
+            if (material.specular != nullptr) shader->setUniform("material.specular", material.specular->getHandle());
+            if (material.normal != nullptr)  shader->setUniform("material.normal", material.normal->getHandle());
+            if (material.height != nullptr) shader->setUniform("material.height", material.height->getHandle());
         }
         else 
         {
@@ -102,6 +102,11 @@ namespace Essentia
     void Mesh::SetMaterial(const Material& newMaterial) {
         material = newMaterial;
     }
+
+    void Mesh::setDiffuse(std::shared_ptr<Texture> tex) { material.diffuse = tex; needsUpdate = true; }
+    void Mesh::setSpecular(std::shared_ptr<Texture> tex) { material.specular = tex; needsUpdate = true; }
+    void Mesh::setNormal(std::shared_ptr<Texture> tex) { material.normal = tex; needsUpdate = true; }
+    void Mesh::setHeight(std::shared_ptr<Texture> tex) { material.height = tex; needsUpdate = true; }
 
     std::weak_ptr<Material> Mesh::GetMaterial() const {
         return std::make_shared<Material>(material);

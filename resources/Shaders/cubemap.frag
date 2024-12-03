@@ -3,13 +3,13 @@
 
 out vec4 FragColor;
 
-in vec2 TexCoords;
+in vec3 TexCoords;
 
 struct Material {
-    layout(bindless_sampler) sampler2D diffuse;
-    layout(bindless_sampler) sampler2D specular;
-    layout(bindless_sampler) sampler2D normal;
-    layout(bindless_sampler) sampler2D height;
+    layout(bindless_sampler) samplerCube diffuse;
+    layout(bindless_sampler) samplerCube specular;
+    layout(bindless_sampler) samplerCube normal;
+    layout(bindless_sampler) samplerCube height;
     float shininess;
 };
 

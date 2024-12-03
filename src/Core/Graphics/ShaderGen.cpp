@@ -49,6 +49,7 @@ ShaderGenerator::ShaderGenerator()
     in vec2 TexCoord;
 
     out vec4 FragColor;
+    uniform Material material;
     )";
 
     // Header para geometry shader (si se necesita)
@@ -88,8 +89,8 @@ ShaderGenerator::ShaderGenerator()
 
     out vec4 FragColor;
 
+    uniform Material material;
     uniform vec3 viewPos = vec3(0.0, 0.0, 0.0);
-    uniform vec3 objectColor = vec3(1.0, 1.0, 1.0);
 
     struct Light {
         vec3 position;
@@ -109,8 +110,6 @@ ShaderGenerator::ShaderGenerator()
     uniform Light lights[10];
     uniform int lightsNum = 0;
 
-    uniform Material material;
-
     vec3 bpSpecularLight(vec3 normal, vec3 lightDir, vec3 viewDir, float shininess)
     {
         vec3 halfwayDir = normalize(lightDir + viewDir); // Halfway vector
@@ -121,7 +120,7 @@ ShaderGenerator::ShaderGenerator()
     vec3 dirLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos) {
         vec3 lightDir = normalize(-light.direction);
         float diff = max(dot(normal, lightDir), 0.0);
-        vec3 diffuse = light.diffuse * diff * texture(material.diffuse, TexCoord).rgb * objectColor;
+        vec3 diffuse = light.diffuse * diff * texture(material.diffuse, TexCoord).rgb * material.color;
         return diffuse;
     }
 
@@ -132,7 +131,7 @@ ShaderGenerator::ShaderGenerator()
         float distance = length(light.position - fragPos);
         float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-        vec3 diffuse = light.diffuse * diff * attenuation * texture(material.diffuse, TexCoord).rgb * objectColor;
+        vec3 diffuse = light.diffuse * diff * attenuation * texture(material.diffuse, TexCoord).rgb * material.color;
         vec3 viewDir = normalize(viewPos - fragPos);
         vec3 specular = bpSpecularLight(normal, lightDir, viewDir, material.shininess) *
                         texture(material.specular, TexCoord).rgb * attenuation;
@@ -150,7 +149,7 @@ ShaderGenerator::ShaderGenerator()
         float distance = length(light.position - fragPos);
         float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-        vec3 diffuse = light.diffuse * diff * intensity * attenuation * texture(material.diffuse, TexCoord).rgb * objectColor;
+        vec3 diffuse = light.diffuse * diff * intensity * attenuation * texture(material.diffuse, TexCoord).rgb * material.color;
         vec3 viewDir = normalize(viewPos - fragPos);
         vec3 specular = bpSpecularLight(normal, lightDir, viewDir, material.shininess) *
                         texture(material.specular, TexCoord).rgb * intensity * attenuation;
@@ -189,8 +188,35 @@ std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
 {
     std::ostringstream shader;
     shader << versionNextensionsHeader << "\n";
-
-
+    if (type == FRAGMENT)
+    {
+        if (GLAD_GL_ARB_bindless_texture && Essentia::bindlessTexturesMode)
+        {
+            shader << R"(
+            struct Material {
+                layout(bindless_sampler) sampler2D diffuse;
+                layout(bindless_sampler) sampler2D specular;
+                layout(bindless_sampler) sampler2D normal;
+                layout(bindless_sampler) sampler2D height;
+                float shininess;
+                vec3 color;
+            };
+            )";
+        }
+        else
+        {
+            shader << R"(
+            struct Material {
+                sampler2D diffuse;
+                sampler2D specular;
+                sampler2D normal;
+                sampler2D height;
+                float shininess;
+                vec3 color;
+            };
+            )";
+        }
+    }
     shader << shaderHeaders2D.at(type) << "\n";
 
     // Add Texture Uniforms declarations
@@ -205,16 +231,7 @@ std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
     }
 
     // Add pre-main content (custom functions and others)
-    if (customFunctions.at(type).empty())
-    {
-        if (type == FRAGMENT)
-            shader << R"(
-            vec4 defaultBlend(sampler2D tex, vec2 uv) {
-                return texture(tex, uv);
-            }
-            )";
-    }
-    else 
+    if (!customFunctions.at(type).empty())
     {
         for (const auto& function : customFunctions.at(type))
             shader << function << "\n";
@@ -225,13 +242,9 @@ std::string ShaderGenerator::generateShader2D(SH_TYPE type) const
     )";
 
     if (customMainCode.at(type).empty()) {
-        if (type == FRAGMENT && !textureUniforms.empty())
+        if (type == FRAGMENT)
         {
-            shader << "    FragColor = texture(" << textureUniforms[0] << ", TexCoord);\n";
-        }
-        else if (type == FRAGMENT)
-        {
-            shader << "    FragColor = vec4(1.0);\n";
+            shader << "    FragColor = texture(material.diffuse, TexCoord);\n";
         }
         else if (type == VERTEX)
         {
@@ -267,6 +280,7 @@ std::string ShaderGenerator::generateShader3D(SH_TYPE type, bool ambientLightOn)
                 layout(bindless_sampler) sampler2D normal;
                 layout(bindless_sampler) sampler2D height;
                 float shininess;
+                vec3 color;
             };
             )";
         }
@@ -279,6 +293,7 @@ std::string ShaderGenerator::generateShader3D(SH_TYPE type, bool ambientLightOn)
                 sampler2D normal;
                 sampler2D height;
                 float shininess;
+                vec3 color;
             };
             )";
         }
@@ -392,7 +407,7 @@ std::string ShaderGenerator::generateShader3D(SH_TYPE type, bool ambientLightOn)
             res *= texColor;
             )";
         }
-        else shader << "res = objectColor;\n";*/
+        else shader << "res = material.color;\n";*/
 
         shader << R"(
         FragColor = result;

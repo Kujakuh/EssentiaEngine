@@ -11,7 +11,6 @@
 #include <Core/Graphics/Vertex.hpp>
 #include <Core/Graphics/Texture.hpp>
 #include <Core/Graphics/Shader.hpp>
-#include <Debug/openglDebug.hpp>
 #include <Core/Graphics/Material.hpp>
 
 namespace Essentia
@@ -22,8 +21,9 @@ namespace Essentia
             std::vector<Vertex> vertices;
             std::vector<GLuint> indices;
             GLuint VAO;
-            std::shared_ptr<Shader> shader;
+
             Material material;
+            std::shared_ptr<Shader> shader;
 
             Mesh() = default;
             Mesh(std::shared_ptr<Shader> sh, std::vector<Vertex> vert, std::vector<GLuint> ind, Material mat)
@@ -34,21 +34,17 @@ namespace Essentia
             void disableShader() const { shader->disable(); }
             void updateVertices(const std::vector<Vertex>& newVertices);
 
-            /*void SetTexture(const std::string& name, std::shared_ptr<Texture> texture);
-            std::shared_ptr<Texture> GetTexture(const std::string& name) const;
-            const std::unordered_map<std::string, std::shared_ptr<Texture>>& GetAllTextures();
-            void SetAllTextures(std::unordered_map<std::string, std::shared_ptr<Texture>> newTextures);*/
-
             void SetMaterial(const Material& newMaterial);
             std::weak_ptr<Material> GetMaterial() const;
+
+            void setDiffuse(std::shared_ptr<Texture> tex);
+            void setSpecular(std::shared_ptr<Texture> tex);
+            void setNormal(std::shared_ptr<Texture> tex);
+            void setHeight(std::shared_ptr<Texture> tex);
 
         private:
             unsigned int VBO, EBO;
             bool needsUpdate;
-
-            /*void bindTextures();
-            void updateTextures();
-            void unbindTextures();*/
 
             void updateMaterial();
             void bindMaterial();
