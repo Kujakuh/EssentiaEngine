@@ -128,8 +128,10 @@ namespace Essentia
     {
         glBindVertexArray(VAO);
 
-        bindMaterial();
-
+        if (needsUpdate) {
+            bindMaterial();
+            needsUpdate = false;
+        }
         updateMaterial();
 
         glDrawElements(GL_TRIANGLES, static_cast<GLuint>(indices.size()), GL_UNSIGNED_INT, 0);
