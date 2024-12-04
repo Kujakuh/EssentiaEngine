@@ -4,4 +4,5 @@ build/
 .vscode/
 /.vs
 .idea/
+/resources/Models/debug
 CMakeSettings.json

@@ -28,15 +28,15 @@ namespace Essentia
 
             void initializeShader();
 
-            void processNode(aiNode* node, const aiScene* scene);
-            Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+            void processNode(aiNode* node, const aiScene* scene, bool inverseUvY);
+            Mesh processMesh(aiMesh* mesh, const aiScene* scene, bool inverseUvY);
             std::vector<Essentia::Material> loadMaterials(aiMaterial* mat);
             std::vector<std::shared_ptr<Texture>> loadMaterialsTextures(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName);
 
         public:
             std::vector<std::shared_ptr<Mesh>> meshes;
 
-            Model(const std::string& path);
+            Model(const std::string& path, bool inverseUvY = true);
             Model(const std::vector<std::shared_ptr<Mesh>>& initialMeshes);
 
             void addMesh(const std::shared_ptr<Mesh>& mesh);
@@ -44,7 +44,7 @@ namespace Essentia
             size_t getMeshCount() const;
             const std::shared_ptr<Mesh>& getMesh(size_t index) const;
 
-            void loadModel(const std::string& path);
+            void loadModel(const std::string& path, bool inverseUvY = true);
 
             void addCustomShaderFunction(SH_TYPE type, const std::string& functionCode);
             void addCustomShaderMainCode(SH_TYPE type, const std::string& mainCode);

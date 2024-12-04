@@ -5,9 +5,9 @@ namespace Essentia
     Model::Model(const std::vector<std::shared_ptr<Mesh>>& initialMeshes) : meshes(initialMeshes) 
     { initializeShader(); }
 
-    Model::Model(const std::string& path) 
+    Model::Model(const std::string& path, bool inverseUvY)
     { 
-        loadModel(path);
+        loadModel(path, inverseUvY);
         initializeShader();
     }
 
@@ -62,7 +62,7 @@ namespace Essentia
         else setShader(std::make_shared<Shader>(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA));
     }
 
-    void Model::loadModel(const std::string& path)
+    void Model::loadModel(const std::string& path, bool inverseUvY)
     {
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
@@ -73,22 +73,22 @@ namespace Essentia
             return;
         }
         dir = path.substr(0, path.find_last_of('/'));
-        processNode(scene->mRootNode, scene);
+        processNode(scene->mRootNode, scene, inverseUvY);
     }
 
 
-    void Model::processNode(aiNode* node, const aiScene* scene)
+    void Model::processNode(aiNode* node, const aiScene* scene, bool inverseUvY)
     {
         for (unsigned int i = 0; i < node->mNumMeshes; i++)
         {
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-            meshes.push_back(std::make_shared<Mesh>(processMesh(mesh, scene)));
+            meshes.push_back(std::make_shared<Mesh>(processMesh(mesh, scene, inverseUvY)));
         }
         for (unsigned int i = 0; i < node->mNumChildren; i++)
-            processNode(node->mChildren[i], scene);
+            processNode(node->mChildren[i], scene, inverseUvY);
     }
 
-    Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
+    Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene, bool inverseUvY)
     {
         std::vector<Vertex> vertices;
         std::vector<GLuint> indices;
@@ -105,7 +105,8 @@ namespace Essentia
             }
 
             if (mesh->mTextureCoords[0]) {
-                texCoords = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
+                if(inverseUvY) texCoords = glm::vec2(mesh->mTextureCoords[0][i].x, 1.0f - mesh->mTextureCoords[0][i].y);
+                else texCoords = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
                 tangent = glm::vec3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z);
                 bitangent = glm::vec3(mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z);
             }

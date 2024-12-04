@@ -196,14 +196,15 @@ int main(void)
 	bool wireframeMode = false;
 	dir direction = down;
 
-	Model model(RESOURCES_PATH "Models/backpack/backpack.obj");
+	Model model(RESOURCES_PATH "Models/backpack/backpack.obj", false);
 	model.getShader()->use();
 	model.getShader()->setUniform("projection", camera.getProjectionMatrix());
 	model.getShader()->disable();
 
 	entity4->GetComponent<Transform>()->setPosition().x += 5;
-	entity4->GetComponent<Transform>()->setPosition().z += 14;
-	entity4->GetComponent<Transform>()->setScale(Vector3(0.1f));
+	entity4->GetComponent<Transform>()->setPosition().z -= 12;
+	entity4->GetComponent<Transform>()->setScale(Vector3(3.0f));
+	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 	entity4->GetComponent<Transform>()->updateMatrix();
 
 	while ( !glfwWindowShouldClose(window) )
