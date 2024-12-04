@@ -388,6 +388,8 @@ std::string ShaderLab::generateShader3D(SH_TYPE type, bool ambientLightOn) const
 
         shader << R"(
         FragColor = result;
+        //FragColor = vec4(TexCoord, 0.0, 1.0);
+        //FragColor = vec4(norm *0.5 + 0.5, 1.0);
         )";
     }
     else if (type == VERTEX)

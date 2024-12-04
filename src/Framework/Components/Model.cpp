@@ -5,6 +5,12 @@ namespace Essentia
     Model::Model(const std::vector<std::shared_ptr<Mesh>>& initialMeshes) : meshes(initialMeshes) 
     { initializeShader(); }
 
+    Model::Model(const std::string& path) 
+    { 
+        loadModel(path);
+        initializeShader();
+    }
+
     void Model::addMesh(const std::shared_ptr<Mesh>& mesh) { meshes.push_back(mesh); }
 
     size_t Model::getMeshCount() const { return meshes.size(); }
@@ -76,27 +82,93 @@ namespace Essentia
         for (unsigned int i = 0; i < node->mNumMeshes; i++)
         {
             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-            //meshes.push_back(std::make_shared<Mesh>(processMesh(mesh, scene)));
+            meshes.push_back(std::make_shared<Mesh>(processMesh(mesh, scene)));
         }
         for (unsigned int i = 0; i < node->mNumChildren; i++)
             processNode(node->mChildren[i], scene);
     }
 
-    Mesh processMesh(aiMesh* mesh, const aiScene* scene)
+    Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     {
-        return Mesh();
+        std::vector<Vertex> vertices;
+        std::vector<GLuint> indices;
+        std::vector<Material> materials;
+
+        for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
+            glm::vec3 position(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+            glm::vec3 normal(0.0f);
+            glm::vec2 texCoords(0.0f);
+            glm::vec3 tangent(1.0f), bitangent(0.0f);
+
+            if (mesh->HasNormals()) {
+                normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+            }
+
+            if (mesh->mTextureCoords[0]) {
+                texCoords = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
+                tangent = glm::vec3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z);
+                bitangent = glm::vec3(mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z);
+            }
+
+            Vertex vertex(position, normal, texCoords, tangent, bitangent);
+
+            vertices.push_back(vertex);
+        }
+
+        for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
+            aiFace face = mesh->mFaces[i];
+            indices.insert(indices.end(), face.mIndices, face.mIndices + face.mNumIndices);
+        }
+
+        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        materials = loadMaterials(material);
+
+        return Mesh(shader, vertices, indices, materials);
     }
-     
-    std::vector<std::shared_ptr<Texture>> Model::loadMaterials(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName)
+    
+    std::vector<Essentia::Material> Model::loadMaterials(aiMaterial* mat) {
+        std::vector<Essentia::Material> materials;
+
+        struct TextureType {
+            aiTextureType aiType;
+            TEX_TYPE texType;
+            std::function<void(Essentia::Material&, std::shared_ptr<Texture>)> setter;
+        };
+
+        std::vector<TextureType> textureTypes = {
+            { aiTextureType_DIFFUSE, TEX_TYPE::TEX_DIFF, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.diffuse = tex; } },
+            { aiTextureType_SPECULAR, TEX_TYPE::TEX_SPEC, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.specular = tex; } },
+            { aiTextureType_HEIGHT, TEX_TYPE::TEX_NORM, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.normal = tex; } },
+            { aiTextureType_AMBIENT, TEX_TYPE::TEX_HEIGHT, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.height = tex; } }
+        };
+
+        size_t maxTextures = 0;
+        for (const auto& textureType : textureTypes) {
+            maxTextures = std::max(maxTextures, static_cast<size_t>(mat->GetTextureCount(textureType.aiType)));
+        }
+
+        materials.resize(maxTextures);
+
+        for (const auto& textureType : textureTypes) {
+            auto textures = loadMaterialsTextures(mat, textureType.aiType, textureType.texType);
+            for (size_t i = 0; i < textures.size(); ++i) {
+                textureType.setter(materials[i], textures[i]);
+            }
+        }
+        return materials;
+    }
+
+    std::vector<std::shared_ptr<Texture>> Model::loadMaterialsTextures(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName)
     {
         std::vector<std::shared_ptr<Texture>> textures;
-        for (size_t i = 0; i < mat->GetTextureCount(type); i++)
+        for (uint8_t i = 0; i < mat->GetTextureCount(type); i++)
         {
             aiString str;
             mat->GetTexture(type, i, &str);
             std::string file = dir + '/' + std::string(str.C_Str());
 
             std::shared_ptr<Texture> tx = TextureManager::getTexture(file, GL_TEXTURE_2D, typeName, Essentia::defaultFilters3D);
+            if (tx) { textures.push_back(tx); }
         }
         return textures;
     }

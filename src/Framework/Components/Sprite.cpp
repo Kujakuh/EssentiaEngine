@@ -40,7 +40,7 @@ namespace Essentia
             shader,
             getAspectRatioAdjustedVertices(aspectRatio),
             getDefaultSquareIndices(),
-            mat
+            { mat }
         );
         mesh = std::make_shared<Mesh>(_mesh);
         shader->disable();
@@ -60,7 +60,7 @@ namespace Essentia
             shader,
             getAspectRatioAdjustedVertices(aspectRatio),
             getDefaultSquareIndices(),
-            mat
+            { mat }
         );
 
         mesh = std::make_shared<Mesh>(_mesh);

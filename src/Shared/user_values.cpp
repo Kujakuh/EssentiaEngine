@@ -17,7 +17,7 @@ namespace Essentia
         defaultFilters[FILTERS::WRAP_S] = GL_REPEAT;
         defaultFilters[FILTERS::WRAP_T] = GL_REPEAT;
 
-		defaultFilters3D[FILTERS::MIN_F] = GL_LINEAR_MIPMAP_LINEAR;
+		defaultFilters3D[FILTERS::MIN_F] = GL_LINEAR;
 		defaultFilters3D[FILTERS::MAG_F] = GL_LINEAR;
 		defaultFilters3D[FILTERS::WRAP_S] = GL_REPEAT;
 		defaultFilters3D[FILTERS::WRAP_T] = GL_REPEAT;

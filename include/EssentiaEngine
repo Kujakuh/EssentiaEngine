@@ -45,6 +45,7 @@ using EventListener = Essentia::EventListener;
 
 using Transform = Essentia::Transform;
 using Sprite = Essentia::Sprite;
+using Model = Essentia::Model;
 
 using Renderer2D = Essentia::Renderer2D;
 

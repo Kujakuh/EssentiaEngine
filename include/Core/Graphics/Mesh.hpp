@@ -22,32 +22,33 @@ namespace Essentia
             std::vector<GLuint> indices;
             GLuint VAO;
 
-            Material material;
+            std::vector<Material> materials;
             std::shared_ptr<Shader> shader;
 
             Mesh() = default;
-            Mesh(std::shared_ptr<Shader> sh, std::vector<Vertex> vert, std::vector<GLuint> ind, Material mat)
-                : vertices(vert), indices(ind), material(mat), shader(sh) { setupMesh(); needsUpdate = true; }
+            Mesh(std::shared_ptr<Shader> sh, std::vector<Vertex> vert, std::vector<GLuint> ind, std::vector<Material> mat)
+                : vertices(vert), indices(ind), materials(mat), shader(sh) { setupMesh(); needsUpdate = true; }
 
             void render();
             void initShader() const { shader->use(); }
             void disableShader() const { shader->disable(); }
             void updateVertices(const std::vector<Vertex>& newVertices);
 
-            void SetMaterial(const Material& newMaterial);
-            std::weak_ptr<Material> GetMaterial() const;
+            void SetMaterial(const Material& newMaterial, int i);
+            std::weak_ptr<Material> GetMaterial(int i = 0) const;
+            std::weak_ptr<std::vector<Material>> GetMaterials() const;
 
-            void setDiffuse(std::shared_ptr<Texture> tex);
-            void setSpecular(std::shared_ptr<Texture> tex);
-            void setNormal(std::shared_ptr<Texture> tex);
-            void setHeight(std::shared_ptr<Texture> tex);
+            void setDiffuse(std::shared_ptr<Texture> tex, int i = 0);
+            void setSpecular(std::shared_ptr<Texture> tex, int i = 0);
+            void setNormal(std::shared_ptr<Texture> tex, int i = 0);
+            void setHeight(std::shared_ptr<Texture> tex, int i = 0);
 
         private:
             unsigned int VBO, EBO;
             bool needsUpdate;
 
-            void updateMaterial();
-            void bindMaterial();
+            void updateMaterial(int i = 0);
+            void bindMaterial(int i = 0);
             void unbindMaterial();
 
             void setupMesh();

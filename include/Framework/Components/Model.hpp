@@ -29,13 +29,14 @@ namespace Essentia
             void initializeShader();
 
             void processNode(aiNode* node, const aiScene* scene);
-            //Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-            std::vector<std::shared_ptr<Texture>> loadMaterials(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName);
+            Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+            std::vector<Essentia::Material> loadMaterials(aiMaterial* mat);
+            std::vector<std::shared_ptr<Texture>> loadMaterialsTextures(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName);
 
         public:
             std::vector<std::shared_ptr<Mesh>> meshes;
 
-            Model() = default;
+            Model(const std::string& path);
             Model(const std::vector<std::shared_ptr<Mesh>>& initialMeshes);
 
             void addMesh(const std::shared_ptr<Mesh>& mesh);

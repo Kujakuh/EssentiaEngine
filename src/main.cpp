@@ -50,8 +50,6 @@ int main(void)
 				Quaternion(1, 1, 1, 1),
 				Vector3(1));
 
-	entity6->AddComponent<Transform>();
-	entity4->AddComponent<Transform>(Vector3(1,2,4), Quaternion(0.3,-0.9, 0, 1), Vector3(1,3,2));
 	Transform *ref = myEntity.entity->GetComponent<Transform>();
 
 	if (entity4->HasComponent<Transform>())
@@ -139,6 +137,8 @@ int main(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #pragma endregion
 
+	//Essentia::bindlessTexturesMode = false;
+
 	std::vector<std::string> faces
 	{
 			RESOURCES_PATH "Textures/right.jpg",
@@ -165,7 +165,7 @@ int main(void)
 		std::make_shared<Shader>(s),
 		Essentia::cubeVertices, 
 		Essentia::cubeIndices,
-		mat1
+		{ mat1 }
 	);
 	mesh.shader->setUniform("projection", camera.getProjectionMatrix());
 	s.disable();
@@ -177,7 +177,7 @@ int main(void)
 		std::make_shared<Shader>(cube),
 		Essentia::cubeVertices,
 		Essentia::cubeIndices,
-		mat2
+		{ mat2 }
 	);
 	cubemap.shader->setUniform("projection", camera.getProjectionMatrix());
 	cube.disable();
@@ -196,6 +196,16 @@ int main(void)
 	bool wireframeMode = false;
 	dir direction = down;
 
+	Model model(RESOURCES_PATH "Models/backpack/backpack.obj");
+	model.getShader()->use();
+	model.getShader()->setUniform("projection", camera.getProjectionMatrix());
+	model.getShader()->disable();
+
+	entity4->GetComponent<Transform>()->setPosition().x += 5;
+	entity4->GetComponent<Transform>()->setPosition().z += 14;
+	entity4->GetComponent<Transform>()->setScale(Vector3(0.1f));
+	entity4->GetComponent<Transform>()->updateMatrix();
+
 	while ( !glfwWindowShouldClose(window) )
 	{
 		InputManager::GetActiveInstance()->Update();
@@ -207,6 +217,11 @@ int main(void)
 		{
 			ref->rotate(Vector3(0.024f * (float)glfwGetTime(), 0.015f * (float)glfwGetTime(), 0.03 * (float)glfwGetTime()));
 			ref->updateMatrix();
+		}
+		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_MIDDLE))
+		{
+			entity4->GetComponent<Transform>()->rotate(Vector3(0.14f, 0.45f, 0.2));
+			entity4->GetComponent<Transform>()->updateMatrix();
 		}
 		if(InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -267,6 +282,16 @@ int main(void)
 		}
 
 		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
+
+		model.getShader()->use();
+		model.getShader()->setUniform("model", entity4->GetComponent<Transform>()->getModelMatrix());
+		model.getShader()->setUniform("view", camera.getViewMatrix());
+		model.getShader()->setUniform("viewPos", camera.getPosition());
+		for (int i = 0; i < model.getMeshCount(); i++)
+		{
+			model.meshes[i]->render();
+		}
+		model.getShader()->disable();
 
 		scene->Update();
 
