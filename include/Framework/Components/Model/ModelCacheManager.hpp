@@ -20,6 +20,7 @@ namespace Essentia
 
             std::shared_ptr<Model> loadModel(const std::string& path, bool inverseUvY = true);
 
+            bool isLoaded(const std::string& path);
             void unloadModel(const std::string& path);
             void clearCache();
 

@@ -26,6 +26,12 @@ namespace Essentia
         return model;
     }
 
+    bool ModelCacheManager::isLoaded(const std::string& path)
+    {
+        auto it = modelCache.find(path);
+        return it != modelCache.end();
+    }
+
     void ModelCacheManager::unloadModel(const std::string& path)
     {
         auto it = modelCache.find(path);
