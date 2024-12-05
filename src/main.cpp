@@ -197,6 +197,7 @@ int main(void)
 	dir direction = down;
 
 	Model model(RESOURCES_PATH "Models/backpack/backpack.obj", false);
+	model.loadModel(RESOURCES_PATH "Models/debug/boombox_4k.fbx");
 	model.getShader()->use();
 	model.getShader()->setUniform("projection", camera.getProjectionMatrix());
 	model.getShader()->disable();
@@ -207,12 +208,12 @@ int main(void)
 	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 	entity4->GetComponent<Transform>()->updateMatrix();
 
-	while ( !glfwWindowShouldClose(window) )
+	while (!glfwWindowShouldClose(window))
 	{
 		InputManager::GetActiveInstance()->Update();
 		showFPS(window);
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if (InputManager::IsKeyPressed(KEY_SPACE))
 		{
@@ -224,7 +225,7 @@ int main(void)
 			entity4->GetComponent<Transform>()->rotate(Vector3(0.14f, 0.45f, 0.2));
 			entity4->GetComponent<Transform>()->updateMatrix();
 		}
-		if(InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		glDepthFunc(GL_LEQUAL);
 		cubemap.initShader();
@@ -232,7 +233,7 @@ int main(void)
 		cubemap.render();
 		cubemap.disableShader();
 		glDepthFunc(GL_LESS);
-		
+
 		mesh.initShader();
 		mesh.shader->setUniform("model", ref->getModelMatrix());
 		mesh.shader->setUniform("view", camera.getViewMatrix());
@@ -254,7 +255,7 @@ int main(void)
 				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/mario.png");
 			}
 		}
-		if (InputManager::IsKeyPressed(KEY_DOWN)) 
+		if (InputManager::IsKeyPressed(KEY_DOWN))
 		{
 			entity6->GetComponent<Transform>()->setPosition().y -= 0.1;
 			if (direction != down)
@@ -281,6 +282,21 @@ int main(void)
 				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/right.png");
 			}
 		}
+		if (InputManager::IsKeyPressed(KEY_2))
+		{
+			model.loadModel(RESOURCES_PATH "Models/debug/boombox_4k.fbx");
+			model.getShader()->use();
+			model.getShader()->setUniform("projection", camera.getProjectionMatrix());
+			model.getShader()->disable();
+		}
+		if (InputManager::IsKeyPressed(KEY_1))
+		{
+			model.loadModel(RESOURCES_PATH "Models/backpack/backpack.obj", false);
+			model.getShader()->use();
+			model.getShader()->setUniform("projection", camera.getProjectionMatrix());
+			model.getShader()->disable();
+		}
+			
 
 		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
 

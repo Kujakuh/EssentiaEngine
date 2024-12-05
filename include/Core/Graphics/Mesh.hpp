@@ -52,6 +52,8 @@ namespace Essentia
             void unbindMaterial();
 
             void setupMesh();
+
+            friend class Model;
     };
 }
 

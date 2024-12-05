@@ -33,18 +33,22 @@ namespace Essentia
             std::vector<Essentia::Material> loadMaterials(aiMaterial* mat);
             std::vector<std::shared_ptr<Texture>> loadMaterialsTextures(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName);
 
+            void loadModelInner(const std::string& path, bool inverseUvY = true);
+
         public:
             std::vector<std::shared_ptr<Mesh>> meshes;
 
+            Model() = default;
             Model(const std::string& path, bool inverseUvY = true);
             Model(const std::vector<std::shared_ptr<Mesh>>& initialMeshes);
+
+            void loadModel(const std::string& path, bool inverseUvY = true);
 
             void addMesh(const std::shared_ptr<Mesh>& mesh);
 
             size_t getMeshCount() const;
             const std::shared_ptr<Mesh>& getMesh(size_t index) const;
 
-            void loadModel(const std::string& path, bool inverseUvY = true);
 
             void addCustomShaderFunction(SH_TYPE type, const std::string& functionCode);
             void addCustomShaderMainCode(SH_TYPE type, const std::string& mainCode);
@@ -53,6 +57,8 @@ namespace Essentia
 
             void setShader(std::shared_ptr<Shader> _shader);
             std::shared_ptr<Shader> getShader() const;
+
+            friend class ModelCacheManager;
     };
 }
 

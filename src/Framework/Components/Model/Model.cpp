@@ -1,4 +1,5 @@
-#include <Framework/Components/Model.hpp>
+#include <Framework/Components/Model/Model.hpp>
+#include <Framework/Components/Model/ModelCacheManager.hpp>
 
 namespace Essentia
 {
@@ -8,7 +9,11 @@ namespace Essentia
     Model::Model(const std::string& path, bool inverseUvY)
     { 
         loadModel(path, inverseUvY);
-        initializeShader();
+    }
+
+    void Model::loadModel(const std::string& path, bool inverseUvY)
+    {
+        *this = *(ModelCacheManager::getInstance().loadModel(path, inverseUvY));
     }
 
     void Model::addMesh(const std::shared_ptr<Mesh>& mesh) { meshes.push_back(mesh); }
@@ -62,7 +67,7 @@ namespace Essentia
         else setShader(std::make_shared<Shader>(vertexCode.c_str(), fragmentCode.c_str(), DATA_SOURCE::STR_DATA));
     }
 
-    void Model::loadModel(const std::string& path, bool inverseUvY)
+    void Model::loadModelInner(const std::string& path, bool inverseUvY)
     {
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
@@ -74,6 +79,7 @@ namespace Essentia
         }
         dir = path.substr(0, path.find_last_of('/'));
         processNode(scene->mRootNode, scene, inverseUvY);
+        if(shader) shader.reset();
     }
 
 
