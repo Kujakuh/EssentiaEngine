@@ -358,31 +358,6 @@ std::string ShaderLab::generateShader3D(SH_TYPE type, bool ambientLightOn) const
             specular += bpSpecularLight(norm, normalize(sunLight.direction), normalize(viewPos - FragPos), 16.0);
             )";
 
-        //shader << R"(
-        //for (int i = 0; i < lightsNum; ++i) {
-        //    Light light = lights[i];
-
-        //    // Luz direccional
-        //    if (length(light.position) == 0.0) {
-        //        diffuse += dirLight(light, FragPos, norm, viewPos);
-        //        ambient *= vec4(light.ambient, 1.0);
-        //    }
-        //    // Luz puntual
-        //    else if (light.innerCutOff > 0.0) {
-        //        diffuse += pointLight(light, FragPos, norm, viewPos);
-        //    }
-        //    // Luz focal
-        //    else {
-        //        diffuse += spotLight(light, FragPos, norm, viewPos);
-        //    }
-        //    
-        //}
-
-        //vec4 baseColor = ambient + vec4(diffuse, 0.0);
-        //float alphaValue = texture(material.alpha, TexCoord).r;
-        //vec4 result = vec4(baseColor.rgb, baseColor.a * alphaValue);
-        //)";
-
         shader << R"(
         for (int i = 0; i < lightsNum; ++i) {
             Light light = lights[i];
@@ -406,7 +381,7 @@ std::string ShaderLab::generateShader3D(SH_TYPE type, bool ambientLightOn) const
         float alphaValue = alphaMap.r; // Suponiendo que el canal rojo representa la opacidad
 
         // Ajustar el canal alfa de ambient si alphaMap tiene datos válidos
-        if (alphaMap.a > 0.0) {
+        if (alphaValue > 0.0) {
             ambient.a *= alphaValue;
         }
 

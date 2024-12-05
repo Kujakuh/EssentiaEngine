@@ -23,6 +23,7 @@ namespace Essentia
         private:
             CameraBase* camera = nullptr;
             void renderEntities(std::vector<WeakptrWrapper<Entity>>& entities);
+            void renderTransparentEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& transparentEntities);
     };
 }
 #endif // RENDERER3D_H
