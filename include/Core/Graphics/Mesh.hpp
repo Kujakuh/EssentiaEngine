@@ -42,6 +42,7 @@ namespace Essentia
             void setSpecular(std::shared_ptr<Texture> tex, int i = 0);
             void setNormal(std::shared_ptr<Texture> tex, int i = 0);
             void setHeight(std::shared_ptr<Texture> tex, int i = 0);
+            void setAlpha(std::shared_ptr<Texture> tex, int i = 0);
 
         private:
             unsigned int VBO, EBO;

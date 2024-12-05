@@ -197,7 +197,7 @@ int main(void)
 	dir direction = down;
 
 	entity4->AddComponent<Model>(RESOURCES_PATH "Models/backpack/backpack.obj", false);
-	entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/debug/boombox_4k.fbx");
+	entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/debug/Chandelier_03_4k.fbx");
 
 	entity4->GetComponent<Transform>()->setPosition().x += 5;
 	entity4->GetComponent<Transform>()->setPosition().z -= 12;
@@ -279,7 +279,7 @@ int main(void)
 			}
 		}
 		if (InputManager::IsKeyPressed(KEY_2))
-			entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/debug/boombox_4k.fbx");
+			entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/debug/Chandelier_03_4k.fbx");
 
 		if (InputManager::IsKeyPressed(KEY_1))
 			entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/backpack/backpack.obj", false);

@@ -29,7 +29,7 @@ namespace Essentia
     bool Model::hasAlpha() const
     {
         for (auto& mesh : meshes)
-            if (mesh->materials[0].hasAlpha()) return true;
+            if (mesh->materials.size() > 0) if (mesh->materials[0].hasAlpha()) return true;
 
         return false;
     }
@@ -153,7 +153,8 @@ namespace Essentia
             { aiTextureType_DIFFUSE, TEX_TYPE::TEX_DIFF, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.diffuse = tex; } },
             { aiTextureType_SPECULAR, TEX_TYPE::TEX_SPEC, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.specular = tex; } },
             { aiTextureType_HEIGHT, TEX_TYPE::TEX_NORM, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.normal = tex; } },
-            { aiTextureType_AMBIENT, TEX_TYPE::TEX_HEIGHT, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.height = tex; } }
+            { aiTextureType_AMBIENT, TEX_TYPE::TEX_HEIGHT, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.height = tex; } },
+            { aiTextureType_OPACITY, TEX_TYPE::TEX_OPA, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.alpha = tex; } }
         };
 
         size_t maxTextures = 0;

@@ -198,6 +198,7 @@ std::string ShaderLab::generateShader2D(SH_TYPE type) const
                 layout(bindless_sampler) sampler2D specular;
                 layout(bindless_sampler) sampler2D normal;
                 layout(bindless_sampler) sampler2D height;
+                layout(bindless_sampler) sampler2D alpha;
                 float shininess;
                 vec3 color;
             };
@@ -211,6 +212,7 @@ std::string ShaderLab::generateShader2D(SH_TYPE type) const
                 sampler2D specular;
                 sampler2D normal;
                 sampler2D height;
+                sampler2D alpha;
                 float shininess;
                 vec3 color;
             };
@@ -279,6 +281,7 @@ std::string ShaderLab::generateShader3D(SH_TYPE type, bool ambientLightOn) const
                 layout(bindless_sampler) sampler2D specular;
                 layout(bindless_sampler) sampler2D normal;
                 layout(bindless_sampler) sampler2D height;
+                layout(bindless_sampler) sampler2D alpha;
                 float shininess;
                 vec3 color;
             };
@@ -292,6 +295,7 @@ std::string ShaderLab::generateShader3D(SH_TYPE type, bool ambientLightOn) const
                 sampler2D specular;
                 sampler2D normal;
                 sampler2D height;
+                sampler2D alpha;
                 float shininess;
                 vec3 color;
             };
@@ -329,7 +333,7 @@ std::string ShaderLab::generateShader3D(SH_TYPE type, bool ambientLightOn) const
         shader << R"(
         vec3 norm = normalize(Normal);
         vec3 diffuse = vec3(0.0);
-        vec3 ambient = texture(material.diffuse, TexCoord).rgb;
+        vec4 ambient = texture(material.diffuse, TexCoord);
         vec3 specular = vec3(0.0);
 
         )";
@@ -349,10 +353,35 @@ std::string ShaderLab::generateShader3D(SH_TYPE type, bool ambientLightOn) const
             0.0  // Quadratic (sin caída de luz con la distancia)
             );
 
-            ambient *= sunLight.ambient;
+            ambient *= vec4(sunLight.ambient, 1.0);
             diffuse += dirLight(sunLight, FragPos, norm, viewPos);
             specular += bpSpecularLight(norm, normalize(sunLight.direction), normalize(viewPos - FragPos), 16.0);
             )";
+
+        //shader << R"(
+        //for (int i = 0; i < lightsNum; ++i) {
+        //    Light light = lights[i];
+
+        //    // Luz direccional
+        //    if (length(light.position) == 0.0) {
+        //        diffuse += dirLight(light, FragPos, norm, viewPos);
+        //        ambient *= vec4(light.ambient, 1.0);
+        //    }
+        //    // Luz puntual
+        //    else if (light.innerCutOff > 0.0) {
+        //        diffuse += pointLight(light, FragPos, norm, viewPos);
+        //    }
+        //    // Luz focal
+        //    else {
+        //        diffuse += spotLight(light, FragPos, norm, viewPos);
+        //    }
+        //    
+        //}
+
+        //vec4 baseColor = ambient + vec4(diffuse, 0.0);
+        //float alphaValue = texture(material.alpha, TexCoord).r;
+        //vec4 result = vec4(baseColor.rgb, baseColor.a * alphaValue);
+        //)";
 
         shader << R"(
         for (int i = 0; i < lightsNum; ++i) {
@@ -361,24 +390,34 @@ std::string ShaderLab::generateShader3D(SH_TYPE type, bool ambientLightOn) const
             // Luz direccional
             if (length(light.position) == 0.0) {
                 diffuse += dirLight(light, FragPos, norm, viewPos);
-                ambient += light.ambient;
+                ambient *= vec4(light.ambient, 1.0);
             }
             // Luz puntual
             else if (light.innerCutOff > 0.0) {
                 diffuse += pointLight(light, FragPos, norm, viewPos);
-                ambient += light.ambient;
             }
             // Luz focal
             else {
                 diffuse += spotLight(light, FragPos, norm, viewPos);
-                ambient += light.ambient;
             }
         }
-        
-        ambient = min(ambient, vec3(0.3));
 
-        vec4 result = vec4(diffuse + ambient, 1.0);
+        vec4 alphaMap = texture(material.alpha, TexCoord);
+        float alphaValue = alphaMap.r; // Suponiendo que el canal rojo representa la opacidad
+
+        // Ajustar el canal alfa de ambient si alphaMap tiene datos válidos
+        if (alphaMap.a > 0.0) {
+            ambient.a *= alphaValue;
+        }
+
+        // Si ambient.a sigue siendo 0, usar el valor de alphaMap si está disponible
+        if (ambient.a == 0.0 && alphaMap.a > 0.0) {
+            ambient.a = alphaValue;
+        }
+
+        vec4 result = ambient + vec4(diffuse, 0.0);;
         )";
+
 
         if (customMainCode.at(type) != "")
         {

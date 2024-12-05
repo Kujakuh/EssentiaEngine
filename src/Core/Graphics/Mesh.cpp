@@ -55,6 +55,7 @@ namespace Essentia
                 if (materials[i].specular != nullptr) shader->setUniform("material.specular", materials[i].specular->getHandle());
                 if (materials[i].normal != nullptr)  shader->setUniform("material.normal", materials[i].normal->getHandle());
                 if (materials[i].height != nullptr) shader->setUniform("material.height", materials[i].height->getHandle());
+                if (materials[i].alpha != nullptr) shader->setUniform("material.alpha", materials[i].alpha->getHandle());
             }
             else
             {
@@ -82,9 +83,14 @@ namespace Essentia
                     shader->setUniform("material.height", materials[i].height->getTextureUnit());
                     materials[i].height->unbind();
                 }
+                if (materials[i].alpha != nullptr)
+                {
+                    materials[i].alpha->bind();
+                    shader->setUniform("material.alpha", materials[i].alpha->getTextureUnit());
+                    materials[i].alpha->unbind();
+                }
             }
         }
-        //else shader->setUniform("material.color", glm::vec3(1.0f));
     }
 
     void Mesh::bindMaterial(int i) {
@@ -93,6 +99,7 @@ namespace Essentia
             if (materials[i].specular != nullptr) materials[i].specular->bind();
             if (materials[i].normal != nullptr) materials[i].normal->bind();
             if (materials[i].height != nullptr) materials[i].height->bind();
+            if (materials[i].alpha != nullptr) materials[i].alpha->bind();
         }
     }
 
@@ -110,6 +117,7 @@ namespace Essentia
     void Mesh::setSpecular(std::shared_ptr<Texture> tex, int i) { materials[i].specular = tex; needsUpdate = true; }
     void Mesh::setNormal(std::shared_ptr<Texture> tex, int i) { materials[i].normal = tex; needsUpdate = true; }
     void Mesh::setHeight(std::shared_ptr<Texture> tex, int i) { materials[i].height = tex; needsUpdate = true; }
+    void Mesh::setAlpha(std::shared_ptr<Texture> tex, int i) { materials[i].alpha = tex; needsUpdate = true; }
 
     std::weak_ptr<Material> Mesh::GetMaterial(int i) const {
         return std::make_shared<Material>(materials[i]);
