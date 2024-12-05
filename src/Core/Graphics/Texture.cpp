@@ -55,6 +55,7 @@ namespace Essentia
     GLuint Texture::getID() const { return ID; }
     GLuint64 Texture::getHandle() const { return textureHandle; }
     bool Texture::isBindless() const { return bindlessSupported; }
+    bool Texture::hasAlpha() const { return nrChannels == 4; }
 
     void Texture::enableBindless()
     {

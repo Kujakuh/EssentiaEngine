@@ -26,6 +26,13 @@ namespace Essentia
 
         return meshes[index];
     }
+    bool Model::hasAlpha() const
+    {
+        for (auto& mesh : meshes)
+            if (mesh->materials[0].hasAlpha()) return true;
+
+        return false;
+    }
 
     void Model::addCustomShaderFunction(SH_TYPE type, const std::string& functionCode)
     {

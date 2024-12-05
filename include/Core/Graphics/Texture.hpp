@@ -48,6 +48,7 @@ namespace Essentia
             GLuint getID() const;
             GLuint64 getHandle() const;
             bool isBindless() const;
+            bool hasAlpha() const;
 
             void enableBindless();
 

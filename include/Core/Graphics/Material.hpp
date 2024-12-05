@@ -30,8 +30,13 @@ namespace Essentia {
         bool hasTexture() const {
             return diffuse || specular || normal || height;
         }
-    };
 
+        bool hasAlpha() const 
+        { 
+            if (diffuse) return diffuse->hasAlpha();
+            else return false;
+        }
+    };
 }
 
 #endif // !MATERIAL_H

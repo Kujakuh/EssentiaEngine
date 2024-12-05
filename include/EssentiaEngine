@@ -18,6 +18,7 @@
 #include <Framework/Camera/CameraPerspective.hpp>
 #include <Framework/Camera/Camera2D.hpp>
 #include <Framework/Input/InputManager.hpp>
+#include <Framework/Components/Model/ModelCacheManager.hpp>
 
 #include <DebugTools>
 
@@ -48,11 +49,13 @@ using Sprite = Essentia::Sprite;
 using Model = Essentia::Model;
 
 using Renderer2D = Essentia::Renderer2D;
+using Renderer3D = Essentia::Renderer3D;
 
 using TextureHandle = std::shared_ptr<Essentia::Texture>;
 using Vertex = Essentia::Vertex;
 using Shader = Essentia::Shader;
 using TextureManager = Essentia::TextureManager;
+using ModelCacheManager = Essentia::ModelCacheManager;
 using Mesh = Essentia::Mesh;
 using Material = Essentia::Material;
 

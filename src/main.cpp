@@ -114,7 +114,7 @@ int main(void)
 
     glEnable(GL_DEPTH_TEST);
 	// VSYNC
-	glfwSwapInterval(1);
+	//glfwSwapInterval(1);
 
     glfwSetWindowAspectRatio(window, 16, 9);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -152,7 +152,7 @@ int main(void)
 	CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
 	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);
 	//Camera2D camera("Camera", scene, 90.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
-	scene->RegisterSystems(Essentia::Renderer2D(&camera));
+	scene->RegisterSystems(Renderer2D(&camera), Renderer3D(&camera));
 
 	ShaderLab f;
 	Shader s(f.generateShader3D(VERTEX).c_str(), f.generateShader3D(FRAGMENT).c_str(), DATA_SOURCE::STR_DATA);
@@ -171,7 +171,7 @@ int main(void)
 	s.disable();
 
 	cube.use();
-	TextureHandle tx = Essentia::TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
+	TextureHandle tx = TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
 	Material mat2; mat2.diffuse = tx;
 	Mesh cubemap(
 		std::make_shared<Shader>(cube),
@@ -196,17 +196,13 @@ int main(void)
 	bool wireframeMode = false;
 	dir direction = down;
 
-	Model model(RESOURCES_PATH "Models/backpack/backpack.obj", false);
-	model.loadModel(RESOURCES_PATH "Models/debug/boombox_4k.fbx");
-	model.getShader()->use();
-	model.getShader()->setUniform("projection", camera.getProjectionMatrix());
-	model.getShader()->disable();
+	entity4->AddComponent<Model>(RESOURCES_PATH "Models/backpack/backpack.obj", false);
+	entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/debug/boombox_4k.fbx");
 
 	entity4->GetComponent<Transform>()->setPosition().x += 5;
 	entity4->GetComponent<Transform>()->setPosition().z -= 12;
 	entity4->GetComponent<Transform>()->setScale(Vector3(3.0f));
 	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
-	entity4->GetComponent<Transform>()->updateMatrix();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -283,32 +279,12 @@ int main(void)
 			}
 		}
 		if (InputManager::IsKeyPressed(KEY_2))
-		{
-			model.loadModel(RESOURCES_PATH "Models/debug/boombox_4k.fbx");
-			model.getShader()->use();
-			model.getShader()->setUniform("projection", camera.getProjectionMatrix());
-			model.getShader()->disable();
-		}
+			entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/debug/boombox_4k.fbx");
+
 		if (InputManager::IsKeyPressed(KEY_1))
-		{
-			model.loadModel(RESOURCES_PATH "Models/backpack/backpack.obj", false);
-			model.getShader()->use();
-			model.getShader()->setUniform("projection", camera.getProjectionMatrix());
-			model.getShader()->disable();
-		}
+			entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/backpack/backpack.obj", false);
 			
-
 		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
-
-		model.getShader()->use();
-		model.getShader()->setUniform("model", entity4->GetComponent<Transform>()->getModelMatrix());
-		model.getShader()->setUniform("view", camera.getViewMatrix());
-		model.getShader()->setUniform("viewPos", camera.getPosition());
-		for (int i = 0; i < model.getMeshCount(); i++)
-		{
-			model.meshes[i]->render();
-		}
-		model.getShader()->disable();
 
 		scene->Update();
 
