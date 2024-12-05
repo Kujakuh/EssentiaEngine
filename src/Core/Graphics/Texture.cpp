@@ -137,7 +137,7 @@ namespace Essentia
         glBindTexture(texType == TEX_TYPE::TEX_CUBEMAP ? GL_TEXTURE_CUBE_MAP : type, 0);
     }
 
-    void Texture::loadFromFile(const char* texturePath, bool flip)
+    /*void Texture::loadFromFile(const char* texturePath, bool flip)
     {
         if (ID != 0)
         {
@@ -165,7 +165,104 @@ namespace Essentia
 
         stbi_image_free(data);
         unbind();
+    }*/
+
+    void Texture::loadFromFile(const char* texturePath, bool flip)
+    {
+        if (ID != 0)
+        {
+            glDeleteTextures(1, &ID);
+            ID = 0;
+        }
+
+        // Detecta la extensión del archivo
+        std::string pathStr = texturePath;
+        std::string extension = pathStr.substr(pathStr.find_last_of('.') + 1);
+        std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+
+        if (extension == "exr")
+        {
+            loadEXR(texturePath);
+            return;
+        }
+
+        // Carga estándar con stb_image
+        if (flip) stbi_set_flip_vertically_on_load(true);
+        unsigned char* data = stbi_load(texturePath, &width, &height, &nrChannels, 0);
+        if (!data)
+        {
+            std::cerr << "ERROR::TEXTURE::FAILED_TO_LOAD " << texturePath << std::endl;
+            return;
+        }
+
+        glGenTextures(1, &ID);
+        bind();
+
+        GLenum format = GL_RGB;
+        if (nrChannels == 1) format = GL_RED;
+        else if (nrChannels == 4) format = GL_RGBA;
+
+        glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(type);
+        applyFilters();
+
+        stbi_image_free(data);
+        unbind();
     }
+
+    void Texture::loadEXR(const char* texturePath)
+    {
+        try
+        {
+            Imf::Array2D<Imf::Rgba> pixels;
+            int exrWidth, exrHeight;
+
+            // Lee el archivo EXR
+            Imf::RgbaInputFile file(texturePath);
+            Imath::Box2i dw = file.dataWindow();
+            exrWidth = dw.max.x - dw.min.x + 1;
+            exrHeight = dw.max.y - dw.min.y + 1;
+
+            // Reserva memoria para los píxeles
+            pixels.resizeErase(exrHeight, exrWidth);
+
+            // Lee los píxeles al buffer
+            file.setFrameBuffer(&pixels[0][0] - dw.min.x - dw.min.y * exrWidth, 1, exrWidth);
+            file.readPixels(dw.min.y, dw.max.y);
+
+            // Convierte a un formato adecuado para OpenGL
+            std::vector<float> texData(exrWidth * exrHeight * 4); // RGBA
+            for (int y = 0; y < exrHeight; ++y)
+            {
+                for (int x = 0; x < exrWidth; ++x)
+                {
+                    const Imf::Rgba& px = pixels[y][x];
+                    int idx = (y * exrWidth + x) * 4;
+                    texData[idx + 0] = px.r;
+                    texData[idx + 1] = px.g;
+                    texData[idx + 2] = px.b;
+                    texData[idx + 3] = px.a;
+                }
+            }
+
+            // Subir textura a OpenGL
+            glGenTextures(1, &ID);
+            bind();
+
+            glTexImage2D(type, 0, GL_RGBA32F, exrWidth, exrHeight, 0, GL_RGBA, GL_FLOAT, texData.data());
+            glGenerateMipmap(type);
+            applyFilters();
+
+            unbind();
+
+            std::cout << "Successfully loaded EXR texture: " << texturePath << std::endl;
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "ERROR::EXR::FAILED_TO_LOAD " << texturePath << ": " << e.what() << std::endl;
+        }
+    }
+
 
     void Texture::loadCubemap(const std::vector<std::string>& faces, bool flip)
     {

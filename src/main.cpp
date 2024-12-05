@@ -197,12 +197,14 @@ int main(void)
 	dir direction = down;
 
 	entity4->AddComponent<Model>(RESOURCES_PATH "Models/backpack/backpack.obj", false);
-	entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/lamp/street_lamp_02_4k.fbx");
+	entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/debug/Chandelier_03_4k.fbx");
 
 	entity4->GetComponent<Transform>()->setPosition().x += 5;
 	entity4->GetComponent<Transform>()->setPosition().z -= 12;
 	entity4->GetComponent<Transform>()->setScale(Vector3(3.0f));
 	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
+
+	Model* mod = entity4->GetComponent<Model>();
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -279,10 +281,10 @@ int main(void)
 			}
 		}
 		if (InputManager::IsKeyPressed(KEY_2))
-			entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/lamp/street_lamp_02_4k.fbx");
+			mod->loadModel(RESOURCES_PATH "Models/debug/Chandelier_03_4k.fbx");
 
 		if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(RESOURCES_PATH "Models/backpack/backpack.obj"))
-			entity4->GetComponent<Model>()->loadModel(RESOURCES_PATH "Models/backpack/backpack.obj");
+			mod->loadModel(RESOURCES_PATH "Models/backpack/backpack.obj");
 			
 		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
 
