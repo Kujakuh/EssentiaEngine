@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <set>
 #include <vector>
+#include <future>
 
 #include <flat_hash_map>
 #include <glad/glad.h>
@@ -34,9 +35,15 @@ namespace Essentia
 
         public:
             static std::shared_ptr<Texture> getTexture(const std::string& texturePath, GLenum textureType,
-                TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters, bool flip = false);
+                TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters, GLint shaderID = 0, bool flip = false);
 
             static std::shared_ptr<Texture> getCubemapTexture(const std::vector<std::string>& faces, GLenum textureType,
+                TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters);
+
+            static std::future<std::shared_ptr<Texture>> TextureManager::getTextureAsync(const std::string& texturePath, GLenum textureType,
+                TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters, GLint shaderId = 0, bool flip = false);
+
+            static std::future<std::shared_ptr<Texture>> TextureManager::getCubemapTextureAsync(const std::vector<std::string>& faces, GLenum textureType,
                 TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters);
 
             static void clearCache();

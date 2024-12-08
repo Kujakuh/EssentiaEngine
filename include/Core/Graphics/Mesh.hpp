@@ -43,6 +43,11 @@ namespace Essentia
             void setNormal(std::shared_ptr<Texture> tex, int i = 0);
             void setHeight(std::shared_ptr<Texture> tex, int i = 0);
             void setAlpha(std::shared_ptr<Texture> tex, int i = 0);
+            void setAlbedo(std::shared_ptr<Texture> tex, int i = 0);
+            void setRoughness(std::shared_ptr<Texture> tex, int i = 0);
+            void setMetallic(std::shared_ptr<Texture> tex, int i = 0);
+            void setAo(std::shared_ptr<Texture> tex, int i = 0);
+            void setEmissive(std::shared_ptr<Texture> tex, int i = 0);
 
         private:
             unsigned int VBO, EBO;

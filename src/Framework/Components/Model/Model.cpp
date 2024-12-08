@@ -77,7 +77,15 @@ namespace Essentia
     void Model::loadModelInner(const std::string& path, bool inverseUvY)
     {
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+        const aiScene* scene = importer.ReadFile(
+            path,
+            aiProcess_Triangulate |
+            aiProcess_GenSmoothNormals |
+            aiProcess_FlipUVs |
+            aiProcess_CalcTangentSpace |
+            aiProcess_OptimizeMeshes |
+            aiProcess_OptimizeGraph
+        );
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {
@@ -86,7 +94,6 @@ namespace Essentia
         }
         dir = path.substr(0, path.find_last_of('/'));
         processNode(scene->mRootNode, scene, inverseUvY);
-        if(shader) shader.reset();
     }
 
 
@@ -149,14 +156,23 @@ namespace Essentia
             std::function<void(Essentia::Material&, std::shared_ptr<Texture>)> setter;
         };
 
+        // Tipos de texturas que se procesarán
         std::vector<TextureType> textureTypes = {
             { aiTextureType_DIFFUSE, TEX_TYPE::TEX_DIFF, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.diffuse = tex; } },
             { aiTextureType_SPECULAR, TEX_TYPE::TEX_SPEC, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.specular = tex; } },
             { aiTextureType_NORMALS, TEX_TYPE::TEX_NORM, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.normal = tex; } },
             { aiTextureType_HEIGHT, TEX_TYPE::TEX_HEIGHT, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.height = tex; } },
-            { aiTextureType_OPACITY, TEX_TYPE::TEX_OPA, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.alpha = tex; } }
+            { aiTextureType_OPACITY, TEX_TYPE::TEX_OPA, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.alpha = tex; } },
+
+            // Texturas PBR
+            { aiTextureType_BASE_COLOR, TEX_TYPE::TEX_ALBEDO, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.albedo = tex; } },
+            { aiTextureType_METALNESS, TEX_TYPE::TEX_METALLIC, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.metallic = tex; } },
+            { aiTextureType_DIFFUSE_ROUGHNESS, TEX_TYPE::TEX_ROUGHNESS, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.roughness = tex; } },
+            { aiTextureType_AMBIENT_OCCLUSION, TEX_TYPE::TEX_AO, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.ao = tex; } },
+            { aiTextureType_EMISSIVE, TEX_TYPE::TEX_EMISSIVE, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.emissive = tex; } }
         };
 
+        // Determina cuántas texturas se deben procesar
         size_t maxTextures = 0;
         for (const auto& textureType : textureTypes) {
             maxTextures = std::max(maxTextures, static_cast<size_t>(mat->GetTextureCount(textureType.aiType)));
@@ -164,14 +180,44 @@ namespace Essentia
 
         materials.resize(maxTextures);
 
+        // Procesa cada tipo de textura y la asigna al material correspondiente
         for (const auto& textureType : textureTypes) {
             auto textures = loadMaterialsTextures(mat, textureType.aiType, textureType.texType);
             for (size_t i = 0; i < textures.size(); ++i) {
                 textureType.setter(materials[i], textures[i]);
+
+                // Sincroniza albedo y diffuse si corresponde
+                if (textureType.aiType == aiTextureType_DIFFUSE) {
+                    materials[i].albedo = materials[i].diffuse;
+                }
+                else if (textureType.aiType == aiTextureType_BASE_COLOR) {
+                    materials[i].diffuse = materials[i].albedo;
+                }
             }
         }
+        
+        for (auto& material : materials) 
+        {
+            // Fallback: Si no hay albedo, asigna diffuse (y viceversa)
+            if (!material.albedo && material.diffuse) {
+                material.albedo = material.diffuse;
+            }
+            else if (!material.diffuse && material.albedo) {
+                material.diffuse = material.albedo;
+            }
+
+            // Fallback: Si no hay metallic, asigna specular (y viceversa)
+            if (!material.metallic && material.specular) {
+                material.metallic = material.specular;
+            }
+            else if (!material.specular && material.metallic) {
+                material.specular = material.metallic;
+            }
+        }
+
         return materials;
     }
+
 
     std::vector<std::shared_ptr<Texture>> Model::loadMaterialsTextures(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName)
     {
@@ -187,4 +233,29 @@ namespace Essentia
         }
         return textures;
     }
+
+    std::vector<std::shared_ptr<Texture>> Model::loadMaterialsTexturesAsync(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName) {
+        std::vector<std::shared_ptr<Texture>> textures;
+        std::vector<std::future<std::shared_ptr<Texture>>> tasks;
+
+        for (uint8_t i = 0; i < mat->GetTextureCount(type); i++) {
+            aiString str;
+            mat->GetTexture(type, i, &str);
+            std::string file = dir + '/' + std::string(str.C_Str());
+
+            // Lanza la carga de textura de forma asíncrona
+            tasks.push_back(TextureManager::getTextureAsync(file, GL_TEXTURE_2D, typeName, Essentia::defaultFilters3D, shader->getID()));
+        }
+
+        // Espera a que todas las texturas se hayan cargado y almacénalas
+        for (auto& task : tasks) {
+            auto tx = task.get(); // Sincroniza y obtiene el resultado
+            if (tx) {
+                textures.push_back(tx);
+            }
+        }
+
+        return textures;
+    }
+
 }

@@ -66,4 +66,6 @@ using Camera2D = Essentia::Camera2D;
 
 using InputManager = Essentia::InputManager;
 
+using ShaderLab = Essentia::ShaderLab;
+
 #endif //!ESSENTIA_IMPORTS_H

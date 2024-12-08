@@ -14,7 +14,7 @@
 #include <Core/Graphics/Mesh.hpp>
 #include <Core/Graphics/Texture.hpp>
 #include <Core/Graphics/TextureManager.hpp>
-#include <Core/Graphics/ShaderGen.hpp>
+#include <Core/Graphics/ShaderLab.hpp>
 #include <Shared/enums.hpp>
 
 namespace Essentia
@@ -24,7 +24,6 @@ namespace Essentia
         private:
             std::string dir;
             std::shared_ptr<Shader> shader;
-            ShaderLab shaderLab;
 
             void initializeShader();
 
@@ -32,11 +31,13 @@ namespace Essentia
             Mesh processMesh(aiMesh* mesh, const aiScene* scene, bool inverseUvY);
             std::vector<Essentia::Material> loadMaterials(aiMaterial* mat);
             std::vector<std::shared_ptr<Texture>> loadMaterialsTextures(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName);
+            std::vector<std::shared_ptr<Texture>> loadMaterialsTexturesAsync(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName);
 
             void loadModelInner(const std::string& path, bool inverseUvY = true);
 
         public:
             std::vector<std::shared_ptr<Mesh>> meshes;
+            ShaderLab shaderLab;
 
             Model() = default;
             Model(const std::string& path, bool inverseUvY = true);

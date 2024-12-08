@@ -12,7 +12,7 @@
 #include <Core/Graphics/Texture.hpp>
 #include <Core/Graphics/Shader.hpp>
 #include <Core/Graphics/TextureManager.hpp>
-#include <Core/Graphics/ShaderGen.hpp>
+#include <Core/Graphics/ShaderLab.hpp>
 #include <Shared/user_values.hpp>
 
 namespace Essentia

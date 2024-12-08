@@ -19,10 +19,11 @@ namespace Essentia
         }
 
         auto model = std::make_shared<Model>();
+        model->initializeShader();
+
         model->loadModelInner(path, inverseUvY);
         modelCache[path] = model;
 
-        model->initializeShader();
         return model;
     }
 

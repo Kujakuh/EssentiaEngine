@@ -40,10 +40,10 @@ namespace Essentia
     }
 
     std::shared_ptr<Texture> TextureManager::getTexture(const std::string& texturePath, GLenum textureType,
-        TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters, bool flip)
+        TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters, GLint shaderId, bool flip)
     {
-        GLint shaderID = 0;
-        glGetIntegerv(GL_CURRENT_PROGRAM, &shaderID);
+        GLint shaderID = shaderId;
+        if(shaderID == 0) glGetIntegerv(GL_CURRENT_PROGRAM, &shaderID);
 
         initializeForShader(shaderID);
 
@@ -95,6 +95,67 @@ namespace Essentia
         shaderCache[key] = texture;
 
         return texture;
+    }
+
+    std::future<std::shared_ptr<Texture>> TextureManager::getTextureAsync(
+        const std::string& texturePath, GLenum textureType,
+        TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters,
+        GLint shaderId, bool flip)
+    {
+        // Captura los parámetros necesarios para la tarea asíncrona
+        return std::async(std::launch::async, [=]() mutable {
+            GLint shaderID = shaderId;
+            if (shaderID == 0) glGetIntegerv(GL_CURRENT_PROGRAM, &shaderID);
+
+            initializeForShader(shaderID);
+
+            auto& shaderCache = textureCachePerShader[shaderID];
+            auto it = shaderCache.find(texturePath);
+            if (it != shaderCache.end()) {
+                return it->second; // Si ya está en caché, devolver la textura
+            }
+
+            // Cargar una nueva textura
+            std::shared_ptr<Texture> texture;
+            if (GLAD_GL_ARB_bindless_texture && bindlessTexturesMode) {
+                texture = std::make_shared<Texture>(texturePath.c_str(), textureType, 0, filters, type, flip);
+                shaderCache[texturePath] = texture;
+            }
+            else {
+                int unit = allocateUnit(shaderID);
+                texture = std::make_shared<Texture>(texturePath.c_str(), textureType, unit, filters, type, flip);
+                shaderCache[texturePath] = texture;
+            }
+
+            return texture; // Devuelve la nueva textura
+            });
+    }
+
+    std::future<std::shared_ptr<Texture>> TextureManager::getCubemapTextureAsync(
+        const std::vector<std::string>& faces, GLenum textureType,
+        TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters)
+    {
+        // Captura los parámetros necesarios para la tarea asíncrona
+        return std::async(std::launch::async, [=]() mutable {
+            GLint shaderID = 0;
+            glGetIntegerv(GL_CURRENT_PROGRAM, &shaderID);
+
+            initializeForShader(shaderID);
+
+            std::string key = generateCubemapKey(faces);
+            auto& shaderCache = textureCachePerShader[shaderID];
+            auto it = shaderCache.find(key);
+            if (it != shaderCache.end()) {
+                return it->second; // Si ya está en caché, devolver la textura
+            }
+
+            // Cargar un nuevo cubemap
+            int unit = allocateUnit(shaderID);
+            auto texture = std::make_shared<Texture>(faces, textureType, unit, filters, type);
+            shaderCache[key] = texture;
+
+            return texture; // Devuelve la nueva textura
+            });
     }
 
     void TextureManager::clearCache()
