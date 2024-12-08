@@ -183,8 +183,7 @@ int main(void)
 	cube.disable();
 
 	camera.sensitivity = 0.05f;
-	ref->setPosition().x -= 3;
-	ref->setScale(Vector3(5, 2, 2));
+	ref->setPosition().x += 1.5f;
 	ref->updateMatrix();
 
 	entity6->AddComponent<Sprite>(RESOURCES_PATH "Textures/mario.png");
@@ -198,17 +197,18 @@ int main(void)
 
 	const char* modelo1 = RESOURCES_PATH "Models/backpack/backpack.obj";
 	const char* modelo2 = RESOURCES_PATH "Models/lamp/street_lamp_02_4k.fbx";
-	const char* modelo3 = RESOURCES_PATH "Models/debug/Chandelier_03_4k.fbx";
+	const char* modelo3 = RESOURCES_PATH "Models/debug/Lantern_01_4k.fbx";
 
 	entity4->AddComponent<Model>();
 	Model* mod = entity4->GetComponent<Model>();
 	mod->loadModel(modelo1, false);
-	mod->loadModel(modelo2);
+	mod->loadModel(modelo3);
 
-	entity4->GetComponent<Transform>()->setPosition().x += 5;
-	entity4->GetComponent<Transform>()->setPosition().z -= 12;
+	//entity4->GetComponent<Transform>()->setPosition().x += 5;
+	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
 	entity4->GetComponent<Transform>()->setScale(Vector3(3.0f));
 	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
+
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -229,10 +229,26 @@ int main(void)
 		}
 		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+		mod->getShader()->use();
+		mod->getShader()->setUniform("lightsNum", 1);
+		mod->getShader()->setUniform("lights[0].position", ref->getPosition());
+		mod->getShader()->setUniform("lights[0].type", 0);
+		mod->getShader()->setUniform("lights[0].color", Vector3(1, 0.9, 0.8));
+		mod->getShader()->setUniform("lights[0].intensity", 5.0f);
+		mod->getShader()->disable();
+
+		mesh.shader->use();
+		mesh.shader->setUniform("lightsNum", 1);
+		mesh.shader->setUniform("lights[0].position", ref->getPosition());
+		mesh.shader->setUniform("lights[0].type", 0);
+		mesh.shader->setUniform("lights[0].color", Vector3(1, 0.9, 0.8));
+		mesh.shader->setUniform("lights[0].intensity", 5.0f);
+		mesh.shader->disable();
+
 		glDepthFunc(GL_LEQUAL);
 		cubemap.initShader();
 		cubemap.shader->setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
-		cubemap.render();
+		//cubemap.render();
 		cubemap.disableShader();
 		glDepthFunc(GL_LESS);
 
@@ -285,7 +301,7 @@ int main(void)
 			}
 		}
 		if (InputManager::IsKeyPressed(KEY_2))
-			mod->loadModel(modelo2);
+			mod->loadModel(modelo3);
 
 		if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(modelo1))
 			mod->loadModel(modelo1);

@@ -150,6 +150,18 @@ namespace Essentia
     std::vector<Essentia::Material> Model::loadMaterials(aiMaterial* mat) {
         std::vector<Essentia::Material> materials;
 
+        // ---------------------------------------- DEBUG ----------------------------------------
+        int roughnessCount = mat->GetTextureCount(aiTextureType_SHININESS);
+        if (roughnessCount == 0) {
+            std::cerr << "No roughness textures found in material!" << std::endl;
+        }
+        else {
+            aiString str;
+            mat->GetTexture(aiTextureType_SHININESS, 0, &str);
+            std::cout << str.C_Str() << "\n";
+        }
+        // ---------------------------------------- DEBUG ----------------------------------------
+
         struct TextureType {
             aiTextureType aiType;
             TEX_TYPE texType;
@@ -168,6 +180,7 @@ namespace Essentia
             { aiTextureType_BASE_COLOR, TEX_TYPE::TEX_ALBEDO, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.albedo = tex; } },
             { aiTextureType_METALNESS, TEX_TYPE::TEX_METALLIC, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.metallic = tex; } },
             { aiTextureType_DIFFUSE_ROUGHNESS, TEX_TYPE::TEX_ROUGHNESS, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.roughness = tex; } },
+            { aiTextureType_SHININESS, TEX_TYPE::TEX_ROUGHNESS, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.roughness = tex; } },
             { aiTextureType_AMBIENT_OCCLUSION, TEX_TYPE::TEX_AO, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.ao = tex; } },
             { aiTextureType_EMISSIVE, TEX_TYPE::TEX_EMISSIVE, [](Essentia::Material& mat, std::shared_ptr<Texture> tex) { mat.emissive = tex; } }
         };

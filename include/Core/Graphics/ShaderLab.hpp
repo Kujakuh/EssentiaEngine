@@ -30,7 +30,7 @@ namespace Essentia
         public:
             ShaderLab();
 
-            RENDER_MODE renderMode = PONG_SHADING;
+            RENDER_MODE renderMode = PBR;
 
             void addTextureUniform(const std::string& textureFileName);
             void removeTextureUniform(const std::string& textureUniformName);

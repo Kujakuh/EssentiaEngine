@@ -188,25 +188,32 @@ namespace Essentia
             };
 
             uniform Light lights[10];
-            uniform int lightsNum;
+            uniform int lightsNum = 0;
 
             // ----------------------------------------------------------------------------
             float calculateAttenuation(vec3 fragPos, Light light)
             {
-                if (light.type == 0 || light.type == 2) {
+                if (light.type == 0 || light.type == 2) 
+                {
                     float distance = length(light.position - fragPos);
-                    // Atenuación exponencial más suave
-                    return exp(-0.1 * distance) / (distance * distance + 0.1);  // Suaviza la atenuación
+                    //return 1.0 / (distance * distance);
+                    float alpha = light.intensity/10;  // Factor de escala (ajustable)
+                    float beta = light.intensity/2;   // Exponente para controlar la rapidez de la atenuación
+                    return 1.0 / (1.0 + alpha * pow(distance, beta));
                 }
                 return 1.0; // Sin atenuación para luces direccionales
             }
             // ----------------------------------------------------------------------------
             vec3 calculateLightDir(vec3 fragPos, Light light) {
-                if (light.type == 1) { // Luz direccional
+                if (light.type == 1) 
+                {
+                    // Luz direccional
                     return normalize(-light.direction);
-                }
-                return normalize(light.position - fragPos); // Luz puntual o focal
+                } 
+                else 
+                    return normalize(fragPos - light.position);
             }
+
             // ----------------------------------------------------------------------------
             float calculateSpotEffect(vec3 lightDir, Light light) {
                 if (light.type != 2) return 1.0; // No es luz focal
@@ -278,18 +285,16 @@ namespace Essentia
             // ----------------------------------------------------------------------------
 
             // Función para calcular la iluminación PBR
-            vec4 calculatePBR(vec3 normal, vec3 viewDir, vec3 lightDir, Material material, Light light, vec2 TexCoord, vec3 fragPos) 
+            vec3 calculatePBR(vec3 normal, vec3 viewDir, vec3 lightDir, Material material, Light light, vec2 TexCoord, vec3 fragPos) 
             {
                 vec4 albedoSample = texture(material.diffuse, TexCoord); // RGBA
                 vec3 albedo = (albedoSample.rgb != vec3(0.0)) ? albedoSample.rgb : material.color;
                 albedo = pow(albedo, vec3(2.2));  // Corrección gamma de la textura
+                
+                float metallic = texture(material.metallic, vec2(TexCoord.x, TexCoord.y)).r;
+                float roughness = texture(material.roughness, vec2(TexCoord.x, TexCoord.y)).r;
 
-                float metallic = texture(material.metallic, TexCoord).r;
-                if (isnan(metallic)) metallic = 0.0; // Comprobación de valor nulo
-                float roughness = texture(material.roughness, TexCoord).r;
-                if (isnan(roughness)) roughness = 0.5; // Valor por defecto para rugosidad
-
-                float ao = texture(material.ao, TexCoord).r;
+                float ao = texture(material.ao, vec2(TexCoord.x, 1-TexCoord.y)).r;
                 if (isnan(ao)) ao = 1.0; // Valor por defecto para oclusión ambiental
 
                 // Normal y dirección de vista
@@ -297,15 +302,15 @@ namespace Essentia
                 vec3 V = normalize(viewDir); // Dirección de vista es pasada como parámetro
 
                 // Calcula el valor de F0 para fresnel
-                vec3 F0 = vec3(0.04); 
+                vec3 F0 = vec3(0.03); 
                 F0 = mix(F0, albedo, metallic);
 
                 // Cálculo de la radiancia de la luz
                 vec3 L = normalize(lightDir - fragPos);
                 vec3 H = normalize(V + L);
                 float distance = length(lightDir - fragPos);
-                float attenuation = calculateAttenuation(fragPos, light);  // Usando la atenuación suavizada
-                vec3 radiance = light.color * attenuation * light.intensity; // Incorporando la intensidad de la luz
+                float attenuation = calculateAttenuation(fragPos, light);
+                vec3 radiance = light.color * attenuation * light.intensity;
 
                 // Si la luz es focal, ajustamos su efecto
                 float spotEffect = calculateSpotEffect(L, light);
@@ -330,10 +335,10 @@ namespace Essentia
                 float NdotL = max(dot(N, L), 0.0);
 
                 // Radiancia total
-                vec3 Lo = (kD * albedo / PI + specular) * radiance * NdotL;
+                vec3 Lo = (kD * (albedo / PI) + specular) * radiance * NdotL;
 
                 // Iluminación ambiental
-                vec3 ambient = vec3(0.05) * albedo * ao;
+                vec3 ambient = vec3(0.03) * albedo * ao;
 
                 // Resultado final
                 vec3 color = ambient + Lo;
@@ -344,12 +349,7 @@ namespace Essentia
                 // Corrección gamma
                 color = pow(color, vec3(1.0 / 2.2));
 
-                // Determinar opacidad
-                float opacityMap = texture(material.alpha, TexCoord).r; // Mapa de opacidad
-                float opacity = (opacityMap > 0.0) ? opacityMap : albedoSample.a; // Usa la opacidad del albedo si no hay mapa de opacidad
-                opacity = clamp(opacity, 0.0, 1.0);
-
-                return vec4(color, opacity);
+                return color;
             }
             )";
     }
@@ -553,7 +553,10 @@ namespace Essentia
             if (renderMode == RENDER_MODE::PONG_SHADING)
             {
                 shader << R"(
-                vec3 norm = normalize(Normal);
+                vec3 norm = Normal;
+                vec3 n = texture(material.normal, TexCoord).rgb;
+                if (length(n) > 0) norm = n; 
+
                 vec3 diffuse = vec3(0.0);
                 vec4 ambient = texture(material.diffuse, TexCoord);
                 vec3 specular = vec3(0.0);
@@ -618,10 +621,18 @@ namespace Essentia
             if (renderMode == RENDER_MODE::PBR)
             {
                 shader << R"(
-                
-                vec3 norm = normalize(Normal);
+                vec3 norm = Normal;
+                vec3 n = texture(material.normal, TexCoord).rgb;
+                if (length(n) > 0) norm = n; 
+
                 vec3 viewDir = normalize(viewPos - FragPos);
-                vec4 result = vec4(0.0);
+                vec3 result = vec3(0.0);
+
+                vec4 albedoSample = texture(material.diffuse, TexCoord);
+                float opacityMap = texture(material.alpha, TexCoord).r;
+                float opacity = (opacityMap > 0.0) ? opacityMap : albedoSample.a;
+                opacity = clamp(opacity, 0.0, 1.0);
+
                 )";
 
                 if (ambientLightOn)
@@ -644,17 +655,18 @@ namespace Essentia
                     vec3 lightDir = calculateLightDir(FragPos, lights[i]);
                     result += calculatePBR(norm, viewDir, lightDir, material, lights[i], TexCoord, FragPos);
                 }
+
                 )";
             }
 
             if (customMainCode.at(type) != "")
             {
-                // Any change that want to be made to the final pixel must be end up being applied to "result" variable
+                // Any change that want to be made to the final pixel must be end up being applied to "result" and "opacity" variables
                 shader << customMainCode.at(type) << "\n";
             }
 
             shader << R"(
-            FragColor = result;
+            FragColor = vec4(result, opacity);
             //FragColor = texture(material.diffuse, TexCoord); 
             //FragColor = vec4(TexCoord, 0.0, 1.0);
             //FragColor = vec4(norm *0.5 + 0.5, 1.0);
