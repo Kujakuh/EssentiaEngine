@@ -103,6 +103,7 @@ namespace Essentia
                     materials[i].emissive->bind();
                     shader->setUniform("material.emissive", materials[i].emissive->getTextureUnit());
                 }
+                unbindMaterial();
             }
         }
     }
@@ -165,15 +166,16 @@ namespace Essentia
         glBindVertexArray(VAO);
 
         if (needsUpdate) {
-            bindMaterial();
+            updateMaterial();
             needsUpdate = false;
         }
-        updateMaterial();
+
+        bindMaterial();
 
         glDrawElements(GL_TRIANGLES, static_cast<GLuint>(indices.size()), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
-        glActiveTexture(GL_TEXTURE0);
         unbindMaterial();
+        glActiveTexture(GL_TEXTURE0);
     }
 }
