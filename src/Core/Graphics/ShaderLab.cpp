@@ -614,12 +614,7 @@ namespace Essentia
                     ambient.a = alphaValue;
                 }
 
-                vec4 albedoSample = texture(material.diffuse, TexCoord);
-                float opacityMap = texture(material.alpha, TexCoord).r;
-                float opacity = (opacityMap > 0.0) ? opacityMap : albedoSample.a;
-                opacity = clamp(opacity, 0.0, 1.0);
-
-                vec3 result = vec3(ambient + vec4(diffuse, 0.0)).rgb;
+                vec4 result = ambient + vec4(diffuse, 0.0);
                 )";
             }
             if (renderMode == RENDER_MODE::PBR)
@@ -630,7 +625,7 @@ namespace Essentia
                 if (length(n) > 0) norm = n; 
 
                 vec3 viewDir = normalize(viewPos - FragPos);
-                vec3 result = vec3(0.0);
+                vec3 res = vec3(0.0);
 
                 )";
 
@@ -645,20 +640,22 @@ namespace Essentia
 
                     // Cálculo de la luz solar base
                     vec3 lightDir = calculateLightDir(FragPos, sunLight);
-                    result += calculatePBR(norm, viewDir, lightDir, material, sunLight, TexCoord, FragPos);
+                    res += calculatePBR(norm, viewDir, lightDir, material, sunLight, TexCoord, FragPos);
                     )";
 
                 shader << R"(
                 
                 for (int i = 0; i < lightsNum; ++i) {
                     vec3 lightDir = calculateLightDir(FragPos, lights[i]);
-                    result += calculatePBR(norm, viewDir, lightDir, material, lights[i], TexCoord, FragPos);
+                    res += calculatePBR(norm, viewDir, lightDir, material, lights[i], TexCoord, FragPos);
                 }
 
                 vec4 albedoSample = texture(material.diffuse, TexCoord);
                 float opacityMap = texture(material.alpha, TexCoord).r;
                 float opacity = (opacityMap > 0.0) ? opacityMap : albedoSample.a;
                 opacity = clamp(opacity, 0.0, 1.0);
+
+                vec4 result = vec4(res, opacity);
 
                 )";
             }
@@ -670,7 +667,7 @@ namespace Essentia
             }
 
             shader << R"(
-            FragColor = vec4(result, opacity);
+            FragColor = result;
             //FragColor = texture(material.diffuse, TexCoord); 
             //FragColor = vec4(TexCoord, 0.0, 1.0);
             //FragColor = vec4(norm *0.5 + 0.5, 1.0);

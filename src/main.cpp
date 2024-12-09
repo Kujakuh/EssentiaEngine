@@ -133,8 +133,8 @@ int main(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #pragma endregion
 
-	Essentia::bindlessTexturesMode = false;
-	Essentia::render_mode = PONG_SHADING;
+	//Essentia::bindlessTexturesMode = false;
+	//Essentia::render_mode = PBR;
 
 	std::vector<std::string> faces
 	{
@@ -228,7 +228,7 @@ int main(void)
 		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		mod->getShader()->use();;
-		mod->getShader()->setUniform("lightsNum", 1);
+		mod->getShader()->setUniform("lightsNum", 0);
 		mod->getShader()->setUniform("lights[0].position", camera.getPosition());
 		mod->getShader()->setUniform("lights[0].type", 0);
 		mod->getShader()->setUniform("lights[0].color", Vector3(1, 0.9, 0.8));
@@ -236,7 +236,7 @@ int main(void)
 		mod->getShader()->disable();
 
 		mesh.shader->use();
-		mesh.shader->setUniform("lightsNum", 1);
+		mesh.shader->setUniform("lightsNum", 0);
 		mesh.shader->setUniform("lights[0].position", camera.getPosition());
 		mesh.shader->setUniform("lights[0].type", 0);
 		mesh.shader->setUniform("lights[0].color", Vector3(1, 0.9, 0.8));
