@@ -614,7 +614,12 @@ namespace Essentia
                     ambient.a = alphaValue;
                 }
 
-                vec4 result = ambient + vec4(diffuse, 0.0);;
+                vec4 albedoSample = texture(material.diffuse, TexCoord);
+                float opacityMap = texture(material.alpha, TexCoord).r;
+                float opacity = (opacityMap > 0.0) ? opacityMap : albedoSample.a;
+                opacity = clamp(opacity, 0.0, 1.0);
+
+                vec3 result = vec3(ambient + vec4(diffuse, 0.0)).rgb;
                 )";
             }
             if (renderMode == RENDER_MODE::PBR)
@@ -626,11 +631,6 @@ namespace Essentia
 
                 vec3 viewDir = normalize(viewPos - FragPos);
                 vec3 result = vec3(0.0);
-
-                vec4 albedoSample = texture(material.diffuse, TexCoord);
-                float opacityMap = texture(material.alpha, TexCoord).r;
-                float opacity = (opacityMap > 0.0) ? opacityMap : albedoSample.a;
-                opacity = clamp(opacity, 0.0, 1.0);
 
                 )";
 
@@ -654,6 +654,11 @@ namespace Essentia
                     vec3 lightDir = calculateLightDir(FragPos, lights[i]);
                     result += calculatePBR(norm, viewDir, lightDir, material, lights[i], TexCoord, FragPos);
                 }
+
+                vec4 albedoSample = texture(material.diffuse, TexCoord);
+                float opacityMap = texture(material.alpha, TexCoord).r;
+                float opacity = (opacityMap > 0.0) ? opacityMap : albedoSample.a;
+                opacity = clamp(opacity, 0.0, 1.0);
 
                 )";
             }

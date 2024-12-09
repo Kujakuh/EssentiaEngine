@@ -66,52 +66,42 @@ namespace Essentia
                 if (materials[i].diffuse != nullptr) {
                     materials[i].diffuse->bind();
                     shader->setUniform("material.diffuse", materials[i].diffuse->getTextureUnit());
-                    materials[i].diffuse->unbind();
                 }
                 else if (materials[i].albedo != nullptr) {
                     materials[i].albedo->bind();
                     shader->setUniform("material.diffuse", materials[i].albedo->getTextureUnit());
-                    materials[i].albedo->unbind();
                 }
                 if (materials[i].specular != nullptr) {
                     materials[i].specular->bind();
                     shader->setUniform("material.specular", materials[i].specular->getTextureUnit());
-                    materials[i].specular->unbind();
                 }
                 if (materials[i].normal != nullptr) {
                     materials[i].normal->bind();
                     shader->setUniform("material.normal", materials[i].normal->getTextureUnit());
-                    materials[i].normal->unbind();
                 }
                 if (materials[i].height != nullptr) {
                     materials[i].height->bind();
                     shader->setUniform("material.height", materials[i].height->getTextureUnit());
-                    materials[i].height->unbind();
                 }
                 if (materials[i].alpha != nullptr) {
                     materials[i].alpha->bind();
                     shader->setUniform("material.alpha", materials[i].alpha->getTextureUnit());
-                    materials[i].alpha->unbind();
                 }
                 if (materials[i].roughness != nullptr) {
                     materials[i].roughness->bind();
                     shader->setUniform("material.roughness", materials[i].roughness->getTextureUnit());
-                    materials[i].roughness->unbind();
                 }
                 if (materials[i].metallic != nullptr) {
                     materials[i].metallic->bind();
                     shader->setUniform("material.metallic", materials[i].metallic->getTextureUnit());
-                    materials[i].metallic->unbind();
                 }
                 if (materials[i].ao != nullptr) {
                     materials[i].ao->bind();
                     shader->setUniform("material.ao", materials[i].ao->getTextureUnit());
-                    materials[i].ao->unbind();
                 }
                 if (materials[i].emissive != nullptr) {
                     materials[i].emissive->bind();
                     shader->setUniform("material.emissive", materials[i].emissive->getTextureUnit());
-                    materials[i].emissive->unbind();
                 }
             }
         }

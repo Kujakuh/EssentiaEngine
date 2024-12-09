@@ -46,10 +46,6 @@ int main(void)
 	myEntity.entity->AddChild(entity4);
 	myEntity.entity->AddChild(entity6);
 
-	Transform t(Vector3(1),
-				Quaternion(1, 1, 1, 1),
-				Vector3(1));
-
 	Transform *ref = myEntity.entity->GetComponent<Transform>();
 
 	if (entity4->HasComponent<Transform>())
@@ -137,7 +133,8 @@ int main(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #pragma endregion
 
-	//Essentia::bindlessTexturesMode = false;
+	Essentia::bindlessTexturesMode = false;
+	Essentia::render_mode = PONG_SHADING;
 
 	std::vector<std::string> faces
 	{
@@ -195,7 +192,6 @@ int main(void)
 	bool wireframeMode = false;
 	dir direction = down;
 
-
 	const char* modelo1 = RESOURCES_PATH "Models/lamp/Chandelier_03_4k.fbx";
 	const char* modelo2 = RESOURCES_PATH "Models/lamp/Lantern_01_4k.fbx";
 	const char* modelo3 = RESOURCES_PATH "Models/debug/brass_diya_lantern_4k.fbx";
@@ -250,15 +246,16 @@ int main(void)
 		glDepthFunc(GL_LEQUAL);
 		cubemap.initShader();
 		cubemap.shader->setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
-		//cubemap.render();
+		cubemap.render();
 		cubemap.disableShader();
 		glDepthFunc(GL_LESS);
 
 		mesh.initShader();
+		ref->updateMatrix();
 		mesh.shader->setUniform("model", ref->getModelMatrix());
 		mesh.shader->setUniform("view", camera.getViewMatrix());
 		mesh.shader->setUniform("viewPos", camera.getPosition());
-		//mesh.render();
+		mesh.render();
 		mesh.disableShader();
 
 		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity;

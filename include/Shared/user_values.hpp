@@ -16,6 +16,7 @@ namespace Essentia
     extern std::vector<Vertex> cubeVertices;
     extern std::vector<GLuint> cubeIndices;
     extern bool bindlessTexturesMode;
+    extern RENDER_MODE render_mode;
 
     void init();
 }

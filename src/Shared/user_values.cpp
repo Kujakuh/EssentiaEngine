@@ -6,11 +6,13 @@ namespace Essentia
 	ska::flat_hash_map<FILTERS, GLenum> defaultFilters3D;
 	std::vector<Vertex> cubeVertices;
 	std::vector<GLuint> cubeIndices;
+    RENDER_MODE render_mode;
 	bool bindlessTexturesMode;
 
     void init()
     {
 		bindlessTexturesMode = true;
+        render_mode = PBR;
 
         defaultFilters[FILTERS::MIN_F] = GL_NEAREST;
         defaultFilters[FILTERS::MAG_F] = GL_NEAREST;

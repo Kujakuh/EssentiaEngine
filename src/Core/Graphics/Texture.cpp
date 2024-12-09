@@ -43,12 +43,12 @@ namespace Essentia
     {
         switch (texType)
         {
-            case TEX_TYPE::TEX_DIFF: return "diffuse";
-            case TEX_TYPE::TEX_SPEC: return "specular";
-            case TEX_TYPE::TEX_NORM: return "normal";
-            case TEX_TYPE::TEX_HEIGHT: return "height";
-            case TEX_TYPE::TEX_CUBEMAP: return "cubemap";
-            default: return "Undefined";
+        case TEX_TYPE::TEX_DIFF: return "diffuse";
+        case TEX_TYPE::TEX_SPEC: return "specular";
+        case TEX_TYPE::TEX_NORM: return "normal";
+        case TEX_TYPE::TEX_HEIGHT: return "height";
+        case TEX_TYPE::TEX_CUBEMAP: return "cubemap";
+        default: return "Undefined";
         }
     }
 
@@ -69,7 +69,7 @@ namespace Essentia
     }
 
     int Texture::getTextureUnit() const { return textureUnit; }
-    bool Texture::filterExists(FILTERS key) const {return wrapFilters.find(key) != wrapFilters.end();}
+    bool Texture::filterExists(FILTERS key) const { return wrapFilters.find(key) != wrapFilters.end(); }
     GLenum Texture::getFilter(FILTERS key) const
     {
         auto it = wrapFilters.find(key);
@@ -125,18 +125,19 @@ namespace Essentia
 
     void Texture::bind() const
     {
-        if (!bindlessSupported)
+        if (!bindlessSupported) {
             glActiveTexture(GL_TEXTURE0 + textureUnit);
-        glBindTexture(texType == TEX_TYPE::TEX_CUBEMAP ? GL_TEXTURE_CUBE_MAP : type, ID);
+            glBindTexture(texType == TEX_TYPE::TEX_CUBEMAP ? GL_TEXTURE_CUBE_MAP : type, ID);
+        }
     }
 
     void Texture::unbind() const
     {
-        if (!bindlessSupported) 
+        if (!bindlessSupported) {
             glActiveTexture(GL_TEXTURE0 + textureUnit);
-        glBindTexture(texType == TEX_TYPE::TEX_CUBEMAP ? GL_TEXTURE_CUBE_MAP : type, 0);
+            glBindTexture(texType == TEX_TYPE::TEX_CUBEMAP ? GL_TEXTURE_CUBE_MAP : type, 0);
+        }
     }
-
     void Texture::loadFromFile(const char* texturePath, bool flip)
     {
         if (ID != 0)
