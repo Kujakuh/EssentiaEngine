@@ -137,36 +137,6 @@ namespace Essentia
         glBindTexture(texType == TEX_TYPE::TEX_CUBEMAP ? GL_TEXTURE_CUBE_MAP : type, 0);
     }
 
-    /*void Texture::loadFromFile(const char* texturePath, bool flip)
-    {
-        if (ID != 0)
-        {
-            glDeleteTextures(1, &ID);
-            ID = 0;
-        }
-        if (flip) stbi_set_flip_vertically_on_load(true);
-        unsigned char* data = stbi_load(texturePath, &width, &height, &nrChannels, 0);
-        if (!data)
-        {
-            std::cerr << "ERROR::TEXTURE::FAILED_TO_LOAD " << texturePath << std::endl;
-            return;
-        }
-
-        glGenTextures(1, &ID);
-        bind();
-
-        GLenum format = GL_RGB;
-        if (nrChannels == 1) format = GL_RED;
-        else if (nrChannels == 4) format = GL_RGBA;
-
-        glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(type);
-        applyFilters();
-
-        stbi_image_free(data);
-        unbind();
-    }*/
-
     void Texture::loadFromFile(const char* texturePath, bool flip)
     {
         if (ID != 0)
@@ -210,7 +180,7 @@ namespace Essentia
         unbind();
     }
 
-    void Texture::loadEXR(const char* texturePath)
+    void Texture::loadEXR(const char* texturePath, bool flip)
     {
         try
         {
@@ -236,7 +206,8 @@ namespace Essentia
             {
                 for (int x = 0; x < exrWidth; ++x)
                 {
-                    const Imf::Rgba& px = pixels[y][x];
+                    int srcY = flip ? (exrHeight - 1 - y) : y;
+                    const Imf::Rgba& px = pixels[srcY][x];
                     int idx = (y * exrWidth + x) * 4;
                     texData[idx + 0] = px.r;
                     texData[idx + 1] = px.g;

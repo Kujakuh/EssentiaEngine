@@ -69,7 +69,7 @@ namespace Essentia
             void unbind() const;
 
             void loadFromFile(const char* texturePath, bool flip = true);
-            void loadEXR(const char* texturePath);
+            void loadEXR(const char* texturePath, bool flip = true);
             void loadCubemap(const std::vector<std::string>& faces, bool flip);
             void loadHDRIToCubemap(const std::string& hdriPath, unsigned int cubemapResolution = 1024, bool linearFilter = true, bool flip = true);
     };

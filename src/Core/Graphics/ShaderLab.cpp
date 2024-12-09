@@ -197,8 +197,8 @@ namespace Essentia
                 {
                     float distance = length(light.position - fragPos);
                     //return 1.0 / (distance * distance);
-                    float alpha = light.intensity/10;  // Factor de escala (ajustable)
-                    float beta = light.intensity/2;   // Exponente para controlar la rapidez de la atenuación
+                    float alpha = 0.1;  // Factor de escala (ajustable)
+                    float beta = 2.0;   // Exponente para controlar la rapidez de la atenuación
                     return 1.0 / (1.0 + alpha * pow(distance, beta));
                 }
                 return 1.0; // Sin atenuación para luces direccionales
@@ -208,12 +208,11 @@ namespace Essentia
                 if (light.type == 1) 
                 {
                     // Luz direccional
-                    return normalize(-light.direction);
+                    return -light.direction;
                 } 
                 else 
-                    return normalize(fragPos - light.position);
+                    return light.position - fragPos;
             }
-
             // ----------------------------------------------------------------------------
             float calculateSpotEffect(vec3 lightDir, Light light) {
                 if (light.type != 2) return 1.0; // No es luz focal
@@ -294,7 +293,7 @@ namespace Essentia
                 float metallic = texture(material.metallic, vec2(TexCoord.x, TexCoord.y)).r;
                 float roughness = texture(material.roughness, vec2(TexCoord.x, TexCoord.y)).r;
 
-                float ao = texture(material.ao, vec2(TexCoord.x, 1-TexCoord.y)).r;
+                float ao = texture(material.ao, vec2(TexCoord.x, TexCoord.y)).r;
                 if (isnan(ao)) ao = 1.0; // Valor por defecto para oclusión ambiental
 
                 // Normal y dirección de vista
@@ -306,9 +305,9 @@ namespace Essentia
                 F0 = mix(F0, albedo, metallic);
 
                 // Cálculo de la radiancia de la luz
-                vec3 L = normalize(lightDir - fragPos);
+                vec3 L = normalize(lightDir);
                 vec3 H = normalize(V + L);
-                float distance = length(lightDir - fragPos);
+                float distance = length(lightDir);
                 float attenuation = calculateAttenuation(fragPos, light);
                 vec3 radiance = light.color * attenuation * light.intensity;
 
@@ -335,7 +334,7 @@ namespace Essentia
                 float NdotL = max(dot(N, L), 0.0);
 
                 // Radiancia total
-                vec3 Lo = (kD * (albedo / PI) + specular) * radiance * NdotL;
+                vec3 Lo = (kD * albedo / PI + specular) * radiance * NdotL;
 
                 // Iluminación ambiental
                 vec3 ambient = vec3(0.03) * albedo * ao;
@@ -621,8 +620,8 @@ namespace Essentia
             if (renderMode == RENDER_MODE::PBR)
             {
                 shader << R"(
-                vec3 norm = Normal;
-                vec3 n = texture(material.normal, TexCoord).rgb;
+                vec3 norm = normalize(Normal);
+                vec3 n = getNormalFromMap();
                 if (length(n) > 0) norm = n; 
 
                 vec3 viewDir = normalize(viewPos - FragPos);
@@ -642,7 +641,7 @@ namespace Essentia
                     sunLight.type = 1; // Luz direccional
                     sunLight.direction = normalize(vec3(0.0, -1.0, 0.0)); // Dirección del sol (ligeramente inclinada)
                     sunLight.color = vec3(1.0, 0.95, 0.9); // Color cálido, similar a la luz solar
-                    sunLight.intensity = 10; // Intensidad más alta que las luces estándar
+                    sunLight.intensity = 2; // Intensidad más alta que las luces estándar
 
                     // Cálculo de la luz solar base
                     vec3 lightDir = calculateLightDir(FragPos, sunLight);

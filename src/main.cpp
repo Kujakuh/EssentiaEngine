@@ -195,18 +195,20 @@ int main(void)
 	bool wireframeMode = false;
 	dir direction = down;
 
-	const char* modelo1 = RESOURCES_PATH "Models/backpack/backpack.obj";
-	const char* modelo2 = RESOURCES_PATH "Models/lamp/street_lamp_02_4k.fbx";
-	const char* modelo3 = RESOURCES_PATH "Models/debug/Lantern_01_4k.fbx";
+
+	const char* modelo1 = RESOURCES_PATH "Models/lamp/Chandelier_03_4k.fbx";
+	const char* modelo2 = RESOURCES_PATH "Models/lamp/Lantern_01_4k.fbx";
+	const char* modelo3 = RESOURCES_PATH "Models/debug/brass_diya_lantern_4k.fbx";
 
 	entity4->AddComponent<Model>();
 	Model* mod = entity4->GetComponent<Model>();
-	mod->loadModel(modelo1, false);
 	mod->loadModel(modelo3);
+	mod->loadModel(modelo2);
+	
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
-	entity4->GetComponent<Transform>()->setScale(Vector3(3.0f));
+	entity4->GetComponent<Transform>()->setScale(Vector3(6.0f));
 	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
 
@@ -229,20 +231,20 @@ int main(void)
 		}
 		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		mod->getShader()->use();
+		mod->getShader()->use();;
 		mod->getShader()->setUniform("lightsNum", 1);
-		mod->getShader()->setUniform("lights[0].position", ref->getPosition());
+		mod->getShader()->setUniform("lights[0].position", camera.getPosition());
 		mod->getShader()->setUniform("lights[0].type", 0);
 		mod->getShader()->setUniform("lights[0].color", Vector3(1, 0.9, 0.8));
-		mod->getShader()->setUniform("lights[0].intensity", 5.0f);
+		mod->getShader()->setUniform("lights[0].intensity", 1.0f);
 		mod->getShader()->disable();
 
 		mesh.shader->use();
 		mesh.shader->setUniform("lightsNum", 1);
-		mesh.shader->setUniform("lights[0].position", ref->getPosition());
+		mesh.shader->setUniform("lights[0].position", camera.getPosition());
 		mesh.shader->setUniform("lights[0].type", 0);
 		mesh.shader->setUniform("lights[0].color", Vector3(1, 0.9, 0.8));
-		mesh.shader->setUniform("lights[0].intensity", 5.0f);
+		mesh.shader->setUniform("lights[0].intensity", 1.0f);
 		mesh.shader->disable();
 
 		glDepthFunc(GL_LEQUAL);
@@ -256,7 +258,7 @@ int main(void)
 		mesh.shader->setUniform("model", ref->getModelMatrix());
 		mesh.shader->setUniform("view", camera.getViewMatrix());
 		mesh.shader->setUniform("viewPos", camera.getPosition());
-		mesh.render();
+		//mesh.render();
 		mesh.disableShader();
 
 		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity;
@@ -266,7 +268,8 @@ int main(void)
 
 		if (InputManager::IsKeyPressed(KEY_UP))
 		{
-			entity6->GetComponent<Transform>()->setPosition().y += 0.1;
+			ref->setPosition().y += 0.1;
+			//entity6->GetComponent<Transform>()->setPosition().y += 0.1;
 			if (direction != up)
 			{
 				direction = up;
@@ -275,7 +278,8 @@ int main(void)
 		}
 		if (InputManager::IsKeyPressed(KEY_DOWN))
 		{
-			entity6->GetComponent<Transform>()->setPosition().y -= 0.1;
+			//entity6->GetComponent<Transform>()->setPosition().y -= 0.1;
+			ref->setPosition().y -= 0.1;
 			if (direction != down)
 			{
 				direction = down;
@@ -284,7 +288,9 @@ int main(void)
 		}
 		if (InputManager::IsKeyPressed(KEY_LEFT))
 		{
-			entity6->GetComponent<Transform>()->setPosition().x -= 0.1;
+			//entity6->GetComponent<Transform>()->setPosition().x -= 0.1;
+			ref->setPosition().x -= 0.1;
+
 			if (direction != left)
 			{
 				direction = left;
@@ -293,7 +299,8 @@ int main(void)
 		}
 		if (InputManager::IsKeyPressed(KEY_RIGHT))
 		{
-			entity6->GetComponent<Transform>()->setPosition().x += 0.1;
+			ref->setPosition().x += 0.1;
+			//entity6->GetComponent<Transform>()->setPosition().x += 0.1;
 			if (direction != right)
 			{
 				direction = right;
@@ -301,10 +308,10 @@ int main(void)
 			}
 		}
 		if (InputManager::IsKeyPressed(KEY_2))
-			mod->loadModel(modelo3);
+			mod->loadModel(modelo2);
 
-		if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(modelo1))
-			mod->loadModel(modelo1);
+		if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(modelo3))
+			mod->loadModel(modelo3);
 			
 		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
 
