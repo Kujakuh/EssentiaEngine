@@ -43,9 +43,6 @@ int main(void)
 	GameObjectTemplate myEntity(scene);
 	GameObject entity6 = scene->CreateEntity("Entity6");
 
-	myEntity.entity->AddChild(entity4);
-	myEntity.entity->AddChild(entity6);
-
 	Transform *ref = myEntity.entity->GetComponent<Transform>();
 
 	if (entity4->HasComponent<Transform>())
@@ -63,9 +60,8 @@ int main(void)
 		printMatrix(ref->getModelMatrix());
 
 	}
-	std::vector<GameObject> ents = myEntity.entity->GetChildren();
-	std::cout << ents.size() << ents.at(0)->GetName() << std::endl;
-
+	//std::vector<GameObject> ents = myEntity.entity->GetChildren();
+	//std::cout << ents.size() << ents.at(0)->GetName() << std::endl;
 
 	if (!glfwInit()) return -1;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);

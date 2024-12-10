@@ -25,9 +25,6 @@ namespace Essentia
             bool isAlive;
 
         public:
-            WeakptrWrapper<Entity> parent;
-            std::vector<WeakptrWrapper<Entity>> children;
-
             Entity(int id, const std::string& name);
 
             int GetID() const;
@@ -37,15 +34,6 @@ namespace Essentia
             void Destroy();
 
             std::function<void()> onUpdate;
-
-            void SetParent(WeakptrWrapper<Entity> newParent);
-            WeakptrWrapper<Entity> GetParent() const;
-
-            void AddChild(WeakptrWrapper<Entity> child);
-            void RemoveChild(WeakptrWrapper<Entity> child);
-            std::vector<WeakptrWrapper<Entity>> GetChildren() const;
-
-            bool IsAncestorOf(WeakptrWrapper<Entity> entity) const;
 
         public:
             template <typename T, typename... Args>

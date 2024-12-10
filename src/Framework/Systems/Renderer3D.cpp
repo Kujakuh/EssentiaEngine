@@ -98,8 +98,8 @@ namespace Essentia
         std::sort(transparentMeshes.begin(), transparentMeshes.end(),
             [this](const std::pair<WeakptrWrapper<Entity>, std::shared_ptr<Mesh>>& a, const std::pair<WeakptrWrapper<Entity>, std::shared_ptr<Mesh>>& b)
             {
-                auto positionA = a.first.lock()->GetComponent<Transform>()->getPosition();
-                auto positionB = b.first.lock()->GetComponent<Transform>()->getPosition();
+                auto positionA = a.first.weakPtr_.lock()->GetComponent<Transform>()->getPosition();
+                auto positionB = b.first.weakPtr_.lock()->GetComponent<Transform>()->getPosition();
 
                 float distanceA = glm::length(camera->getPosition() - positionA);
                 float distanceB = glm::length(camera->getPosition() - positionB);

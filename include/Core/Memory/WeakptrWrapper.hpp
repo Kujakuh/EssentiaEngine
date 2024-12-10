@@ -15,6 +15,8 @@ namespace Essentia
             WeakptrWrapper(std::weak_ptr<T> weakPtr) : weakPtr_(weakPtr) {}
             WeakptrWrapper() : weakPtr_() {}
 
+            std::weak_ptr<T> weakPtr_;
+
             T* operator->() {
                 auto sharedPtr = weakPtr_.lock();
                 if (!sharedPtr) {
@@ -22,25 +24,6 @@ namespace Essentia
                 }
                 return sharedPtr.get();
             }
-
-            std::shared_ptr<T> lock() const {
-                auto sharedPtr = weakPtr_.lock();
-                if (!sharedPtr) {
-                    throw std::runtime_error("Invalid access to expired pointer");
-                }
-                return sharedPtr;  // Devuelve el puntero compartido
-            }
-
-            T* get() {
-                auto sharedPtr = weakPtr_.lock();
-                if (!sharedPtr) {
-                    throw std::runtime_error("Invalid access to expired pointer");
-                }
-                return sharedPtr.get();  // Devuelve el puntero crudo
-            }
-
-        private:
-            std::weak_ptr<T> weakPtr_;
     };
 }
 
