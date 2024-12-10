@@ -19,6 +19,8 @@
 #include <Framework/Camera/Camera2D.hpp>
 #include <Framework/Input/InputManager.hpp>
 #include <Framework/Components/Model/ModelCacheManager.hpp>
+#include <Framework/Time/Time.hpp>
+#include <Framework/Time/Timer.hpp>
 
 #include <DebugTools>
 
@@ -65,6 +67,9 @@ using CameraPerspective = Essentia::CameraPerspective;
 using Camera2D = Essentia::Camera2D;
 
 using InputManager = Essentia::InputManager;
+
+using Time = Essentia::Time;
+using Timer = Essentia::Timer;
 
 using ShaderLab = Essentia::ShaderLab;
 
