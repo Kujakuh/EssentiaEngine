@@ -130,7 +130,7 @@ int main(void)
 #pragma endregion
 
 	//Essentia::bindlessTexturesMode = false;
-	//Essentia::render_mode = PBR;
+	//Essentia::render_mode = PONG_SHADING;
 
 	std::vector<std::string> faces
 	{
@@ -202,13 +202,16 @@ int main(void)
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
 	entity4->GetComponent<Transform>()->setScale(Vector3(6.0f));
 	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
-
+	std::string title;
+	std::shared_ptr<Timer> timo = std::make_shared<Timer>([]() {std::cout << "15 secs have passed \n";}, 15);
 	while (!glfwWindowShouldClose(window))
 	{
 		InputManager::GetActiveInstance()->Update();
 		Time::update();
+		title = "FPS: " + std::to_string(Time::fps());
+		if (!timo->isDone()) title += " Timer runing, current time: " + std::to_string(timo->getElapsedTime());
 
-		glfwSetWindowTitle(window, ("FPS: " +std::to_string(Time::getFps())).c_str());
+		glfwSetWindowTitle(window, title.c_str());
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -300,7 +303,7 @@ int main(void)
 				direction = right;
 				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/right.png");
 				std::cout << "15 secs Timer Started\n";
-				Time::addTimer(std::make_shared<Timer>([]() {std::cout << "15 secs have passed \n";}, 15));
+				Time::addTimer(timo);
 			}
 		}
 		if (InputManager::IsKeyPressed(KEY_2))

@@ -16,8 +16,8 @@ namespace Essentia
             static void update();
 
             static double now();
-            static float getDeltaTime();
-            static int getFps();
+            static float deltaTime();
+            static int fps();
 
             static void addTimer(std::shared_ptr<Timer> timer);
 
@@ -30,9 +30,9 @@ namespace Essentia
             static std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
             static std::chrono::time_point<std::chrono::high_resolution_clock> lastFrame;
             static std::chrono::time_point<std::chrono::high_resolution_clock> lastFpsUpdate;
-            static int fps;
-            static int frameCount;
-            static float deltaTime;
+            static int _fps;
+            static int _frameCount;
+            static float _deltaTime;
 
             static std::vector<std::shared_ptr<Timer>> timers;
     };

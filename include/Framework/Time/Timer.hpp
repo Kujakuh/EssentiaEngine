@@ -14,10 +14,12 @@ namespace Essentia
             void update(float deltaTime);
 
             bool isDone() const;
+            float getElapsedTime() const;
 
             void stop();
             void pause();
             void resume();
+            void reset();
 
         private:
             std::function<void()> callback;
