@@ -202,16 +202,19 @@ int main(void)
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
 	entity4->GetComponent<Transform>()->setScale(Vector3(6.0f));
 	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
+
 	std::string title;
-	std::shared_ptr<Timer> timo = std::make_shared<Timer>([]() {std::cout << "15 secs have passed \n";}, 15);
+	std::shared_ptr<Timer> timo = std::make_shared<Timer>(15);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		InputManager::GetActiveInstance()->Update();
 		Time::update();
+
 		title = "FPS: " + std::to_string(Time::fps());
 		if (!timo->isDone()) title += " Timer runing, current time: " + std::to_string(timo->getElapsedTime());
-
 		glfwSetWindowTitle(window, title.c_str());
+
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -227,7 +230,7 @@ int main(void)
 		}
 		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		mod->getShader()->use();;
+		mod->getShader()->use();
 		mod->getShader()->setUniform("lightsNum", 0);
 		mod->getShader()->setUniform("lights[0].position", camera.getPosition());
 		mod->getShader()->setUniform("lights[0].type", 0);

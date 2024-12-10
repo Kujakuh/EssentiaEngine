@@ -9,7 +9,7 @@ namespace Essentia
     class Timer 
     {
         public:
-            Timer(std::function<void()> callback, float duration);
+            Timer(float duration, std::function<void()> callback = []() {});
 
             void update(float deltaTime);
 

@@ -2,7 +2,7 @@
 
 namespace Essentia
 {
-    Timer::Timer(std::function<void()> callback, float duration)
+    Timer::Timer(float duration, std::function<void()> callback)
         : callback(callback), duration(duration), elapsedTime(0.0f), done(true), paused(false) {}
 
     void Timer::update(float deltaTime)
