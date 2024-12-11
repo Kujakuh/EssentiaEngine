@@ -36,17 +36,19 @@ namespace Essentia
 
             void setTexture(const std::string& texturePath, bool flip = true);
             void setTexture(std::shared_ptr<Texture> _texture);
-            void setTextureData(std::shared_ptr<Texture> texture);
+
             void addCustomShaderFunction(SH_TYPE type, const std::string& functionCode);
             void addCustomShaderMainCode(SH_TYPE type, const std::string& mainCode);
             void addCustomShaderFunctionFromFile(SH_TYPE type, const std::string& filePath);
             void addCustomShaderMainCodeFromFile(SH_TYPE type, const std::string& filePath);
+
             void setShader(std::shared_ptr<Shader> _shader);
-            std::string getTexturePath() const;
             std::shared_ptr<Texture> getTexture() const;
             std::shared_ptr<Shader> getShader() const;
 
         private:
+            void setTextureData(std::shared_ptr<Texture> texture);
+            std::string getTexturePath() const;
             std::string getTextureName(const std::string& path);
     };
 }

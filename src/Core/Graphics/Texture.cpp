@@ -68,6 +68,75 @@ namespace Essentia
         }
     }
 
+    bool Texture::isAtlasTexture() const { return !uvRegions.empty(); }
+    void Texture::addUVRegion(const std::string& name, const UVRegion& region) 
+    {
+        uvRegions[name] = region;
+    }
+    UVRegion Texture::getUVRegion(const std::string& name) const
+    {
+        auto it = uvRegions.find(name);
+        if (it != uvRegions.end()) 
+        {
+            return it->second;
+        }
+        throw std::runtime_error("UVRegion '" + name + "' not found in texture.");
+    }
+    void Texture::removeUVRegion(const std::string& name)
+    {
+        auto it = uvRegions.find(name);
+        if (it != uvRegions.end())
+        {
+            uvRegions.erase(it);
+        }
+        else
+        {
+            throw std::runtime_error("UVRegion '" + name + "' not found in texture.");
+        }
+    }
+    void Texture::removeAllUVRegions()
+    {
+        uvRegions.clear();
+    }
+    void Texture::updateUVRegion(const std::string& name, const UVRegion& newRegion)
+    {
+        auto it = uvRegions.find(name);
+        if (it != uvRegions.end())
+        {
+            it->second = newRegion;
+        }
+        else
+        {
+            throw std::runtime_error("UVRegion '" + name + "' not found in texture.");
+        }
+    }
+    void Texture::loadUVsFromJSON(const std::string& filePath)
+    {
+        std::ifstream file(filePath);
+        if (!file.is_open()) throw std::runtime_error("Failed to open JSON file: " + filePath);
+
+        nlohmann::json jsonData;
+        file >> jsonData;
+        
+        for (auto& [key, value] : jsonData.items()) 
+        {
+            if (value.is_array()) 
+            {
+                for (auto& frame : value) 
+                {
+                    UVRegion region = { frame["uMin"], frame["vMin"], frame["uMax"], frame["vMax"] };
+                    addUVRegion(key, region);
+                }
+            }
+            else 
+            {
+                // Si el valor no es un array, lo interpretamos como una única región UV
+                UVRegion region = { value["uMin"], value["vMin"], value["uMax"], value["vMax"] };
+                addUVRegion(key, region);
+            }
+        }
+    }
+
     int Texture::getTextureUnit() const { return textureUnit; }
     bool Texture::filterExists(FILTERS key) const { return wrapFilters.find(key) != wrapFilters.end(); }
     GLenum Texture::getFilter(FILTERS key) const

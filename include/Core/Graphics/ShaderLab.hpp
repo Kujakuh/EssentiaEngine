@@ -31,6 +31,7 @@ namespace Essentia
             ShaderLab();
 
             RENDER_MODE renderMode = Essentia::render_mode;
+            bool textureAtlas = false;
 
             void addTextureUniform(const std::string& textureFileName);
             void removeTextureUniform(const std::string& textureUniformName);

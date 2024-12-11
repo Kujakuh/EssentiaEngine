@@ -6,6 +6,7 @@
 #include <flat_hash_map>
 #include <ImfArray.h>
 #include <ImfRgbaFile.h>
+#include <json.hpp>
 
 #include <string>
 #include <iostream>
@@ -13,6 +14,7 @@
 
 #include <Shared/enums.hpp>
 #include <Shared/user_values.hpp>
+#include <Core/Graphics/UVRegion.hpp>
 
 namespace Essentia
 {
@@ -31,6 +33,8 @@ namespace Essentia
 
             bool bindlessSupported = false;
             GLuint64 textureHandle = 0;
+
+            std::unordered_map<std::string, UVRegion> uvRegions;
 
             void flipVertically(unsigned char* data, int width, int height, int nrChannels);
 
@@ -60,6 +64,14 @@ namespace Essentia
             int getHeight() const;
 
             bool filterExists(FILTERS key) const;
+
+            bool isAtlasTexture() const;
+            void addUVRegion(const std::string& name, const UVRegion& region);
+            UVRegion getUVRegion(const std::string& name) const;
+            void removeUVRegion(const std::string& name);
+            void removeAllUVRegions();
+            void updateUVRegion(const std::string& name, const UVRegion& newRegion);
+            void loadUVsFromJSON(const std::string& filePath);
 
             void modifyFilters(const ska::flat_hash_map<FILTERS, GLenum>& newFilters);
             void modifyFilter(FILTERS key, GLenum value);
