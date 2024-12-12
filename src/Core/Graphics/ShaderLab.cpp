@@ -383,6 +383,7 @@ namespace Essentia
     {
         std::ostringstream shader;
         shader << versionNextensionsHeader << "\n";
+
         if (type == FRAGMENT)
         {
             if (GLAD_GL_ARB_bindless_texture && Essentia::bindlessTexturesMode)
@@ -457,7 +458,8 @@ namespace Essentia
             }
             else if (type == VERTEX)
             {
-                shader << "    gl_Position = projection * view * model * vec4(aPos, 1.0);\n        TexCoord = aTexCoord;\n";
+                shader << "    gl_Position = projection * view * model * vec4(aPos, 1.0);\n";
+                shader << "    TexCoord = aTexCoord;\n";
             }
         }
         else shader << customMainCode.at(type); // Add any custom main code

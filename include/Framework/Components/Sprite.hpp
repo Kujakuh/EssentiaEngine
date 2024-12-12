@@ -22,6 +22,7 @@ namespace Essentia
         private:
             std::shared_ptr<Shader> shader;
             ShaderLab shaderLab;
+            std::string uvRegion;
 
             std::vector<Vertex> getAspectRatioAdjustedVertices(float aspectRatio);
             std::vector<GLuint> getDefaultSquareIndices();
@@ -36,6 +37,8 @@ namespace Essentia
 
             void setTexture(const std::string& texturePath, bool flip = true);
             void setTexture(std::shared_ptr<Texture> _texture);
+            std::string getUVRegionName();
+            void useRegionFromAtlas(const std::string& regionName);
 
             void addCustomShaderFunction(SH_TYPE type, const std::string& functionCode);
             void addCustomShaderMainCode(SH_TYPE type, const std::string& mainCode);

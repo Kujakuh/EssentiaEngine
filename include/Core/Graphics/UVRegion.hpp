@@ -1,3 +1,6 @@
+#ifndef UVREGION_H
+#define UVREGION_H
+
 namespace Essentia
 {
     struct UVRegion 
@@ -6,3 +9,5 @@ namespace Essentia
         float uMax, vMax; // Esquina superior derecha
     };
 }
+
+#endif // !UVREGION_H

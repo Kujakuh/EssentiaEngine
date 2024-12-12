@@ -179,7 +179,11 @@ int main(void)
 	ref->setPosition().x += 1.5f;
 	ref->updateMatrix();
 
-	entity6->AddComponent<Sprite>(RESOURCES_PATH "Textures/mario.png");
+	entity6->AddComponent<Sprite>(RESOURCES_PATH "Textures/atlas2.png");
+	Sprite* sprit = entity6->GetComponent<Sprite>();
+	sprit->getTexture()->loadUVsFromJSON(RESOURCES_PATH "atlas2.json");
+
+	sprit->useRegionFromAtlas("player_idle");
 
 	entity6->GetComponent<Transform>()->setScale().x = 3;
 	entity6->GetComponent<Transform>()->setScale().y = 3;
@@ -205,6 +209,7 @@ int main(void)
 
 	std::string title;
 	std::shared_ptr<Timer> timo = std::make_shared<Timer>(15);
+	int speed = 12;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -268,43 +273,47 @@ int main(void)
 
 		if (InputManager::IsKeyPressed(KEY_UP))
 		{
-			ref->setPosition().y += 0.1;
-			//entity6->GetComponent<Transform>()->setPosition().y += 0.1;
+			//ref->setPosition().y += 0.1;
+			entity6->GetComponent<Transform>()->setPosition().y += speed * Time::deltaTime();
 			if (direction != up)
 			{
 				direction = up;
+				//sprit->useRegionFromAtlas("player_idle");
 				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/mario.png");
 			}
 		}
 		if (InputManager::IsKeyPressed(KEY_DOWN))
 		{
-			//entity6->GetComponent<Transform>()->setPosition().y -= 0.1;
-			ref->setPosition().y -= 0.1;
+			entity6->GetComponent<Transform>()->setPosition().y -= speed * Time::deltaTime();
+			//ref->setPosition().y -= 0.1;
 			if (direction != down)
 			{
 				direction = down;
-				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/mario.png");
+				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/atlas2.png");
+				sprit->useRegionFromAtlas("player_idle");
 			}
 		}
 		if (InputManager::IsKeyPressed(KEY_LEFT))
 		{
-			//entity6->GetComponent<Transform>()->setPosition().x -= 0.1;
-			ref->setPosition().x -= 0.1;
+			entity6->GetComponent<Transform>()->setPosition().x -= speed * Time::deltaTime();
+			//ref->setPosition().x -= 0.1;
 
 			if (direction != left)
 			{
 				direction = left;
+				//sprit->useRegionFromAtlas("player_walk");
 				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/left.png");
 			}
 		}
 		if (InputManager::IsKeyPressed(KEY_RIGHT))
 		{
-			ref->setPosition().x += 0.1;
-			//entity6->GetComponent<Transform>()->setPosition().x += 0.1;
+			//ref->setPosition().x += 0.1;
+			entity6->GetComponent<Transform>()->setPosition().x += speed * Time::deltaTime();
 			if (direction != right)
 			{
 				direction = right;
-				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/right.png");
+				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/atlas2.png");
+				sprit->useRegionFromAtlas("player_walk");
 				std::cout << "15 secs Timer Started\n";
 				Time::addTimer(timo);
 			}
