@@ -50,7 +50,7 @@ namespace Essentia
             std::shared_ptr<Shader> getShader() const;
 
         private:
-            void setTextureData(std::shared_ptr<Texture> texture);
+            void setTextureData();
             std::string getTexturePath() const;
             std::string getTextureName(const std::string& path);
     };

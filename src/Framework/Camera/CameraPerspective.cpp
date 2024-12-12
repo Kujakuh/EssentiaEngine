@@ -1,4 +1,5 @@
 #include <Framework/Camera/CameraPerspective.hpp>
+#include <Framework/Time/Time.hpp>
 
 namespace Essentia
 {
@@ -23,7 +24,7 @@ namespace Essentia
     void CameraPerspective::setNearPlane(float newNearPlane) { nearPlane = newNearPlane; }
     void CameraPerspective::setFarPlane(float newFarPlane) { farPlane = newFarPlane; }
 
-    void CameraPerspective::processMouseMovement(double xpos, double ypos)
+    void CameraPerspective::processMouseMovement(double xpos, double ypos, float speed)
     {
         if (firstMouse)
         {
@@ -39,8 +40,8 @@ namespace Essentia
         lastX = xpos;
         lastY = ypos;
 
-        deltaX *= sensitivity*5;
-        deltaY *= sensitivity*5;
+        deltaX *= sensitivity * speed * Time::deltaTime();
+        deltaY *= sensitivity * speed * Time::deltaTime();
 
         transform->rotate(glm::vec3(deltaY, deltaX, 0.0f), getRight(), glm::vec3(0, 1, 0), getFront());
 

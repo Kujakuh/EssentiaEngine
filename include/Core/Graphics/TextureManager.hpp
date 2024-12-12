@@ -27,8 +27,8 @@ namespace Essentia
             // Unidades de textura disponibles por shader
             static std::unordered_map<GLuint, std::set<int>> availableUnitsPerShader;
 
-            // Caché de texturas por shader
             static std::unordered_map<GLuint, std::unordered_map<std::string, std::shared_ptr<Texture>>> textureCachePerShader;
+            static std::unordered_map<std::string, std::shared_ptr<Texture>> textureCacheBindless;
 
             TextureManager() {}
             static void detectMaxTextureUnits();
@@ -40,18 +40,17 @@ namespace Essentia
             static std::shared_ptr<Texture> getCubemapTexture(const std::vector<std::string>& faces, GLenum textureType,
                 TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters);
 
-            static std::future<std::shared_ptr<Texture>> TextureManager::getTextureAsync(const std::string& texturePath, GLenum textureType,
-                TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters, GLint shaderId = 0, bool flip = false);
+            //static std::future<std::shared_ptr<Texture>> TextureManager::getTextureAsync(const std::string& texturePath, GLenum textureType,
+            //    TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters, GLint shaderId = 0, bool flip = false);
 
-            static std::future<std::shared_ptr<Texture>> TextureManager::getCubemapTextureAsync(const std::vector<std::string>& faces, GLenum textureType,
-                TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters);
+            //static std::future<std::shared_ptr<Texture>> TextureManager::getCubemapTextureAsync(const std::vector<std::string>& faces, GLenum textureType,
+            //    TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters);
 
             static void clearCache();
             static void releaseUnit(int unit);
 
             static std::string getTexturePath(const std::shared_ptr<Texture>& texture);
 
-            // Gestión por shader
             static void initializeForShader(GLuint shaderID);
 
         private:

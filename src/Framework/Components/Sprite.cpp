@@ -5,7 +5,7 @@ namespace Essentia
     std::vector<Vertex> Sprite::getAspectRatioAdjustedVertices(float aspectRatio)
     {
         float width = 0.5f;
-        float height = 0.5f;
+        float height = 0.5f / aspectRatio;
         float uMin = 0.0f;
         float vMin = 0.0f;
         float uMax = 1.0f;
@@ -87,7 +87,7 @@ namespace Essentia
         shader->use();
         texture = TextureManager::getTexture(texturePath, GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters, flip);
         shader->disable();
-        setTextureData(texture);
+        setTextureData();
     }
     std::string Sprite::getUVRegionName() { return uvRegion; }
     void Sprite::setTexture(std::shared_ptr<Texture> _texture)
@@ -95,21 +95,20 @@ namespace Essentia
         shader->use();
         texture = TextureManager::getTexture(TextureManager::getTexturePath(_texture), GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF);
         shader->disable();
-        setTextureData(texture);
+        setTextureData();
     }
 
     void Sprite::useRegionFromAtlas(const std::string& regionName)
     {
-        float aspectRatio = static_cast<float>(texture->getWidth()) / static_cast<float>(texture->getHeight());
         uvRegion = regionName;
-        mesh->updateVertices(getAspectRatioAdjustedVertices(aspectRatio));
+        setTextureData();
     }
 
-    void Sprite::setTextureData(std::shared_ptr<Texture> texture)
+    void Sprite::setTextureData()
     {
         float aspectRatio = static_cast<float>(texture->getWidth()) / static_cast<float>(texture->getHeight());
-        mesh->updateVertices(getAspectRatioAdjustedVertices(aspectRatio));
         mesh->setDiffuse(texture);
+        mesh->updateVertices(getAspectRatioAdjustedVertices(aspectRatio));
     }
 
     void Sprite::addCustomShaderFunction(SH_TYPE type, const std::string& functionCode)

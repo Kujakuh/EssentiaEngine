@@ -102,11 +102,11 @@ int main(void)
 	// -- Most of the times this is an unneeded call
 	// -- since default framebuffer coords are correctly mapped to NDC
 	// -- but its not the case for all devices
-	// glViewport(0, 0, _WIDTH, _HEIGHT);
+	 glViewport(0, 0, _WIDTH, _HEIGHT);
 
     glEnable(GL_DEPTH_TEST);
 	// VSYNC
-	glfwSwapInterval(1);
+	//glfwSwapInterval(1);
 
     glfwSetWindowAspectRatio(window, 16, 9);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -175,7 +175,7 @@ int main(void)
 	cubemap.shader->setUniform("projection", camera.getProjectionMatrix());
 	cube.disable();
 
-	camera.sensitivity = 0.05f;
+	camera.sensitivity = 5.0f;
 	ref->setPosition().x += 1.5f;
 	ref->updateMatrix();
 
@@ -266,10 +266,10 @@ int main(void)
 		mesh.render();
 		mesh.disableShader();
 
-		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity;
-		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity;
-		if (InputManager::IsKeyPressed(KEY_S)) camera.transform->setPosition() -= camera.getFront() * camera.sensitivity;
-		if (InputManager::IsKeyPressed(KEY_W)) camera.transform->setPosition() += camera.getFront() * camera.sensitivity;
+		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity * Time::deltaTime();
+		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity * Time::deltaTime();
+		if (InputManager::IsKeyPressed(KEY_S)) camera.transform->setPosition() -= camera.getFront() * camera.sensitivity * Time::deltaTime();
+		if (InputManager::IsKeyPressed(KEY_W)) camera.transform->setPosition() += camera.getFront() * camera.sensitivity * Time::deltaTime();
 
 		if (InputManager::IsKeyPressed(KEY_UP))
 		{
@@ -324,7 +324,7 @@ int main(void)
 		if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(modelo3))
 			mod->loadModel(modelo3);
 			
-		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y);
+		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y, 10);
 
 		scene->Update();
 

@@ -246,29 +246,4 @@ namespace Essentia
         }
         return textures;
     }
-
-    std::vector<std::shared_ptr<Texture>> Model::loadMaterialsTexturesAsync(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName) {
-        std::vector<std::shared_ptr<Texture>> textures;
-        std::vector<std::future<std::shared_ptr<Texture>>> tasks;
-
-        for (uint8_t i = 0; i < mat->GetTextureCount(type); i++) {
-            aiString str;
-            mat->GetTexture(type, i, &str);
-            std::string file = dir + '/' + std::string(str.C_Str());
-
-            // Lanza la carga de textura de forma asíncrona
-            tasks.push_back(TextureManager::getTextureAsync(file, GL_TEXTURE_2D, typeName, Essentia::defaultFilters3D, shader->getID()));
-        }
-
-        // Espera a que todas las texturas se hayan cargado y almacénalas
-        for (auto& task : tasks) {
-            auto tx = task.get(); // Sincroniza y obtiene el resultado
-            if (tx) {
-                textures.push_back(tx);
-            }
-        }
-
-        return textures;
-    }
-
 }

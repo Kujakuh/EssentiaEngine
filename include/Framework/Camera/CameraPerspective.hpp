@@ -29,7 +29,7 @@ namespace Essentia
             void setNearPlane(float newNearPlane);
             void setFarPlane(float newFarPlane);
 
-            void processMouseMovement(double xpos, double ypos);
+            void processMouseMovement(double xpos, double ypos, float deltaTime = 1.0f);
     };
 }
 
