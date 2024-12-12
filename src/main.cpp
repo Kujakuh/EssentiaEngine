@@ -142,9 +142,9 @@ int main(void)
 			RESOURCES_PATH "Textures/back.jpg"
 	};
 
-	CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
+	//CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
 	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);
-	//Camera2D camera("Camera", scene, 90.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
+	Camera2D camera("Camera", scene, 45.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
 	scene->RegisterSystems(Renderer2D(&camera), Renderer3D(&camera));
 
 	ShaderLab f;
@@ -279,12 +279,12 @@ int main(void)
 			{
 				direction = up;
 				//sprit->useRegionFromAtlas("player_idle");
-				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/mario.png");
+				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/right.png");
 			}
 		}
-		if (InputManager::IsKeyPressed(KEY_DOWN))
+		if (InputManager::IsKeyPressed(KEY_LEFT))
 		{
-			entity6->GetComponent<Transform>()->setPosition().y -= speed * Time::deltaTime();
+			entity6->GetComponent<Transform>()->setPosition().x -= speed * Time::deltaTime();
 			//ref->setPosition().y -= 0.1;
 			if (direction != down)
 			{
@@ -293,11 +293,10 @@ int main(void)
 				sprit->useRegionFromAtlas("player_idle");
 			}
 		}
-		if (InputManager::IsKeyPressed(KEY_LEFT))
+		if (InputManager::IsKeyPressed(KEY_DOWN))
 		{
-			entity6->GetComponent<Transform>()->setPosition().x -= speed * Time::deltaTime();
 			//ref->setPosition().x -= 0.1;
-
+			entity6->GetComponent<Transform>()->setPosition().y -= speed * Time::deltaTime();
 			if (direction != left)
 			{
 				direction = left;
