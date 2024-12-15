@@ -214,7 +214,7 @@ namespace Essentia
             glDeleteTextures(1, &ID);
             ID = 0;
         }
-
+        
         // Detecta la extensión del archivo
         std::string pathStr = texturePath;
         std::string extension = pathStr.substr(pathStr.find_last_of('.') + 1);

@@ -37,7 +37,7 @@ int main(void)
 	GameObject entity3 = scene->CreateEntity("Entity3");
 	scene->DestroyEntity(entity3);
 	scene->DestroyEntity(entity2);
-	scene->DestroyEntity(entity1);
+	//scene->DestroyEntity(entity1);
 
 	GameObject entity4 = scene->CreateEntity("Entity4");
 	GameObjectTemplate myEntity(scene);
@@ -142,9 +142,9 @@ int main(void)
 			RESOURCES_PATH "Textures/back.jpg"
 	};
 
-	//CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
+	CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
 	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);
-	Camera2D camera("Camera", scene, 45.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
+	//Camera2D camera("Camera", scene, 45.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
 	scene->RegisterSystems(Renderer2D(&camera), Renderer3D(&camera));
 
 	ShaderLab f;
@@ -200,12 +200,14 @@ int main(void)
 	Model* mod = entity4->GetComponent<Model>();
 	mod->loadModel(modelo3);
 	mod->loadModel(modelo2);
-	
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
 	entity4->GetComponent<Transform>()->setScale(Vector3(6.0f));
 	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
+
+	entity1->AddComponent<LightSource>(LightType::Spot);
+	entity1->GetComponent<LightSource>()->SetIntensity(0.3f);
 
 	std::string title;
 	std::shared_ptr<Timer> timo = std::make_shared<Timer>(15);
@@ -235,6 +237,7 @@ int main(void)
 		}
 		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+		/*
 		mod->getShader()->use();
 		mod->getShader()->setUniform("lightsNum", 0);
 		mod->getShader()->setUniform("lights[0].position", camera.getPosition());
@@ -250,6 +253,10 @@ int main(void)
 		mesh.shader->setUniform("lights[0].color", Vector3(1, 0.9, 0.8));
 		mesh.shader->setUniform("lights[0].intensity", 1.0f);
 		mesh.shader->disable();
+		*/
+
+		entity1->GetComponent<Transform>()->setPosition(camera.getPosition());
+		entity1->GetComponent<LightSource>()->SetDirection(camera.getFront());
 
 		glDepthFunc(GL_LEQUAL);
 		cubemap.initShader();

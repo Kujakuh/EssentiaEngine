@@ -151,7 +151,7 @@ namespace Essentia
         std::vector<Essentia::Material> materials;
 
         // ---------------------------------------- DEBUG ----------------------------------------
-        int roughnessCount = mat->GetTextureCount(aiTextureType_SHININESS);
+        /*int roughnessCount = mat->GetTextureCount(aiTextureType_SHININESS);
         if (roughnessCount == 0) {
             std::cerr << "No roughness textures found in material!" << std::endl;
         }
@@ -159,7 +159,7 @@ namespace Essentia
             aiString str;
             mat->GetTexture(aiTextureType_SHININESS, 0, &str);
             std::cout << str.C_Str() << "\n";
-        }
+        }*/
         // ---------------------------------------- DEBUG ----------------------------------------
 
         struct TextureType {

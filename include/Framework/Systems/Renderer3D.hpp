@@ -8,6 +8,7 @@
 #include <Core/Memory/WeakptrWrapper.hpp>
 #include <Framework/Camera/CameraBase.hpp>
 #include <Framework/Components/Model/Model.hpp>
+#include <Framework/Components/LightSource.hpp>
 
 namespace Essentia
 {
@@ -22,8 +23,9 @@ namespace Essentia
 
         private:
             CameraBase* camera = nullptr;
-            void renderEntities(std::vector<WeakptrWrapper<Entity>>& entities);
-            void renderTransparentEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& transparentEntities);
+            void renderEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& entities, const std::vector<WeakptrWrapper<Entity>>& lights);
+            void renderTransparentEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& transparentEntities, const std::vector<WeakptrWrapper<Entity>>& lights);
     };
 }
+
 #endif // RENDERER3D_H

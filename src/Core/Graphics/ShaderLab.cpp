@@ -6,16 +6,16 @@ namespace Essentia
     {
         if (GLAD_GL_ARB_bindless_texture && Essentia::bindlessTexturesMode)
         {
-            versionNextensionsHeader = R"(
-        #version 440 core
-        #extension GL_ARB_bindless_texture : require
-        )";
+                versionNextensionsHeader = R"(
+            #version 440 core
+            #extension GL_ARB_bindless_texture : require
+            )";
         }
         else
         {
-            versionNextensionsHeader = R"(
-        #version 330 core
-        )";
+                versionNextensionsHeader = R"(
+            #version 330 core
+            )";
         }
         shaderHeaders2D[VERTEX] = "";
         shaderHeaders2D[FRAGMENT] = "";
@@ -179,15 +179,22 @@ namespace Essentia
 
             struct Light {
                 int type; // 0 = puntual, 1 = direccional, 2 = focal
+
                 vec3 position;
                 vec3 direction;
                 vec3 color;
+                
+                float constant;
+                float linear;
+                float quadratic;
+
                 float intensity;
+
                 float innerCutoff;
                 float outerCutoff;
             };
 
-            uniform Light lights[10];
+            uniform Light lights[100];
             uniform int lightsNum = 0;
 
             // ----------------------------------------------------------------------------
@@ -196,12 +203,17 @@ namespace Essentia
                 if (light.type == 0 || light.type == 2) 
                 {
                     float distance = length(light.position - fragPos);
-                    //return 1.0 / (distance * distance);
-                    float alpha = 0.1;  // Factor de escala (ajustable)
+
+                    //float att = 1.0 / (light.constant + light.linear * distance + light.quadratic);
+
+                    float alpha = 0.1;  // Factor de escala
                     float beta = 2.0;   // Exponente para controlar la rapidez de la atenuación
-                    return 1.0 / (1.0 + alpha * pow(distance, beta));
+                    float customAtt = 1.0 / (1.0 + alpha * pow(distance, beta));
+
+                    return customAtt;
                 }
-                return 1.0; // Sin atenuación para luces direccionales
+
+                return 1.0;
             }
             // ----------------------------------------------------------------------------
             vec3 calculateLightDir(vec3 fragPos, Light light) {
@@ -307,7 +319,6 @@ namespace Essentia
                 // Cálculo de la radiancia de la luz
                 vec3 L = normalize(lightDir);
                 vec3 H = normalize(V + L);
-                float distance = length(lightDir);
                 float attenuation = calculateAttenuation(fragPos, light);
                 vec3 radiance = light.color * attenuation * light.intensity;
 
@@ -469,7 +480,7 @@ namespace Essentia
         )";
 
         // ----------------- DEBUG -----------------
-        std::cout << shader.str() << "\n";
+        //std::cout << shader.str() << "\n";
         // ----------------- DEBUG -----------------
 
         return shader.str();
@@ -627,29 +638,30 @@ namespace Essentia
                 if (length(n) > 0) norm = n; 
 
                 vec3 viewDir = normalize(viewPos - FragPos);
-                vec3 res = vec3(0.0);
+                vec3 res = vec3(1.0);
 
                 )";
 
-                if (ambientLightOn)
+                if (!ambientLightOn)
                     shader << R"(
                     // Luz solar base (luz direccional)
                     Light sunLight;
                     sunLight.type = 1; // Luz direccional
                     sunLight.direction = normalize(vec3(0.0, -1.0, 0.0)); // Dirección del sol (ligeramente inclinada)
                     sunLight.color = vec3(1.0, 0.95, 0.9); // Color cálido, similar a la luz solar
-                    sunLight.intensity = 2; // Intensidad más alta que las luces estándar
+                    sunLight.intensity = 0.1; // Intensidad más alta que las luces estándar
 
                     // Cálculo de la luz solar base
                     vec3 lightDir = calculateLightDir(FragPos, sunLight);
-                    res += calculatePBR(norm, viewDir, lightDir, material, sunLight, TexCoord, FragPos);
+                    res *= calculatePBR(norm, viewDir, lightDir, material, sunLight, TexCoord, FragPos);
                     )";
 
                 shader << R"(
                 
-                for (int i = 0; i < lightsNum; ++i) {
+                for (int i = 0; i < lightsNum; ++i)
+                {
                     vec3 lightDir = calculateLightDir(FragPos, lights[i]);
-                    res += calculatePBR(norm, viewDir, lightDir, material, lights[i], TexCoord, FragPos);
+                    res *= calculatePBR(norm, viewDir, lightDir, material, lights[i], TexCoord, FragPos);
                 }
 
                 vec4 albedoSample = texture(material.diffuse, TexCoord);
@@ -700,7 +712,7 @@ namespace Essentia
         )";
 
         // ----------------- DEBUG -----------------
-        std::cout << shader.str() << "\n";
+        //std::cout << shader.str() << "\n";
         // ----------------- DEBUG -----------------
 
         return shader.str();
