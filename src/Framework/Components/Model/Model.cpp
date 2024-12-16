@@ -6,6 +6,13 @@ namespace Essentia
     Model::Model(const std::vector<std::shared_ptr<Mesh>>& initialMeshes) : meshes(initialMeshes) 
     { initializeShader(); }
 
+    Model::Model(const Mesh mesh)
+    {
+        meshes = { std::make_shared<Mesh>(mesh) };
+        initializeShader();
+        meshes.at(0)->setupMesh(); meshes.at(0)->needsUpdate = true;
+    }
+
     Model::Model(const std::string& path, bool inverseUvY)
     { 
         loadModel(path, inverseUvY);

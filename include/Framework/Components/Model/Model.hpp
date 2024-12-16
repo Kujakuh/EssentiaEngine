@@ -32,7 +32,7 @@ namespace Essentia
             Mesh processMesh(aiMesh* mesh, const aiScene* scene, bool inverseUvY);
             std::vector<Essentia::Material> loadMaterials(aiMaterial* mat);
             std::vector<std::shared_ptr<Texture>> loadMaterialsTextures(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName);
-            std::vector<std::shared_ptr<Texture>> loadMaterialsTexturesAsync(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName);
+            //std::vector<std::shared_ptr<Texture>> loadMaterialsTexturesAsync(aiMaterial* mat, aiTextureType type, TEX_TYPE typeName);
 
             void loadModelInner(const std::string& path, bool inverseUvY = true);
 
@@ -41,6 +41,7 @@ namespace Essentia
             ShaderLab shaderLab;
 
             Model() = default;
+            Model(const Mesh mesh);
             Model(const std::string& path, bool inverseUvY = true);
             Model(const std::vector<std::shared_ptr<Mesh>>& initialMeshes);
 

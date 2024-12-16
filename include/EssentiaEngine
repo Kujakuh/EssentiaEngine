@@ -26,6 +26,7 @@
 
 #include <Shared/values.hpp>
 #include <Shared/user_values.hpp>
+#include <Shared/defaultModels.hpp>
 
 using Vector2 = glm::vec2;
 using Vector3 = glm::vec3;

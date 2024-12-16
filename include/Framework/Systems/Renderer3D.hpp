@@ -31,8 +31,9 @@ namespace Essentia
 
             std::vector<float> meshDistances;
 
-            void renderEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& entities, const std::vector<WeakptrWrapper<Entity>>& lights);
-            void renderTransparentEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& transparentEntities, const std::vector<WeakptrWrapper<Entity>>& lights);
+            //void uploadLightsToShader(std::shared_ptr<Shader> shader, const std::vector<WeakptrWrapper<Entity>>& lights);
+            void renderEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& entities);
+            void renderTransparentEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& transparentEntities);
     };
 }
 

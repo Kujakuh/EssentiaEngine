@@ -258,7 +258,7 @@ namespace Essentia
 
 	void Shader::use() const
 	{
-		glUseProgram(this->ID);
+		if(this != NULL) glUseProgram(this->ID);
 	}
 	void Shader::disable() const
 	{

@@ -35,9 +35,6 @@ int main(void)
 	GameObject entity1 = scene->CreateEntity("Entity1");
 	GameObject entity2 = scene->CreateEntity("Entity2");
 	GameObject entity3 = scene->CreateEntity("Entity3");
-	scene->DestroyEntity(entity3);
-	scene->DestroyEntity(entity2);
-	//scene->DestroyEntity(entity1);
 
 	GameObject entity4 = scene->CreateEntity("Entity4");
 	GameObjectTemplate myEntity(scene);
@@ -129,8 +126,7 @@ int main(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #pragma endregion
 
-	//Essentia::bindlessTexturesMode = false;
-	//Essentia::render_mode = PONG_SHADING;
+	Essentia::initDefaultModels();
 
 	std::vector<std::string> faces
 	{
@@ -147,21 +143,7 @@ int main(void)
 	//Camera2D camera("Camera", scene, 45.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
 	scene->RegisterSystems(Renderer2D(&camera), Renderer3D(&camera));
 
-	ShaderLab f;
-	Shader s(f.generateShader3D(VERTEX).c_str(), f.generateShader3D(FRAGMENT).c_str(), DATA_SOURCE::STR_DATA);
 	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
-
-	s.use();
-	TextureHandle gg = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_TYPE::TEX_DIFF, Essentia::defaultFilters3D);
-	Material mat1; mat1.diffuse = gg;
-	Mesh mesh(
-		std::make_shared<Shader>(s),
-		Essentia::cubeVertices, 
-		Essentia::cubeIndices,
-		{ mat1 }
-	);
-	mesh.shader->setUniform("projection", camera.getProjectionMatrix());
-	s.disable();
 
 	cube.use();
 	TextureHandle tx = TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
@@ -201,13 +183,17 @@ int main(void)
 	mod->loadModel(modelo3);
 	mod->loadModel(modelo2);
 
+	entity2->AddComponent<Model>(Essentia::cube);
+	entity2->GetComponent<Model>()->getMesh(0)->materials[0].albedo = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_ALBEDO);
+	entity2->GetComponent<Transform>()->setPosition().x += 6;
+
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
 	entity4->GetComponent<Transform>()->setScale(Vector3(6.0f));
 	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
 	entity1->AddComponent<LightSource>(LightType::Spot);
-	entity1->GetComponent<LightSource>()->SetIntensity(2.0f);
+	entity1->GetComponent<LightSource>()->SetIntensity(50.0f);
 
 	std::string title;
 	std::shared_ptr<Timer> timo = std::make_shared<Timer>(15);
@@ -237,24 +223,6 @@ int main(void)
 		}
 		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-		/*
-		mod->getShader()->use();
-		mod->getShader()->setUniform("lightsNum", 0);
-		mod->getShader()->setUniform("lights[0].position", camera.getPosition());
-		mod->getShader()->setUniform("lights[0].type", 0);
-		mod->getShader()->setUniform("lights[0].color", Vector3(1, 0.9, 0.8));
-		mod->getShader()->setUniform("lights[0].intensity", 1.0f);
-		mod->getShader()->disable();
-
-		mesh.shader->use();
-		mesh.shader->setUniform("lightsNum", 0);
-		mesh.shader->setUniform("lights[0].position", camera.getPosition());
-		mesh.shader->setUniform("lights[0].type", 0);
-		mesh.shader->setUniform("lights[0].color", Vector3(1, 0.9, 0.8));
-		mesh.shader->setUniform("lights[0].intensity", 1.0f);
-		mesh.shader->disable();
-		*/
-
 		entity1->GetComponent<Transform>()->setPosition(camera.getPosition());
 		entity1->GetComponent<LightSource>()->SetDirection(camera.getFront());
 
@@ -264,14 +232,6 @@ int main(void)
 		cubemap.render();
 		cubemap.disableShader();
 		glDepthFunc(GL_LESS);
-
-		mesh.initShader();
-		ref->updateMatrix();
-		mesh.shader->setUniform("model", ref->getModelMatrix());
-		mesh.shader->setUniform("view", camera.getViewMatrix());
-		mesh.shader->setUniform("viewPos", camera.getPosition());
-		mesh.render();
-		mesh.disableShader();
 
 		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity * Time::deltaTime();
 		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity * Time::deltaTime();

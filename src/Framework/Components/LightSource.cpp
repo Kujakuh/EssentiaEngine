@@ -4,7 +4,7 @@ namespace Essentia
 {
     LightSource::LightSource()
         : direction(glm::vec3(0.0f, -1.0f, 0.0f)), color(glm::vec3(1.0)),
-        ambient(glm::vec3(0.2f)), diffuse(glm::vec3(0.5f)), specular(glm::vec3(1.0f)),
+        ambient(glm::vec3(0.1f)), diffuse(glm::vec3(1.0f)), specular(glm::vec3(1.0f)),
         intensity(0.1f), type(LightType::Point),
         innerCutOff(0.0f), outerCutOff(0.0f),
         constant(1.0f), linear(0.09f), quadratic(0.032f), needsUpdate(true) {}

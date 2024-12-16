@@ -144,7 +144,7 @@ namespace Essentia
             }
 
             vec3 spotLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos) {
-                vec3 lightDir = normalize(light.position - fragPos);
+                vec3 lightDir = normalize(light.direction);
                 float diff = max(dot(normal, lightDir), 0.0);
 
                 float theta = dot(lightDir, normalize(-light.direction));
@@ -238,7 +238,8 @@ namespace Essentia
                 vec3 tangentNormal = texture(material.normal, TexCoord).xyz * 2.0 - 1.0;
                 // Verificamos si el normal está correctamente mapeado
                 if (length(tangentNormal) == 0.0) {
-                    tangentNormal = vec3(0.0, 0.0, 1.0); // Valor por defecto si la textura no está disponible
+                    //tangentNormal = Normal * 2.0 - 1.0;
+                    return Normal;
                 }
 
                 vec3 Q1  = dFdx(FragPos);
@@ -343,6 +344,8 @@ namespace Essentia
 
                 // Escala por NdotL
                 float NdotL = max(dot(N, L), 0.0);
+                vec3 nan =  texture(material.normal, TexCoord).xyz;
+                if(length(nan) == 0) { NdotL = 1.0 - NdotL; }
 
                 // Radiancia total
                 vec3 Lo = (kD * albedo / PI + specular) * radiance * NdotL;
@@ -359,6 +362,7 @@ namespace Essentia
                 // Corrección gamma
                 color = pow(color, vec3(1.0 / 2.2));
 
+                //return color;
                 return color;
             }
             )";
@@ -582,8 +586,8 @@ namespace Essentia
                     vec3(0.0, -1.0, 0.0), // Dirección de la luz, emula el sol hacia abajo
                     0.0, // InnerCutOff no necesario para luces direccionales
                     0.0, // OuterCutOff no necesario para luces direccionales
-                    vec3(0.3, 0.3, 0.3), // Luz ambiental tenue
-                    vec3(1.0, 1.0, 1.0), // Luz difusa fuerte (luz del sol)
+                    vec3(0.1, 0.1, 0.1), // Luz ambiental tenue
+                    vec3(0.4, 0.4, 0.4), // Luz difusa fuerte (luz del sol)
                     vec3(1.0, 1.0, 1.0), // Luz especular fuerte
                     1.0, // Constante (luz direccional no cambia con la distancia)
                     0.0, // Linear (sin caída de luz con la distancia)
@@ -633,23 +637,21 @@ namespace Essentia
             if (renderMode == RENDER_MODE::PBR)
             {
                 shader << R"(
-                vec3 norm = normalize(Normal);
-                vec3 n = getNormalFromMap();
-                if (length(n) > 0) norm = n; 
+                vec3 norm = getNormalFromMap();
 
                 vec3 viewDir = normalize(viewPos - FragPos);
                 vec3 res = vec3(1.0);
 
                 )";
 
-                if (!ambientLightOn)
+                if (ambientLightOn)
                     shader << R"(
                     // Luz solar base (luz direccional)
                     Light sunLight;
                     sunLight.type = 1; // Luz direccional
                     sunLight.direction = normalize(vec3(0.0, -1.0, 0.0)); // Dirección del sol (ligeramente inclinada)
                     sunLight.color = vec3(1.0, 0.95, 0.9); // Color cálido, similar a la luz solar
-                    sunLight.intensity = 0.1; // Intensidad más alta que las luces estándar
+                    sunLight.intensity = 10.0; // Intensidad más alta que las luces estándar
 
                     // Cálculo de la luz solar base
                     vec3 lightDir = calculateLightDir(FragPos, sunLight);

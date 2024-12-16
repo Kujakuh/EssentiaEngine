@@ -25,6 +25,5 @@ class SceneTemplate : public Scene
 		{
 			systemDispatcher.RegisterSystem(std::make_shared<Essentia::Renderer2D>(renderer));
 			systemDispatcher.RegisterSystem(std::make_shared<Essentia::Renderer3D>(renderer3d));
-
 		}
 };

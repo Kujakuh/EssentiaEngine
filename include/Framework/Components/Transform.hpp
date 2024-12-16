@@ -44,6 +44,8 @@ namespace Essentia
                 const glm::vec3& customAxisZ = glm::vec3(0.0f, 0.0f, 1.0f));
 
             bool areAligned(const glm::vec3& a, const glm::vec3& b, float epsilon = 0.001f);
+
+            friend class Renderer3D;
     };
 }
 

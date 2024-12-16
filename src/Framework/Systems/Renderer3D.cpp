@@ -31,14 +31,49 @@ namespace Essentia
                 opaqueEntities.push_back(entity);
         }
 
-        renderEntities(opaqueEntities, entitiesWithLights);
-        renderTransparentEntities(transparentEntities, entitiesWithLights);
+        for (auto& entity : entitiesWithModels)
+        {
+            auto& shader = entity->GetComponent<Model>()->getShader();
+            auto mod = entity->GetComponent<Model>();
+            shader->use();
+            shader->setUniform("lightsNum", static_cast<int>(entitiesWithLights.size()));
+            for (int i = 0; i < entitiesWithLights.size(); ++i)
+            {
+                auto lightEntity = entitiesWithLights[i].weakPtr_.lock();
+                if (!lightEntity) continue;
+
+                auto ls = lightEntity->GetComponent<LightSource>();
+                auto ts = lightEntity->GetComponent<Transform>();
+
+                const std::string lightBase = "lights[" + std::to_string(i) + "]";
+
+                if(ts->needsUpdate) shader->setUniform(lightBase + ".position", ts->getPosition());
+                if(ls->type == LightType::Spot) shader->setUniform(lightBase + ".direction", ls->GetDirection());
+
+                if (ls->needsUpdate || mod->getMesh(0)->needsUpdate)
+                {
+                    shader->setUniform(lightBase + ".type", static_cast<int>(ls->GetType()));
+                    shader->setUniform(lightBase + ".color", ls->GetColor());
+                    shader->setUniform(lightBase + ".constant", ls->GetConstant());
+                    shader->setUniform(lightBase + ".linear", ls->GetLinear());
+                    shader->setUniform(lightBase + ".quadratic", ls->GetQuadratic());
+                    shader->setUniform(lightBase + ".intensity", ls->GetIntensity());
+                    shader->setUniform(lightBase + ".innerCutoff", ls->GetInnerCutOff());
+                    shader->setUniform(lightBase + ".outerCutoff", ls->GetOuterCutOff());
+                }
+                ls->needsUpdate = false;
+                shader->disable();
+            }
+        }
+
+        renderEntities(opaqueEntities);
+        renderTransparentEntities(transparentEntities);
 
         opaqueEntities.clear();
         transparentEntities.clear();
     }
 
-    void Renderer3D::renderEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& entities, const std::vector<WeakptrWrapper<Entity>>& lights)
+    void Renderer3D::renderEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& entities)
     {
         for (auto& entity : entities)
         {
@@ -47,47 +82,23 @@ namespace Essentia
 
             transform->updateMatrix();
 
-            model->getShader()->use();
+            auto& shader = model->getShader();
+            shader->use();
 
-            for (auto& mesh : model->meshes)
+            shader->setUniform("model", transform->getModelMatrix());
+            if (camera)
             {
-                mesh->shader->setUniform("model", transform->getModelMatrix());
-                if (camera)
-                {
-                    mesh->shader->setUniform("view", camera->getViewMatrix());
-                    mesh->shader->setUniform("projection", camera->getProjectionMatrix());
-                    mesh->shader->setUniform("viewPos", camera->getPosition());
-                }
-
-                mesh->shader->setUniform("lightsNum", static_cast<int>(lights.size()));
-                for (int i = 0; i < lights.size(); ++i)
-                {
-                    auto ls = lights[i].weakPtr_.lock()->GetComponent<LightSource>();
-                    auto ts = lights[i].weakPtr_.lock()->GetComponent<Transform>();
-
-                    const std::string lightBase = "lights[" + std::to_string(i) + "]";
-                    mesh->shader->setUniform(lightBase + ".position", ts->getPosition());
-                    mesh->shader->setUniform(lightBase + ".direction", ls->GetDirection());
-                    if (ls->needsUpdate || mesh->needsUpdate)
-                    {
-                        mesh->shader->setUniform(lightBase + ".type", static_cast<int>(ls->GetType()));
-                        mesh->shader->setUniform(lightBase + ".color", ls->GetColor());
-                        mesh->shader->setUniform(lightBase + ".constant", ls->GetConstant());
-                        mesh->shader->setUniform(lightBase + ".linear", ls->GetLinear());
-                        mesh->shader->setUniform(lightBase + ".quadratic", ls->GetQuadratic());
-                        mesh->shader->setUniform(lightBase + ".intensity", ls->GetIntensity());
-                        mesh->shader->setUniform(lightBase + ".innerCutoff", ls->GetInnerCutOff());
-                        mesh->shader->setUniform(lightBase + ".outerCutoff", ls->GetOuterCutOff());
-                        ls->needsUpdate = false;
-                    }
-                }
-                mesh->render();
+                shader->setUniform("view", camera->getViewMatrix());
+                shader->setUniform("projection", camera->getProjectionMatrix());
+                shader->setUniform("viewPos", camera->getPosition());
             }
+
+            for (auto& mesh : model->meshes) {mesh->render();}
             model->getShader()->disable();
         }
     }
 
-    void Renderer3D::renderTransparentEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& transparentEntities, const std::vector<WeakptrWrapper<Entity>>& lights)
+    void Renderer3D::renderTransparentEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& transparentEntities)
     {
         for (auto& entity : transparentEntities)
         {
@@ -119,30 +130,6 @@ namespace Essentia
                 mesh->shader->setUniform("projection", camera->getProjectionMatrix());
                 mesh->shader->setUniform("viewPos", camera->getPosition());
             }
-
-            mesh->shader->setUniform("lightsNum", static_cast<int>(lights.size()));
-            for (int i = 0; i < lights.size(); ++i)
-            {
-                auto ls = lights[i].weakPtr_.lock()->GetComponent<LightSource>();
-                auto ts = lights[i].weakPtr_.lock()->GetComponent<Transform>();
-
-                const std::string lightBase = "lights[" + std::to_string(i) + "]";
-                mesh->shader->setUniform(lightBase + ".position", ts->getPosition());
-                mesh->shader->setUniform(lightBase + ".direction", ls->GetDirection());
-                if (ls->needsUpdate || mesh->needsUpdate)
-                {
-                    mesh->shader->setUniform(lightBase + ".type", static_cast<int>(ls->GetType()));
-                    mesh->shader->setUniform(lightBase + ".color", ls->GetColor());
-                    mesh->shader->setUniform(lightBase + ".constant", ls->GetConstant());
-                    mesh->shader->setUniform(lightBase + ".linear", ls->GetLinear());
-                    mesh->shader->setUniform(lightBase + ".quadratic", ls->GetQuadratic());
-                    mesh->shader->setUniform(lightBase + ".intensity", ls->GetIntensity());
-                    mesh->shader->setUniform(lightBase + ".innerCutoff", ls->GetInnerCutOff());
-                    mesh->shader->setUniform(lightBase + ".outerCutoff", ls->GetOuterCutOff());
-                    ls->needsUpdate = false;
-                }
-            }
-
             mesh->render();
             mesh->shader->disable();
         }
@@ -188,29 +175,6 @@ namespace Essentia
                 mesh->shader->setUniform("view", camera->getViewMatrix());
                 mesh->shader->setUniform("projection", camera->getProjectionMatrix());
                 mesh->shader->setUniform("viewPos", camera->getPosition());
-            }
-
-            mesh->shader->setUniform("lightsNum", static_cast<int>(lights.size()));
-            for (int i = 0; i < lights.size(); ++i)
-            {
-                auto ls = lights[i].weakPtr_.lock()->GetComponent<LightSource>();
-                auto ts = lights[i].weakPtr_.lock()->GetComponent<Transform>();
-
-                const std::string lightBase = "lights[" + std::to_string(i) + "]";
-                mesh->shader->setUniform(lightBase + ".position", ts->getPosition());
-                mesh->shader->setUniform(lightBase + ".direction", ls->GetDirection());
-                if (ls->needsUpdate || mesh->needsUpdate)
-                {
-                    mesh->shader->setUniform(lightBase + ".type", static_cast<int>(ls->GetType()));
-                    mesh->shader->setUniform(lightBase + ".color", ls->GetColor());
-                    mesh->shader->setUniform(lightBase + ".constant", ls->GetConstant());
-                    mesh->shader->setUniform(lightBase + ".linear", ls->GetLinear());
-                    mesh->shader->setUniform(lightBase + ".quadratic", ls->GetQuadratic());
-                    mesh->shader->setUniform(lightBase + ".intensity", ls->GetIntensity());
-                    mesh->shader->setUniform(lightBase + ".innerCutoff", ls->GetInnerCutOff());
-                    mesh->shader->setUniform(lightBase + ".outerCutoff", ls->GetOuterCutOff());
-                    ls->needsUpdate = false;
-                }
             }
 
             mesh->render();
