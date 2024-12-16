@@ -216,7 +216,8 @@ namespace Essentia
                 return 1.0;
             }
             // ----------------------------------------------------------------------------
-            vec3 calculateLightDir(vec3 fragPos, Light light) {
+            vec3 calculateLightDir(vec3 fragPos, Light light)
+            {
                 if (light.type == 1) 
                 {
                     // Luz direccional
@@ -226,7 +227,8 @@ namespace Essentia
                     return light.position - fragPos;
             }
             // ----------------------------------------------------------------------------
-            float calculateSpotEffect(vec3 lightDir, Light light) {
+            float calculateSpotEffect(vec3 lightDir, Light light)
+            {
                 if (light.type != 2) return 1.0; // No es luz focal
                 float theta = dot(lightDir, normalize(-light.direction));
                 float epsilon = light.innerCutoff - light.outerCutoff;
@@ -237,10 +239,8 @@ namespace Essentia
             {
                 vec3 tangentNormal = texture(material.normal, TexCoord).xyz * 2.0 - 1.0;
                 // Verificamos si el normal está correctamente mapeado
-                if (length(tangentNormal) == 0.0) {
-                    //tangentNormal = Normal * 2.0 - 1.0;
-                    return Normal;
-                }
+                if (length(tangentNormal) == 0.0)
+                    tangentNormal = Normal * 2.0 - 1.0;
 
                 vec3 Q1  = dFdx(FragPos);
                 vec3 Q2  = dFdy(FragPos);
@@ -295,8 +295,6 @@ namespace Essentia
                 return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
             }
             // ----------------------------------------------------------------------------
-
-            // Función para calcular la iluminación PBR
             vec3 calculatePBR(vec3 normal, vec3 viewDir, vec3 lightDir, Material material, Light light, vec2 TexCoord, vec3 fragPos) 
             {
                 vec4 albedoSample = texture(material.diffuse, TexCoord); // RGBA
@@ -307,62 +305,50 @@ namespace Essentia
                 float roughness = texture(material.roughness, vec2(TexCoord.x, TexCoord.y)).r;
 
                 float ao = texture(material.ao, vec2(TexCoord.x, TexCoord.y)).r;
-                if (isnan(ao)) ao = 1.0; // Valor por defecto para oclusión ambiental
+                if (isnan(ao)) ao = 1.0;
 
-                // Normal y dirección de vista
-                vec3 N = normalize(normal);  // Normal es pasada como parámetro
-                vec3 V = normalize(viewDir); // Dirección de vista es pasada como parámetro
+                vec3 N = normal;  
+                vec3 V = viewDir;
 
-                // Calcula el valor de F0 para fresnel
                 vec3 F0 = vec3(0.03); 
                 F0 = mix(F0, albedo, metallic);
 
-                // Cálculo de la radiancia de la luz
                 vec3 L = normalize(lightDir);
                 vec3 H = normalize(V + L);
                 float attenuation = calculateAttenuation(fragPos, light);
                 vec3 radiance = light.color * attenuation * light.intensity;
 
-                // Si la luz es focal, ajustamos su efecto
                 float spotEffect = calculateSpotEffect(L, light);
-                radiance *= spotEffect;  // Modificar la radiancia por el efecto de la luz focal
+                radiance *= spotEffect;
 
-                // BRDF de Cook-Torrance
                 float NDF = DistributionGGX(N, H, roughness);   
                 float G = GeometrySmith(N, V, L, roughness);      
                 vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
 
-                // Numerador y denominador del cálculo de especulares
                 vec3 numerator = NDF * G * F; 
-                float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // +0.0001 para evitar división por 0
+                float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.00001;
                 vec3 specular = numerator / denominator;
 
-                // Cálculo de kS y kD
                 vec3 kS = F;
                 vec3 kD = vec3(1.0) - kS;
-                kD *= 1.0 - metallic;  // Solo los no metales tienen iluminación difusa
+                kD *= 1.0 - metallic;
 
-                // Escala por NdotL
                 float NdotL = max(dot(N, L), 0.0);
                 vec3 nan =  texture(material.normal, TexCoord).xyz;
                 if(length(nan) == 0) { NdotL = 1.0 - NdotL; }
 
                 // Radiancia total
                 vec3 Lo = (kD * albedo / PI + specular) * radiance * NdotL;
-
                 // Iluminación ambiental
                 vec3 ambient = vec3(0.03) * albedo * ao;
 
-                // Resultado final
                 vec3 color = ambient + Lo;
 
                 // Tonemapping HDR
                 color = color / (color + vec3(1.0));
-
                 // Corrección gamma
                 color = pow(color, vec3(1.0 / 2.2));
 
-                //return color;
                 return color;
             }
             )";
@@ -477,7 +463,7 @@ namespace Essentia
                 shader << "    TexCoord = aTexCoord;\n";
             }
         }
-        else shader << customMainCode.at(type); // Add any custom main code
+        else shader << customMainCode.at(type);
 
         shader << R"(
         }
