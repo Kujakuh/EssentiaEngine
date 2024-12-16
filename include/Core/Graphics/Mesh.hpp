@@ -60,6 +60,7 @@ namespace Essentia
             void setupMesh();
 
             friend class Model;
+            friend class Renderer3D;
     };
 }
 

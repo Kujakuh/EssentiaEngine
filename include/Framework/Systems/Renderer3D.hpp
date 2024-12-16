@@ -23,6 +23,14 @@ namespace Essentia
 
         private:
             CameraBase* camera = nullptr;
+
+            std::vector<std::pair<WeakptrWrapper<Entity>, std::shared_ptr<Mesh>>> opaqueMeshes;
+            std::vector<std::pair<WeakptrWrapper<Entity>, std::shared_ptr<Mesh>>> transparentMeshes;
+            std::vector<WeakptrWrapper<Entity>> opaqueEntities;
+            std::vector<WeakptrWrapper<Entity>> transparentEntities;
+
+            std::vector<float> meshDistances;
+
             void renderEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& entities, const std::vector<WeakptrWrapper<Entity>>& lights);
             void renderTransparentEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& transparentEntities, const std::vector<WeakptrWrapper<Entity>>& lights);
     };

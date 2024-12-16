@@ -3,7 +3,16 @@
 
 namespace Essentia
 {
-    Renderer3D::Renderer3D(CameraBase* camera) { setCamera(camera); }
+    Renderer3D::Renderer3D(CameraBase* camera) 
+    { 
+        setCamera(camera); 
+        std::vector<std::pair<WeakptrWrapper<Entity>, std::shared_ptr<Mesh>>> opaqueMeshes;
+        std::vector<std::pair<WeakptrWrapper<Entity>, std::shared_ptr<Mesh>>> transparentMeshes;
+        std::vector<WeakptrWrapper<Entity>> opaqueEntities;
+        std::vector<WeakptrWrapper<Entity>> transparentEntities;
+
+        std::vector<float> meshDistances;
+    }
 
     void Renderer3D::setCamera(CameraBase* camera) { this->camera = camera; }
 
@@ -11,9 +20,6 @@ namespace Essentia
     {
         auto entitiesWithLights = entityManager.GetEntitiesWith<LightSource>();
         auto entitiesWithModels = entityManager.GetEntitiesWith<Transform, Model>();
-
-        std::vector<WeakptrWrapper<Entity>> opaqueEntities;
-        std::vector<WeakptrWrapper<Entity>> transparentEntities;
 
         for (auto& entity : entitiesWithModels)
         {
@@ -27,6 +33,9 @@ namespace Essentia
 
         renderEntities(opaqueEntities, entitiesWithLights);
         renderTransparentEntities(transparentEntities, entitiesWithLights);
+
+        opaqueEntities.clear();
+        transparentEntities.clear();
     }
 
     void Renderer3D::renderEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& entities, const std::vector<WeakptrWrapper<Entity>>& lights)
@@ -38,8 +47,7 @@ namespace Essentia
 
             transform->updateMatrix();
 
-            auto shader = model->getShader();
-            shader->use();
+            model->getShader()->use();
 
             for (auto& mesh : model->meshes)
             {
@@ -58,32 +66,31 @@ namespace Essentia
                     auto ts = lights[i].weakPtr_.lock()->GetComponent<Transform>();
 
                     const std::string lightBase = "lights[" + std::to_string(i) + "]";
-                    mesh->shader->setUniform(lightBase + ".type", static_cast<int>(ls->GetType()));
                     mesh->shader->setUniform(lightBase + ".position", ts->getPosition());
                     mesh->shader->setUniform(lightBase + ".direction", ls->GetDirection());
-                    mesh->shader->setUniform(lightBase + ".color", ls->GetColor());
-                    mesh->shader->setUniform(lightBase + ".constant", ls->GetConstant());
-                    mesh->shader->setUniform(lightBase + ".linear", ls->GetLinear());
-                    mesh->shader->setUniform(lightBase + ".quadratic", ls->GetQuadratic());
-                    mesh->shader->setUniform(lightBase + ".intensity", ls->GetIntensity());
-                    mesh->shader->setUniform(lightBase + ".innerCutoff", ls->GetInnerCutOff());
-                    mesh->shader->setUniform(lightBase + ".outerCutoff", ls->GetOuterCutOff());
+                    if (ls->needsUpdate || mesh->needsUpdate)
+                    {
+                        mesh->shader->setUniform(lightBase + ".type", static_cast<int>(ls->GetType()));
+                        mesh->shader->setUniform(lightBase + ".color", ls->GetColor());
+                        mesh->shader->setUniform(lightBase + ".constant", ls->GetConstant());
+                        mesh->shader->setUniform(lightBase + ".linear", ls->GetLinear());
+                        mesh->shader->setUniform(lightBase + ".quadratic", ls->GetQuadratic());
+                        mesh->shader->setUniform(lightBase + ".intensity", ls->GetIntensity());
+                        mesh->shader->setUniform(lightBase + ".innerCutoff", ls->GetInnerCutOff());
+                        mesh->shader->setUniform(lightBase + ".outerCutoff", ls->GetOuterCutOff());
+                        ls->needsUpdate = false;
+                    }
                 }
-
                 mesh->render();
             }
-            shader->disable();
+            model->getShader()->disable();
         }
     }
 
     void Renderer3D::renderTransparentEntities(std::vector<Essentia::WeakptrWrapper<Entity>>& transparentEntities, const std::vector<WeakptrWrapper<Entity>>& lights)
     {
-        std::vector<std::pair<WeakptrWrapper<Entity>, std::shared_ptr<Mesh>>> opaqueMeshes;
-        std::vector<std::pair<WeakptrWrapper<Entity>, std::shared_ptr<Mesh>>> transparentMeshes;
-
         for (auto& entity : transparentEntities)
         {
-            auto transform = entity->GetComponent<Transform>();
             auto model = entity->GetComponent<Model>();
 
             for (auto& mesh : model->meshes)
@@ -120,33 +127,54 @@ namespace Essentia
                 auto ts = lights[i].weakPtr_.lock()->GetComponent<Transform>();
 
                 const std::string lightBase = "lights[" + std::to_string(i) + "]";
-                mesh->shader->setUniform(lightBase + ".type", static_cast<int>(ls->GetType()));
                 mesh->shader->setUniform(lightBase + ".position", ts->getPosition());
                 mesh->shader->setUniform(lightBase + ".direction", ls->GetDirection());
-                mesh->shader->setUniform(lightBase + ".color", ls->GetColor());
-                mesh->shader->setUniform(lightBase + ".constant", ls->GetConstant());
-                mesh->shader->setUniform(lightBase + ".linear", ls->GetLinear());
-                mesh->shader->setUniform(lightBase + ".quadratic", ls->GetQuadratic());
-                mesh->shader->setUniform(lightBase + ".intensity", ls->GetIntensity());
-                mesh->shader->setUniform(lightBase + ".innerCutoff", ls->GetInnerCutOff());
-                mesh->shader->setUniform(lightBase + ".outerCutoff", ls->GetOuterCutOff());
+                if (ls->needsUpdate || mesh->needsUpdate)
+                {
+                    mesh->shader->setUniform(lightBase + ".type", static_cast<int>(ls->GetType()));
+                    mesh->shader->setUniform(lightBase + ".color", ls->GetColor());
+                    mesh->shader->setUniform(lightBase + ".constant", ls->GetConstant());
+                    mesh->shader->setUniform(lightBase + ".linear", ls->GetLinear());
+                    mesh->shader->setUniform(lightBase + ".quadratic", ls->GetQuadratic());
+                    mesh->shader->setUniform(lightBase + ".intensity", ls->GetIntensity());
+                    mesh->shader->setUniform(lightBase + ".innerCutoff", ls->GetInnerCutOff());
+                    mesh->shader->setUniform(lightBase + ".outerCutoff", ls->GetOuterCutOff());
+                    ls->needsUpdate = false;
+                }
             }
 
             mesh->render();
             mesh->shader->disable();
         }
 
-        std::sort(transparentMeshes.begin(), transparentMeshes.end(),
-            [this](const std::pair<WeakptrWrapper<Entity>, std::shared_ptr<Mesh>>& a, const std::pair<WeakptrWrapper<Entity>, std::shared_ptr<Mesh>>& b)
+        meshDistances.resize(transparentMeshes.size());
+
+        for (size_t i = 0; i < transparentMeshes.size(); ++i)
+        {
+            auto entity = transparentMeshes[i].first.weakPtr_.lock();
+            if (entity)
             {
-                auto positionA = a.first.weakPtr_.lock()->GetComponent<Transform>()->getPosition();
-                auto positionB = b.first.weakPtr_.lock()->GetComponent<Transform>()->getPosition();
+                // If transform changed
+                float newDistance = glm::length(camera->getPosition() - entity->GetComponent<Transform>()->getPosition());
 
-                float distanceA = glm::length(camera->getPosition() - positionA);
-                float distanceB = glm::length(camera->getPosition() - positionB);
+                if (meshDistances[i] != newDistance)
+                {
+                    meshDistances[i] = newDistance;
 
-                return distanceA > distanceB;
-            });
+                    auto& pair = transparentMeshes[i];
+                    float distance = meshDistances[i];
+                    size_t j = i;
+                    while (j > 0 && meshDistances[j - 1] < distance)
+                    {
+                        transparentMeshes[j] = transparentMeshes[j - 1];
+                        meshDistances[j] = meshDistances[j - 1];
+                        --j;
+                    }
+                    transparentMeshes[j] = pair;
+                    meshDistances[j] = distance;
+                }
+            }
+        }
 
         for (auto& [entity, mesh] : transparentMeshes)
         {
@@ -169,20 +197,27 @@ namespace Essentia
                 auto ts = lights[i].weakPtr_.lock()->GetComponent<Transform>();
 
                 const std::string lightBase = "lights[" + std::to_string(i) + "]";
-                mesh->shader->setUniform(lightBase + ".type", static_cast<int>(ls->GetType()));
                 mesh->shader->setUniform(lightBase + ".position", ts->getPosition());
                 mesh->shader->setUniform(lightBase + ".direction", ls->GetDirection());
-                mesh->shader->setUniform(lightBase + ".color", ls->GetColor());
-                mesh->shader->setUniform(lightBase + ".constant", ls->GetConstant());
-                mesh->shader->setUniform(lightBase + ".linear", ls->GetLinear());
-                mesh->shader->setUniform(lightBase + ".quadratic", ls->GetQuadratic());
-                mesh->shader->setUniform(lightBase + ".intensity", ls->GetIntensity());
-                mesh->shader->setUniform(lightBase + ".innerCutoff", ls->GetInnerCutOff());
-                mesh->shader->setUniform(lightBase + ".outerCutoff", ls->GetOuterCutOff());
+                if (ls->needsUpdate || mesh->needsUpdate)
+                {
+                    mesh->shader->setUniform(lightBase + ".type", static_cast<int>(ls->GetType()));
+                    mesh->shader->setUniform(lightBase + ".color", ls->GetColor());
+                    mesh->shader->setUniform(lightBase + ".constant", ls->GetConstant());
+                    mesh->shader->setUniform(lightBase + ".linear", ls->GetLinear());
+                    mesh->shader->setUniform(lightBase + ".quadratic", ls->GetQuadratic());
+                    mesh->shader->setUniform(lightBase + ".intensity", ls->GetIntensity());
+                    mesh->shader->setUniform(lightBase + ".innerCutoff", ls->GetInnerCutOff());
+                    mesh->shader->setUniform(lightBase + ".outerCutoff", ls->GetOuterCutOff());
+                    ls->needsUpdate = false;
+                }
             }
 
             mesh->render();
             mesh->shader->disable();
         }
+
+        opaqueMeshes.clear();
+        transparentMeshes.clear();
     }
 }

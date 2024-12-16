@@ -207,7 +207,7 @@ int main(void)
 	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
 	entity1->AddComponent<LightSource>(LightType::Spot);
-	entity1->GetComponent<LightSource>()->SetIntensity(0.3f);
+	entity1->GetComponent<LightSource>()->SetIntensity(2.0f);
 
 	std::string title;
 	std::shared_ptr<Timer> timo = std::make_shared<Timer>(15);

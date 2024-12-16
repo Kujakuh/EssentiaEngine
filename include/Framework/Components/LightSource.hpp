@@ -6,8 +6,8 @@
 
 #include <glm/glm.hpp>
 
-namespace Essentia {
-
+namespace Essentia
+{
     class LightSource : public IComponent
     {
         private:
@@ -28,6 +28,8 @@ namespace Essentia {
             float constant;
             float linear;
             float quadratic;
+
+            bool needsUpdate = true;
 
         public:
             LightSource();
@@ -71,8 +73,9 @@ namespace Essentia {
 
             float GetQuadratic() const;
             void SetQuadratic(float value);
-    };
 
+            friend class Renderer3D;
+    };
 }
 
 #endif // !LIGHTSOURCE_H

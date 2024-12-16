@@ -204,13 +204,13 @@ namespace Essentia
                 {
                     float distance = length(light.position - fragPos);
 
-                    //float att = 1.0 / (light.constant + light.linear * distance + light.quadratic);
+                    float att = 1.0 / (light.constant + light.linear * distance + light.quadratic);
 
-                    float alpha = 0.1;  // Factor de escala
-                    float beta = 2.0;   // Exponente para controlar la rapidez de la atenuación
-                    float customAtt = 1.0 / (1.0 + alpha * pow(distance, beta));
+                    //float alpha = 0.1;  // Factor de escala
+                    //float beta = 2.0;   // Exponente para controlar la rapidez de la atenuación
+                    //float customAtt = 1.0 / (1.0 + alpha * pow(distance, beta));
 
-                    return customAtt;
+                    return att;
                 }
 
                 return 1.0;
