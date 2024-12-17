@@ -178,10 +178,10 @@ int main(void)
 	const char* modelo2 = RESOURCES_PATH "Models/lamp/Lantern_01_4k.fbx";
 	const char* modelo3 = RESOURCES_PATH "Models/debug/brass_diya_lantern_4k.fbx";
 
-	entity4->AddComponent<Model>();
+	entity4->AddComponent<Model>(modelo2);
 	Model* mod = entity4->GetComponent<Model>();
-	mod->loadModel(modelo3);
-	mod->loadModel(modelo2);
+	//mod->loadModel(modelo3);
+	//mod->loadModel(modelo2);
 
 	entity2->AddComponent<Model>(Essentia::cube);
 	entity2->GetComponent<Model>()->getMesh(0)->materials[0].albedo = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_ALBEDO);
@@ -284,11 +284,11 @@ int main(void)
 				Time::addTimer(timo);
 			}
 		}
-		if (InputManager::IsKeyPressed(KEY_2))
-			mod->loadModel(modelo2);
+		//if (InputManager::IsKeyPressed(KEY_2))
+		//	mod->loadModel(modelo2);
 
-		if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(modelo3))
-			mod->loadModel(modelo3);
+		//if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(modelo3))
+		//	mod->loadModel(modelo3);
 			
 		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y, 10);
 

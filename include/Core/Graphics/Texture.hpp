@@ -4,9 +4,8 @@
 #include <stb_image/stb_image.h>
 #include <glad/glad.h>
 #include <flat_hash_map>
-#include <ImfArray.h>
-#include <ImfRgbaFile.h>
 #include <json.hpp>
+#include <opencv2/opencv.hpp>
 
 #include <string>
 #include <iostream>
@@ -80,8 +79,8 @@ namespace Essentia
             void bind() const;
             void unbind() const;
 
-            void loadFromFile(const char* texturePath, bool flip = true);
-            void loadEXR(const char* texturePath, bool flip = true);
+            void loadFromFile(const char* texturePath, bool flip = false);
+            //void loadEXR(const char* texturePath, bool flip = true);
             void loadCubemap(const std::vector<std::string>& faces, bool flip);
             void loadHDRIToCubemap(const std::string& hdriPath, unsigned int cubemapResolution = 1024, bool linearFilter = true, bool flip = true);
     };

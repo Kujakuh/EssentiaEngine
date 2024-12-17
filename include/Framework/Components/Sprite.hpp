@@ -32,10 +32,10 @@ namespace Essentia
             std::shared_ptr<Mesh> mesh;
             std::shared_ptr<Texture> texture;
 
-            Sprite(const std::string& texturePath, bool flip = true);
+            Sprite(const std::string& texturePath, bool flip = false);
             Sprite(std::shared_ptr<Texture> _texture);
 
-            void setTexture(const std::string& texturePath, bool flip = true);
+            void setTexture(const std::string& texturePath, bool flip = false);
             void setTexture(std::shared_ptr<Texture> _texture);
             std::string getUVRegionName();
             void useRegionFromAtlas(const std::string& regionName);

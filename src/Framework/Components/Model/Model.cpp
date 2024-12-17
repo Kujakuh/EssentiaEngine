@@ -29,7 +29,7 @@ namespace Essentia
     const std::shared_ptr<Mesh>& Model::getMesh(size_t index) const
     {
         if (index >= meshes.size())
-            throw std::out_of_range("Mesh index out of range");
+           throw std::out_of_range("Mesh index out of range");
 
         return meshes[index];
     }

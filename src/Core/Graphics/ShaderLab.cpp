@@ -670,7 +670,7 @@ namespace Essentia
 
             shader << R"(
             FragColor = result;
-            //FragColor = texture(material.diffuse, TexCoord); 
+            //FragColor = vec4(texture(material.diffuse, TexCoord).rgb, 1.0); 
             //FragColor = vec4(TexCoord, 0.0, 1.0);
             //FragColor = vec4(norm *0.5 + 0.5, 1.0);
             )";
