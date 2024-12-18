@@ -69,14 +69,14 @@ namespace Essentia
     }
 
     bool Texture::isAtlasTexture() const { return !uvRegions.empty(); }
-    void Texture::addUVRegion(const std::string& name, const UVRegion& region) 
+    void Texture::addUVRegion(const std::string& name, const UVRegion& region)
     {
         uvRegions[name] = region;
     }
     UVRegion Texture::getUVRegion(const std::string& name) const
     {
         auto it = uvRegions.find(name);
-        if (it != uvRegions.end()) 
+        if (it != uvRegions.end())
         {
             return it->second;
         }
@@ -105,10 +105,7 @@ namespace Essentia
         {
             it->second = newRegion;
         }
-        else
-        {
-            throw std::runtime_error("UVRegion '" + name + "' not found in texture.");
-        }
+        else throw std::runtime_error("UVRegion '" + name + "' not found in texture.");
     }
     void Texture::loadUVsFromJSON(const std::string& filePath)
     {
@@ -117,18 +114,18 @@ namespace Essentia
 
         nlohmann::json jsonData;
         file >> jsonData;
-        
-        for (auto& [key, value] : jsonData.items()) 
+
+        for (auto& [key, value] : jsonData.items())
         {
-            if (value.is_array()) 
+            if (value.is_array())
             {
-                for (auto& frame : value) 
+                for (auto& frame : value)
                 {
                     UVRegion region = { frame["uMin"], frame["vMin"], frame["uMax"], frame["vMax"] };
                     addUVRegion(key, region);
                 }
             }
-            else 
+            else
             {
                 // Si el valor no es un array, lo interpretamos como una única región UV
                 UVRegion region = { value["uMin"], value["vMin"], value["uMax"], value["vMax"] };
@@ -217,80 +214,117 @@ namespace Essentia
         }
 
         std::string ext = trim_extension(texturePath);
-        cv::Mat image;
+        std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower); // Convertir la extensión a minúsculas
 
-        image = cv::imread(texturePath, cv::IMREAD_UNCHANGED);
-        if (image.empty())
-        {
-            std::cerr << "ERROR::TEXTURE::FAILED_TO_LOAD " << texturePath << std::endl;
-            return;
-        }
-        nrChannels = image.channels(); // Obtener el número de canales (1 = grayscale, 3 = RGB, 4 = RGBA)
+        unsigned char* data = nullptr;
+        int channels = 0;
 
-        if (nrChannels != 4)
+        if (ext == "jpeg" || ext == "jpg")
         {
-            image = cv::imread(texturePath, cv::IMREAD_COLOR);
+            cv::Mat image = cv::imread(texturePath, cv::IMREAD_UNCHANGED);
+            if (image.empty())
+            {
+                std::cerr << "ERROR::TEXTURE::FAILED_TO_LOAD " << texturePath << std::endl;
+                return;
+            }
+
             nrChannels = image.channels();
+
+            if (nrChannels != 4)
+            {
+                image = cv::imread(texturePath, cv::IMREAD_COLOR);
+                nrChannels = image.channels();
+            }
+
+            if (!flip) cv::flip(image, image, 1);
+
+            width = image.cols;
+            height = image.rows;
+
+            GLenum format = GL_RGBA;
+            auto code = cv::COLOR_RGBA2BGRA;
+
+            if (nrChannels == 3)
+            {
+                format = GL_RGB;
+                code = cv::COLOR_RGB2BGR;
+            }
+            else if (nrChannels == 1)
+            {
+                format = GL_RED;
+                code = cv::COLOR_GRAY2RGB;
+            }
+
+            cv::cvtColor(image, image, code);
+            data = image.data;
+
+            glGenTextures(1, &ID);
+            bind();
+            glPixelStorei(GL_UNPACK_ALIGNMENT, (image.step & 3) ? 1 : 4);
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, image.step / image.elemSize());
+            glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        }
+        else
+        {
+            stbi_set_flip_vertically_on_load(flip);
+            data = stbi_load(texturePath, &width, &height, &channels, 0);
+
+            if (!data)
+            {
+                std::cerr << "ERROR::TEXTURE::FAILED_TO_LOAD " << texturePath << std::endl;
+                return;
+            }
+
+            nrChannels = channels;
+            GLenum format = GL_RGBA;
+
+            if (nrChannels == 3)
+            {
+                format = GL_RGB;
+            }
+            else if (nrChannels == 1)
+            {
+                format = GL_RED;
+            }
+
+            glGenTextures(1, &ID);
+            bind();
+            glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         }
 
-        if (flip) cv::flip(image, image, 0);
-
-        width = image.cols;
-        height = image.rows;
-
-        std::vector<cv::Mat> channels;
-        cv::split(image, channels);
-
-        GLenum format = GL_RGBA;
-        auto code = cv::COLOR_RGBA2BGRA;
-
-        if (nrChannels == 3) { format = GL_RGB; code = cv::COLOR_RGB2BGR; }
-        if (nrChannels == 1){ format = GL_RED; code = cv::COLOR_GRAY2RGB; }
-
-        cv::cvtColor(image, image, code);
-        unsigned char* data = image.data;
-
-        glGenTextures(1, &ID);
-        bind();
-
-        //use fast 4-byte alignment (default anyway) if possible
-        glPixelStorei(GL_UNPACK_ALIGNMENT, (image.step & 3) ? 1 : 4);
-
-        //set length of one complete row in data (doesn't need to equal image.cols)
-        glPixelStorei(GL_UNPACK_ROW_LENGTH, image.step / image.elemSize());
-
-        // Subir la imagen a OpenGL
-        glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(type);
         applyFilters();
 
         unbind();
+
+        if (ext != "jpeg" && ext != "jpg") stbi_image_free(data);
     }
 
-    cv::Mat Texture::applyExifRotation(const cv::Mat& image, int orientation) 
+
+    cv::Mat Texture::applyExifRotation(const cv::Mat& image, int orientation)
     {
         cv::Mat rotatedImage;
 
-        switch (orientation) 
+        switch (orientation)
         {
-            case 3: // Rotate 180 degrees
-                cv::rotate(image, rotatedImage, cv::ROTATE_180);
-                break;
-            case 6: // Rotate 90 degrees clockwise
-                cv::rotate(image, rotatedImage, cv::ROTATE_90_CLOCKWISE);
-                break;
-            case 8: // Rotate 90 degrees counterclockwise
-                cv::rotate(image, rotatedImage, cv::ROTATE_90_COUNTERCLOCKWISE);
-                break;
-            default: // Unsupported orientation or orientation 1, no rotation
-                std::cerr << "Unsupported EXIF orientation: " << orientation << std::endl;
-                rotatedImage = image.clone();
-                break;
+        case 3: // Rotate 180 degrees
+            cv::rotate(image, rotatedImage, cv::ROTATE_180);
+            break;
+        case 6: // Rotate 90 degrees clockwise
+            cv::rotate(image, rotatedImage, cv::ROTATE_90_CLOCKWISE);
+            break;
+        case 8: // Rotate 90 degrees counterclockwise
+            cv::rotate(image, rotatedImage, cv::ROTATE_90_COUNTERCLOCKWISE);
+            break;
+        default: // Unsupported orientation or orientation 1, no rotation
+            std::cerr << "Unsupported EXIF orientation: " << orientation << std::endl;
+            rotatedImage = image.clone();
+            break;
         }
         return rotatedImage;
     }
 
-    int Texture::getExifOrientation(const std::string& imagePath) 
+    int Texture::getExifOrientation(const std::string& imagePath)
     {
         std::ifstream file(imagePath, std::ios::binary);
         if (!file) {
@@ -362,12 +396,12 @@ namespace Essentia
 
     void Texture::loadHDRIToCubemap(const std::string& hdriPath, unsigned int cubemapResolution, bool linearFilter, bool flip) {
 
-        if (ID != 0) 
+        if (ID != 0)
         {
             glDeleteTextures(1, &ID);
             ID = 0;
         }
-        try 
+        try
         {
             HdriToCubemap<unsigned char> cubemap(hdriPath, cubemapResolution, linearFilter);
 
@@ -387,7 +421,7 @@ namespace Essentia
                 cubemap.getBack()
             };
 
-            for (int i = 0; i < 6; ++i) 
+            for (int i = 0; i < 6; ++i)
             {
                 flipVertically(data[i], cubemapResolution, cubemapResolution, nrChannels);
                 glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, cubemapResolution, cubemapResolution, 0, GL_RGB, GL_UNSIGNED_BYTE, data[i]);
@@ -413,5 +447,4 @@ namespace Essentia
             std::copy(rowBuffer.data(), rowBuffer.data() + rowSize, topRow);
         }
     }
-
 }
