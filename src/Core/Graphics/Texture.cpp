@@ -216,40 +216,37 @@ namespace Essentia
             ID = 0;
         }
 
-        // Carga la imagen con OpenCV
-        int flags = cv::IMREAD_COLOR;
-        flags &= ~cv::IMREAD_ANYCOLOR;
-        flags &= ~cv::IMREAD_ANYDEPTH;
+        std::string ext = trim_extension(texturePath);
+        cv::Mat image;
 
-        cv::Mat image = cv::imread(texturePath, flags);
-        nrChannels = image.channels(); // Obtener el número de canales (1 = grayscale, 3 = RGB, 4 = RGBA)
-
+        image = cv::imread(texturePath, cv::IMREAD_UNCHANGED);
         if (image.empty())
         {
             std::cerr << "ERROR::TEXTURE::FAILED_TO_LOAD " << texturePath << std::endl;
             return;
         }
-        // Si la imagen debe ser volteada verticalmente
-        if (flip) {
-            cv::flip(image, image, 0);
+        nrChannels = image.channels(); // Obtener el número de canales (1 = grayscale, 3 = RGB, 4 = RGBA)
+
+        if (nrChannels != 4)
+        {
+            image = cv::imread(texturePath, cv::IMREAD_COLOR);
+            nrChannels = image.channels();
         }
+
+        if (flip) cv::flip(image, image, 0);
+
         width = image.cols;
         height = image.rows;
 
-        GLenum format = GL_RGB;
-        auto code = cv::COLOR_BGR2RGB;
-        if (nrChannels == 1)
-        {
-            code = cv::COLOR_GRAY2RGB;
-            format = GL_RED;
-        }
-        else if (nrChannels == 4)
-        {
-            auto code = cv::COLOR_BGRA2RGBA;
-            format = GL_RGBA; // OpenGL usará GL_RGBA para los datos de la textura
-        }
+        std::vector<cv::Mat> channels;
+        cv::split(image, channels);
 
-        // Convierte la imagen a datos de OpenGL
+        GLenum format = GL_RGBA;
+        auto code = cv::COLOR_RGBA2BGRA;
+
+        if (nrChannels == 3) { format = GL_RGB; code = cv::COLOR_RGB2BGR; }
+        if (nrChannels == 1){ format = GL_RED; code = cv::COLOR_GRAY2RGB; }
+
         cv::cvtColor(image, image, code);
         unsigned char* data = image.data;
 
@@ -263,66 +260,67 @@ namespace Essentia
         glPixelStorei(GL_UNPACK_ROW_LENGTH, image.step / image.elemSize());
 
         // Subir la imagen a OpenGL
-        glTexImage2D(type, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(type);
         applyFilters();
 
         unbind();
     }
 
-    //void Texture::loadEXR(const char* texturePath, bool flip)
-    //{
-    //    try
-    //    {
-    //        Imf::Array2D<Imf::Rgba> pixels;
-    //        int exrWidth, exrHeight;
+    cv::Mat Texture::applyExifRotation(const cv::Mat& image, int orientation) 
+    {
+        cv::Mat rotatedImage;
 
-    //        // Lee el archivo EXR
-    //        Imf::RgbaInputFile file(texturePath);
-    //        Imath::Box2i dw = file.dataWindow();
-    //        exrWidth = dw.max.x - dw.min.x + 1;
-    //        exrHeight = dw.max.y - dw.min.y + 1;
+        switch (orientation) 
+        {
+            case 3: // Rotate 180 degrees
+                cv::rotate(image, rotatedImage, cv::ROTATE_180);
+                break;
+            case 6: // Rotate 90 degrees clockwise
+                cv::rotate(image, rotatedImage, cv::ROTATE_90_CLOCKWISE);
+                break;
+            case 8: // Rotate 90 degrees counterclockwise
+                cv::rotate(image, rotatedImage, cv::ROTATE_90_COUNTERCLOCKWISE);
+                break;
+            default: // Unsupported orientation or orientation 1, no rotation
+                std::cerr << "Unsupported EXIF orientation: " << orientation << std::endl;
+                rotatedImage = image.clone();
+                break;
+        }
+        return rotatedImage;
+    }
 
-    //        // Reserva memoria para los píxeles
-    //        pixels.resizeErase(exrHeight, exrWidth);
+    int Texture::getExifOrientation(const std::string& imagePath) 
+    {
+        std::ifstream file(imagePath, std::ios::binary);
+        if (!file) {
+            std::cerr << "Error: No se pudo abrir la imagen en la ruta " << imagePath << std::endl;
+            return 1;
+        }
 
-    //        // Lee los píxeles al buffer
-    //        file.setFrameBuffer(&pixels[0][0] - dw.min.x - dw.min.y * exrWidth, 1, exrWidth);
-    //        file.readPixels(dw.min.y, dw.max.y);
+        std::vector<unsigned char> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-    //        // Convierte a un formato adecuado para OpenGL
-    //        std::vector<float> texData(exrWidth * exrHeight * 4); // RGBA
-    //        for (int y = 0; y < exrHeight; ++y)
-    //        {
-    //            for (int x = 0; x < exrWidth; ++x)
-    //            {
-    //                int srcY = flip ? (exrHeight - 1 - y) : y;
-    //                const Imf::Rgba& px = pixels[srcY][x];
-    //                int idx = (y * exrWidth + x) * 4;
-    //                texData[idx + 0] = px.r;
-    //                texData[idx + 1] = px.g;
-    //                texData[idx + 2] = px.b;
-    //                texData[idx + 3] = px.a;
-    //            }
-    //        }
+        TinyEXIF::EXIFInfo exifInfo;
+        if (exifInfo.parseFrom(buffer.data(), buffer.size())) {
+            std::cout << "Orientación EXIF detectada: " << exifInfo.Orientation << std::endl;
+            return exifInfo.Orientation;
+        }
 
-    //        // Subir textura a OpenGL
-    //        glGenTextures(1, &ID);
-    //        bind();
+        std::cerr << "Advertencia: No se encontró información EXIF válida en " << imagePath << std::endl;
+        return 1;
+    }
 
-    //        glTexImage2D(type, 0, GL_RGBA32F, exrWidth, exrHeight, 0, GL_RGBA, GL_FLOAT, texData.data());
-    //        glGenerateMipmap(type);
-    //        applyFilters();
+    std::string Texture::trim_extension(const std::string& filePath, bool withoutDot)
+    {
+        std::filesystem::path path(filePath);
+        std::string extension = path.extension().string();
 
-    //        unbind();
+        if (withoutDot && !extension.empty()) {
+            return extension.substr(1); // Remueve el punto inicial
+        }
 
-    //        std::cout << "Successfully loaded EXR texture: " << texturePath << std::endl;
-    //    }
-    //    catch (const std::exception& e)
-    //    {
-    //        std::cerr << "ERROR::EXR::FAILED_TO_LOAD " << texturePath << ": " << e.what() << std::endl;
-    //    }
-    //}
+        return extension; // Devuelve la extensión completa con el punto
+    }
 
     void Texture::loadCubemap(const std::vector<std::string>& faces, bool flip)
     {
