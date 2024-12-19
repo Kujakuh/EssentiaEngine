@@ -1,6 +1,9 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
+#define OPENCV_IMGCODECS_USE_OPENEXR = 1
+#define OPENCV_IO_ENABLE_OPENEXR = 1
+
 #include <stb_image/stb_image.h>
 #include <glad/glad.h>
 #include <flat_hash_map>

@@ -297,7 +297,7 @@ namespace Essentia
             // ----------------------------------------------------------------------------
             vec3 calculatePBR(vec3 normal, vec3 viewDir, vec3 lightDir, Material material, Light light, vec2 TexCoord, vec3 fragPos) 
             {
-                vec4 albedoSample = texture(material.diffuse, TexCoord); // RGBA
+                vec4 albedoSample = texture(material.diffuse, vec2(TexCoord.x, TexCoord.y)); // RGBA
                 vec3 albedo = (albedoSample.rgb != vec3(0.0)) ? albedoSample.rgb : material.color;
                 albedo = pow(albedo, vec3(2.2));  // Corrección gamma de la textura
                 
@@ -688,6 +688,7 @@ namespace Essentia
             FragPos = vec3(model * vec4(aPos, 1.0));
             Normal = mat3(transpose(inverse(model))) * aNormal;
             TexCoord = aTexCoord;
+            //TexCoord = mod(aTexCoord, 1.0);
             Tangent = aTangent;
             Bitangent = aBitangent;
             gl_Position = projection * view * vec4(FragPos, 1.0);

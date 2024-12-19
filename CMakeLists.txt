@@ -53,7 +53,7 @@ set(BUILD_opencv_highgui OFF CACHE BOOL "" FORCE)         # Desactiva GUI (no se
 set(BUILD_opencv_video OFF CACHE BOOL "" FORCE)           # Análisis de video (desactivar si no usas tracking).
 
 # Optimización de compilación
-set(WITH_OPENGL OFF CACHE BOOL "" FORCE)                   # Activar OpenGL si quieres interoperabilidad con texturas.
+set(WITH_OPENGL ON CACHE BOOL "" FORCE)                   # Activar OpenGL si quieres interoperabilidad con texturas.
 set(WITH_TBB OFF CACHE BOOL "" FORCE)                     # TBB, procesamiento paralelo.
 set(WITH_IPP ON CACHE BOOL "" FORCE)                      # Activar IPP (Intel Performance Primitives, optimización).
 
@@ -63,6 +63,9 @@ set(WITH_PNG ON CACHE BOOL "" FORCE)                      # Soporte para imágene
 set(WITH_TIFF ON CACHE BOOL "" FORCE)                     # Soporte para imágenes TIFF.
 set(WITH_OPENEXR ON CACHE BOOL "" FORCE)                  # Activar soporte para OpenEXR.
 set(WITH_WEBP OFF CACHE BOOL "" FORCE)                    # Desactivar WebP.
+set(OPENCV_IO_ENABLE_OPENEXR ON CACHE BOOL "" FORCE)
+set(OPENCV_IO_FORCE_OPENEXR ON CACHE BOOL "" FORCE)
+set(OPENCV_IMGCODECS_USE_OPENEXR ON CACHE BOOL "" FORCE)
 
 # Soporte de video (opcional)
 set(WITH_FFMPEG ON CACHE BOOL "" FORCE)                   # Soporte para cargar videos y streams (opcional).
@@ -107,7 +110,11 @@ add_executable("${CMAKE_PROJECT_NAME}")
 
 set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY CXX_STANDARD 17)
 
-target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC GLFW_INCLUDE_NONE=1) 
+target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC GLFW_INCLUDE_NONE=1)
+add_compile_definitions(OPENCV_IO_FORCE_OPENEXR=1)
+add_compile_definitions(OPENCV_IO_ENABLE_OPENEXR=1)
+add_compile_definitions(OPENCV_IMGCODECS_USE_OPENEXR=1)
+
 
 if(PRODUCTION_BUILD)
 	# setup the ASSETS_PATH macro to be in the root folder of your exe

@@ -179,7 +179,7 @@ int main(void)
 	const char* mmm = RESOURCES_PATH "Models/debug/scene.gltf";
 	const char* modelo3 = RESOURCES_PATH "Models/debug/textures/Diorama.fbx";
 
-	entity4->AddComponent<Model>(mmm);
+	entity4->AddComponent<Model>(modelo1);
 	Model* mod = entity4->GetComponent<Model>();
 	//mod->loadModel(modelo3);
 	//mod->loadModel(modelo2);

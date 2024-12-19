@@ -207,6 +207,7 @@ namespace Essentia
 
     void Texture::loadFromFile(const char* texturePath, bool flip)
     {
+        
         if (ID != 0)
         {
             glDeleteTextures(1, &ID);
@@ -219,7 +220,7 @@ namespace Essentia
         unsigned char* data = nullptr;
         int channels = 0;
 
-        if (ext == "jpeg" || ext == "jpg")
+        if (ext == "jpeg" || ext == "jpg" || ext == "exr")
         {
             cv::Mat image = cv::imread(texturePath, cv::IMREAD_UNCHANGED);
             if (image.empty())
@@ -236,7 +237,7 @@ namespace Essentia
                 nrChannels = image.channels();
             }
 
-            if (!flip) cv::flip(image, image, 1);
+            if (flip) cv::flip(image, image, 0);
 
             width = image.cols;
             height = image.rows;
@@ -260,8 +261,8 @@ namespace Essentia
 
             glGenTextures(1, &ID);
             bind();
-            glPixelStorei(GL_UNPACK_ALIGNMENT, (image.step & 3) ? 1 : 4);
-            glPixelStorei(GL_UNPACK_ROW_LENGTH, image.step / image.elemSize());
+            /*glPixelStorei(GL_UNPACK_ALIGNMENT, (image.step & 3) ? 1 : 4);
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, image.step / image.elemSize());*/
             glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         }
         else
@@ -297,7 +298,7 @@ namespace Essentia
 
         unbind();
 
-        if (ext != "jpeg" && ext != "jpg") stbi_image_free(data);
+        if (ext != "jpeg" && ext != "jpg" && ext != "exr") stbi_image_free(data);
     }
 
 
