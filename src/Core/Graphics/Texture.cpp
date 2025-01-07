@@ -1,4 +1,4 @@
-#include <Core/Graphics/Texture.hpp>
+ï»¿#include <Core/Graphics/Texture.hpp>
 #include <Core/Graphics/HdriCubemap/hdriCubemap.hpp>
 
 namespace Essentia
@@ -127,7 +127,7 @@ namespace Essentia
             }
             else
             {
-                // Si el valor no es un array, lo interpretamos como una única región UV
+                // Si el valor no es un array, lo interpretamos como una Ãºnica regiÃ³n UV
                 UVRegion region = { value["uMin"], value["vMin"], value["uMax"], value["vMax"] };
                 addUVRegion(key, region);
             }
@@ -214,12 +214,13 @@ namespace Essentia
         }
 
         std::string ext = trim_extension(texturePath);
-        std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower); // Convertir la extensión a minúsculas
+        std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower); // Convertir la extensiÃ³n a minÃºsculas
 
         unsigned char* data = nullptr;
         int channels = 0;
 
-        if (ext == "jpeg" || ext == "jpg" || ext == "exr")
+        if (ext == "exr") loadEXR(texturePath, flip);
+        else if (ext == "jpeg" || ext == "jpg")
         {
             cv::Mat image = cv::imread(texturePath, cv::IMREAD_UNCHANGED);
             if (image.empty())
@@ -253,7 +254,6 @@ namespace Essentia
                 cv::cvtColor(image, image, cv::COLOR_GRAY2RGB);
             }
 
-            // Crear la textura usando OpenCV
             cv::ogl::Texture2D oglTexture;
             if (format == GL_RGB || format == GL_RED)
                 oglTexture.create(cv::Size(width, height), cv::ogl::Texture2D::Format::RGB);
@@ -269,12 +269,9 @@ namespace Essentia
             glGetTexImage(GL_TEXTURE_2D, 0, format, GL_UNSIGNED_BYTE, data);
 
             glGenTextures(1, &ID);
-            glBindTexture(GL_TEXTURE_2D, ID);
-
+            bind();
             glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
-            delete[] data;
-            oglTexture.release();
         }
         else
         {
@@ -312,6 +309,59 @@ namespace Essentia
         if (ext != "jpeg" && ext != "jpg" && ext != "exr") stbi_image_free(data);
     }
 
+    void Texture::loadEXR(const char* texturePath, bool flip)
+    {
+        try
+        {
+            Imf::Array2D<Imf::Rgba> pixels;
+            int exrWidth, exrHeight;
+
+            // Lee el archivo EXR
+            Imf::RgbaInputFile file(texturePath);
+            Imath::Box2i dw = file.dataWindow();
+            exrWidth = dw.max.x - dw.min.x + 1;
+            exrHeight = dw.max.y - dw.min.y + 1;
+
+            // Reserva memoria para los pï¿½xeles
+            pixels.resizeErase(exrHeight, exrWidth);
+
+            // Lee los pï¿½xeles al buffer
+            file.setFrameBuffer(&pixels[0][0] - dw.min.x - dw.min.y * exrWidth, 1, exrWidth);
+            file.readPixels(dw.min.y, dw.max.y);
+
+            // Convierte a un formato adecuado para OpenGL
+            std::vector<float> texData(exrWidth * exrHeight * 4); // RGBA
+            for (int y = 0; y < exrHeight; ++y)
+            {
+                for (int x = 0; x < exrWidth; ++x)
+                {
+                    int srcY = flip ? (exrHeight - 1 - y) : y;
+                    const Imf::Rgba& px = pixels[srcY][x];
+                    int idx = (y * exrWidth + x) * 4;
+                    texData[idx + 0] = px.r;
+                    texData[idx + 1] = px.g;
+                    texData[idx + 2] = px.b;
+                    texData[idx + 3] = px.a;
+                }
+            }
+
+            // Subir textura a OpenGL
+            glGenTextures(1, &ID);
+            bind();
+
+            glTexImage2D(type, 0, GL_RGBA32F, exrWidth, exrHeight, 0, GL_RGBA, GL_FLOAT, texData.data());
+            glGenerateMipmap(type);
+            applyFilters();
+
+            unbind();
+
+            std::cout << "Successfully loaded EXR texture: " << texturePath << std::endl;
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "ERROR::EXR::FAILED_TO_LOAD " << texturePath << ": " << e.what() << std::endl;
+        }
+    }
 
 
     cv::Mat Texture::applyExifRotation(const cv::Mat& image, int orientation)
@@ -349,11 +399,11 @@ namespace Essentia
 
         TinyEXIF::EXIFInfo exifInfo;
         if (exifInfo.parseFrom(buffer.data(), buffer.size())) {
-            std::cout << "Orientación EXIF detectada: " << exifInfo.Orientation << std::endl;
+            std::cout << "OrientaciÃ³n EXIF detectada: " << exifInfo.Orientation << std::endl;
             return exifInfo.Orientation;
         }
 
-        std::cerr << "Advertencia: No se encontró información EXIF válida en " << imagePath << std::endl;
+        std::cerr << "Advertencia: No se encontrÃ³ informaciÃ³n EXIF vÃ¡lida en " << imagePath << std::endl;
         return 1;
     }
 
@@ -366,7 +416,7 @@ namespace Essentia
             return extension.substr(1); // Remueve el punto inicial
         }
 
-        return extension; // Devuelve la extensión completa con el punto
+        return extension; // Devuelve la extensiÃ³n completa con el punto
     }
 
     void Texture::loadCubemap(const std::vector<std::string>& faces, bool flip)

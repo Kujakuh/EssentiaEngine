@@ -1,9 +1,6 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#define OPENCV_IMGCODECS_USE_OPENEXR = 1
-#define OPENCV_IO_ENABLE_OPENEXR = 1
-
 #include <stb_image/stb_image.h>
 #include <glad/glad.h>
 #include <flat_hash_map>
@@ -11,6 +8,8 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/opengl.hpp>
 #include <Core/Memory/TinyEXIF.h>
+#include <ImfArray.h>
+#include <ImfRgbaFile.h>
 
 #include <string>
 #include <iostream>
@@ -87,7 +86,7 @@ namespace Essentia
             void unbind() const;
 
             void loadFromFile(const char* texturePath, bool flip = false);
-            //void loadEXR(const char* texturePath, bool flip = true);
+            void loadEXR(const char* texturePath, bool flip = true);
             void loadCubemap(const std::vector<std::string>& faces, bool flip);
             void loadHDRIToCubemap(const std::string& hdriPath, unsigned int cubemapResolution = 1024, bool linearFilter = true, bool flip = true);
 

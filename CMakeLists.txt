@@ -31,6 +31,12 @@ set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_WARNINGS_AS_ERRORS OFF CACHE BOOL "" FORCE)
 set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE BOOL "" FORCE)
+set(OPENEXR_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(OPENEXR_IS_SUBPROJECT ON CACHE BOOL "" FORCE)
+set(OPENEXR_BUILD_LIBS ON CACHE BOOL "" FORCE)
+set(OPENEXR_BUILD_IMATH_ONLY ON CACHE BOOL "" FORCE)
+
+set(OPENCV_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 # OpenCV Flags ----------------------------------------------------------------------------------------------------------------
 
@@ -61,11 +67,8 @@ set(WITH_IPP ON CACHE BOOL "" FORCE)                      # Activar IPP (Intel P
 set(WITH_JPEG ON CACHE BOOL "" FORCE)                     # Soporte para imágenes JPEG.
 set(WITH_PNG ON CACHE BOOL "" FORCE)                      # Soporte para imágenes PNG.
 set(WITH_TIFF ON CACHE BOOL "" FORCE)                     # Soporte para imágenes TIFF.
-set(WITH_OPENEXR ON CACHE BOOL "" FORCE)                  # Activar soporte para OpenEXR.
+set(WITH_OPENEXR OFF CACHE BOOL "" FORCE)                 # Desactivar soporte para OpenEXR.
 set(WITH_WEBP OFF CACHE BOOL "" FORCE)                    # Desactivar WebP.
-set(OPENCV_IO_ENABLE_OPENEXR ON CACHE BOOL "" FORCE)
-set(OPENCV_IO_FORCE_OPENEXR ON CACHE BOOL "" FORCE)
-set(OPENCV_IMGCODECS_USE_OPENEXR ON CACHE BOOL "" FORCE)
 
 # Soporte de video (opcional)
 set(WITH_FFMPEG ON CACHE BOOL "" FORCE)                   # Soporte para cargar videos y streams (opcional).
@@ -92,7 +95,7 @@ add_subdirectory(thirdparty/nlohmann)			#json read/write
 #add_subdirectory(thirdparty/raudio)				#audio
 add_subdirectory(thirdparty/glm)				#math
 add_subdirectory(thirdparty/imgui-docking)		#ui
-#----------V-----------------------V------------#my libraries												
+												
 #add_subdirectory(thirdparty/safeSave)			#saving data, designed for gamedev. It also makes backups so the player won't loose saves.
 #add_subdirectory(thirdparty/profilerLib)		#profiling, just a simpe library for measuring elapsed time
 #add_subdirectory(thirdparty/gl2d)				#2D rendering library
@@ -101,6 +104,7 @@ add_subdirectory(thirdparty/assimp-5.3.1)		#loading models
 add_subdirectory(thirdparty/ska)				#ska::flat_hash_map
 
 add_subdirectory(thirdparty/opencv-4.10.0)		#various functionalities
+add_subdirectory(thirdparty/openexr-3.3.2)      #exr file read/write
 
 # MY_SOURCES is defined to be a list of all the source files for my game 
 # DON'T ADD THE SOURCES BY HAND, they are already added with this macro
@@ -154,4 +158,4 @@ ocv_target_include_modules("${CMAKE_PROJECT_NAME}" ${OPENCV_MODULES_BUILD})
 #target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw 
 #	glad stb_image stb_truetype gl2d raudio imgui safeSave profilerLib enet glui)
 
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw glad stb_image stb_truetype imgui assimp ska_flat_hash_map nlohmann opencv_world)
+target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw glad stb_image stb_truetype imgui assimp ska_flat_hash_map nlohmann opencv_world OpenEXR)

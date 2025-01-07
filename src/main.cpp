@@ -179,21 +179,21 @@ int main(void)
 	const char* mmm = RESOURCES_PATH "Models/debug/scene.gltf";
 	const char* modelo3 = RESOURCES_PATH "Models/debug/79477.fbx";
 
-	entity4->AddComponent<Model>(modelo3);
+	entity4->AddComponent<Model>(modelo1);
 	Model* mod = entity4->GetComponent<Model>();
 	//mod->loadModel(modelo3);
 	//mod->loadModel(modelo2);
 
 	entity2->AddComponent<Model>(Essentia::cube);
-	entity2->GetComponent<Model>()->getMesh(0)->materials[0].albedo = TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_ALBEDO);
+	entity2->GetComponent<Model>()->getMesh(0)->setAlbedo(TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_ALBEDO));
 	entity2->GetComponent<Transform>()->setPosition().x += 6;
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
 	entity4->GetComponent<Transform>()->setScale(Vector3(1.3f));
-	//entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
+	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
-	entity1->AddComponent<LightSource>(LightType::Spot);
+	entity1->AddComponent<LightSource>(LightType::Point);
 	entity1->GetComponent<LightSource>()->SetIntensity(50.0f);
 
 	std::string title;
