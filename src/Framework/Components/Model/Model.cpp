@@ -26,7 +26,7 @@ namespace Essentia
     void Model::addMesh(const std::shared_ptr<Mesh>& mesh) { meshes.push_back(mesh); }
 
     size_t Model::getMeshCount() const { return meshes.size(); }
-    const std::shared_ptr<Mesh>& Model::getMesh(size_t index) const
+    const std::shared_ptr<Mesh> Model::getMesh(size_t index) const
     {
         if (index >= meshes.size())
            throw std::out_of_range("Mesh index out of range");

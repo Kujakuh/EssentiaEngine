@@ -50,7 +50,7 @@ namespace Essentia
             void addMesh(const std::shared_ptr<Mesh>& mesh);
 
             size_t getMeshCount() const;
-            const std::shared_ptr<Mesh>& getMesh(size_t index) const;
+            const std::shared_ptr<Mesh> getMesh(size_t index) const;
             bool hasAlpha() const;
 
             void addCustomShaderFunction(SH_TYPE type, const std::string& functionCode);

@@ -250,7 +250,7 @@ namespace Essentia
             else if (nrChannels == 1)
             {
                 format = GL_RED;
-                cv::cvtColor(image, image, cv::COLOR_GRAY2BGR);
+                cv::cvtColor(image, image, cv::COLOR_GRAY2RGB);
             }
 
             // Crear la textura usando OpenCV

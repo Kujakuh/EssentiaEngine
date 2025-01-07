@@ -148,11 +148,6 @@ namespace Essentia
     void Mesh::setAo(std::shared_ptr<Texture> tex, int i) { materials[i].ao = tex; needsUpdate = true; }
     void Mesh::setEmissive(std::shared_ptr<Texture> tex, int i) { materials[i].emissive = tex; needsUpdate = true; }
 
-    std::weak_ptr<Material> Mesh::GetMaterial(int i) const {
-        return std::make_shared<Material>(materials[i]);
-    }
-    std::weak_ptr<std::vector<Material>> Mesh::GetMaterials() const { return std::make_shared<std::vector<Material>>(materials); }
-
     void Mesh::updateVertices(const std::vector<Vertex>& newVertices)
     {
         vertices = newVertices;

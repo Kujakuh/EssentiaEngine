@@ -35,8 +35,6 @@ namespace Essentia
             void updateVertices(const std::vector<Vertex>& newVertices);
 
             void SetMaterial(const Material& newMaterial, int i);
-            std::weak_ptr<Material> GetMaterial(int i = 0) const;
-            std::weak_ptr<std::vector<Material>> GetMaterials() const;
 
             void setDiffuse(std::shared_ptr<Texture> tex, int i = 0);
             void setSpecular(std::shared_ptr<Texture> tex, int i = 0);
