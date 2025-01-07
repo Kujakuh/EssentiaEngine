@@ -654,7 +654,7 @@ namespace Essentia
 
                 vec4 albedoSample = texture(material.diffuse, TexCoord);
                 float opacityMap = texture(material.alpha, TexCoord).r;
-                float opacity = (opacityMap > 0.0) ? opacityMap : albedoSample.a;
+                float opacity = (opacityMap > 0.0) ? opacityMap : (albedoSample.a > 0.0) ? albedoSample.a : 1.0;
                 opacity = clamp(opacity, 0.0, 1.0);
 
                 vec4 result = vec4(res, opacity);

@@ -185,7 +185,7 @@ int main(void)
 	//mod->loadModel(modelo2);
 
 	entity2->AddComponent<Model>(Essentia::cube);
-	entity2->GetComponent<Model>()->getMesh(0)->setAlbedo(TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_ALBEDO));
+	//entity2->GetComponent<Model>()->getMesh(0)->setAlbedo(TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_ALBEDO));
 	entity2->GetComponent<Transform>()->setPosition().x += 6;
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
