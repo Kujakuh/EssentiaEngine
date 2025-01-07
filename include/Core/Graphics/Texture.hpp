@@ -9,6 +9,7 @@
 #include <flat_hash_map>
 #include <json.hpp>
 #include <opencv2/opencv.hpp>
+#include <opencv2/core/opengl.hpp>
 #include <Core/Memory/TinyEXIF.h>
 
 #include <string>

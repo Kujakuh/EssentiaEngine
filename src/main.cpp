@@ -177,9 +177,9 @@ int main(void)
 	const char* modelo1 = RESOURCES_PATH "Models/lamp/Chandelier_03_4k.fbx";
 	const char* modelo2 = RESOURCES_PATH "Models/lamp/Lantern_01_4k.fbx";
 	const char* mmm = RESOURCES_PATH "Models/debug/scene.gltf";
-	const char* modelo3 = RESOURCES_PATH "Models/debug/textures/Diorama.fbx";
+	const char* modelo3 = RESOURCES_PATH "Models/debug/79477.fbx";
 
-	entity4->AddComponent<Model>(modelo1);
+	entity4->AddComponent<Model>(modelo3);
 	Model* mod = entity4->GetComponent<Model>();
 	//mod->loadModel(modelo3);
 	//mod->loadModel(modelo2);
@@ -190,10 +190,10 @@ int main(void)
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
-	entity4->GetComponent<Transform>()->setScale(Vector3(0.3f));
+	entity4->GetComponent<Transform>()->setScale(Vector3(1.3f));
 	//entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
-	entity1->AddComponent<LightSource>(LightType::Point);
+	entity1->AddComponent<LightSource>(LightType::Spot);
 	entity1->GetComponent<LightSource>()->SetIntensity(50.0f);
 
 	std::string title;

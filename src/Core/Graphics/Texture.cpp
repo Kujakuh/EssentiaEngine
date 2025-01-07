@@ -207,7 +207,6 @@ namespace Essentia
 
     void Texture::loadFromFile(const char* texturePath, bool flip)
     {
-        
         if (ID != 0)
         {
             glDeleteTextures(1, &ID);
@@ -233,7 +232,7 @@ namespace Essentia
 
             if (nrChannels != 4)
             {
-                image = cv::imread(texturePath, cv::IMREAD_COLOR);
+                image = cv::imread(texturePath, cv::IMREAD_ANYCOLOR);
                 nrChannels = image.channels();
             }
 
@@ -243,27 +242,39 @@ namespace Essentia
             height = image.rows;
 
             GLenum format = GL_RGBA;
-            auto code = cv::COLOR_RGBA2BGRA;
 
             if (nrChannels == 3)
             {
                 format = GL_RGB;
-                code = cv::COLOR_RGB2BGR;
             }
             else if (nrChannels == 1)
             {
                 format = GL_RED;
-                code = cv::COLOR_GRAY2RGB;
+                cv::cvtColor(image, image, cv::COLOR_GRAY2BGR);
             }
 
-            cv::cvtColor(image, image, code);
-            data = image.data;
+            // Crear la textura usando OpenCV
+            cv::ogl::Texture2D oglTexture;
+            if (format == GL_RGB || format == GL_RED)
+                oglTexture.create(cv::Size(width, height), cv::ogl::Texture2D::Format::RGB);
+            else if (format == GL_RGBA)
+                oglTexture.create(cv::Size(width, height), cv::ogl::Texture2D::Format::RGBA);
+
+            oglTexture.copyFrom(image);
+
+            GLuint tex1 = oglTexture.texId();
+            float* data = new float[width * height * 4];
+
+            glBindTexture(GL_TEXTURE_2D, tex1);
+            glGetTexImage(GL_TEXTURE_2D, 0, format, GL_UNSIGNED_BYTE, data);
 
             glGenTextures(1, &ID);
-            bind();
-            /*glPixelStorei(GL_UNPACK_ALIGNMENT, (image.step & 3) ? 1 : 4);
-            glPixelStorei(GL_UNPACK_ROW_LENGTH, image.step / image.elemSize());*/
+            glBindTexture(GL_TEXTURE_2D, ID);
+
             glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
+            delete[] data;
+            oglTexture.release();
         }
         else
         {
@@ -300,6 +311,7 @@ namespace Essentia
 
         if (ext != "jpeg" && ext != "jpg" && ext != "exr") stbi_image_free(data);
     }
+
 
 
     cv::Mat Texture::applyExifRotation(const cv::Mat& image, int orientation)
