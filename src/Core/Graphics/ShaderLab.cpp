@@ -204,7 +204,7 @@ namespace Essentia
                 {
                     float distance = length(light.position - fragPos);
 
-                    float att = 1.0 / (light.constant + light.linear * distance + light.quadratic);
+                    float att = 1.0 / (light.constant + light.linear * distance + light.quadratic * pow(distance, 2.0));
 
                     //float alpha = 0.1;  // Factor de escala
                     //float beta = 2.0;   // Exponente para controlar la rapidez de la atenuación
@@ -630,7 +630,7 @@ namespace Essentia
 
                 )";
 
-                if (ambientLightOn)
+                if (!ambientLightOn)
                     shader << R"(
                     // Luz solar base (luz direccional)
                     Light sunLight;

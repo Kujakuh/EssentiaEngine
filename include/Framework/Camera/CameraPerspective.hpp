@@ -18,6 +18,7 @@ namespace Essentia
             bool firstMouse = true;
 
         public:
+            CameraPerspective() = default;
             CameraPerspective(const std::string& name, Scene* bindScene,
                                float fov, float aspectRatio, float nearPlane, float farPlane);
 
