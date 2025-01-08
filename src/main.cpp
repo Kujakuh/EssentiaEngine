@@ -179,12 +179,12 @@ int main(void)
 	const char* mmm = RESOURCES_PATH "Models/debug/scene.gltf";
 	const char* modelo3 = RESOURCES_PATH "Models/debug/CoffeeCart_01_4k.gltf";
 
-	entity4->AddComponent<Model>(modelo3);
+	entity4->AddComponent<Model>(modelo1);
 	Model* mod = entity4->GetComponent<Model>();
 	//mod->loadModel(modelo3);
 	//mod->loadModel(modelo2);
 
-	entity2->AddComponent<Model>(Essentia::cube);
+	entity2->AddComponent<Model>(Essentia::sphere);
 	//entity2->GetComponent<Model>()->getMesh(0)->setAlbedo(TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_ALBEDO));
 	entity2->GetComponent<Transform>()->setPosition().x += 6;
 
