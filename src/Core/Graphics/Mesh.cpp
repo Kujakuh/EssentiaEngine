@@ -160,10 +160,12 @@ namespace Essentia
     {
         glBindVertexArray(VAO);
 
-        if (needsUpdate) {
+       /* if (needsUpdate) {
             updateMaterial();
             needsUpdate = false;
-        }
+        }*/
+
+        updateMaterial();
 
         bindMaterial();
 

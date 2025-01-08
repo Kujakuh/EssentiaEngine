@@ -177,9 +177,9 @@ int main(void)
 	const char* modelo1 = RESOURCES_PATH "Models/lamp/Chandelier_03_4k.fbx";
 	const char* modelo2 = RESOURCES_PATH "Models/lamp/Lantern_01_4k.fbx";
 	const char* mmm = RESOURCES_PATH "Models/debug/scene.gltf";
-	const char* modelo3 = RESOURCES_PATH "Models/debug/79477.fbx";
+	const char* modelo3 = RESOURCES_PATH "Models/debug/CoffeeCart_01_4k.gltf";
 
-	entity4->AddComponent<Model>(modelo1);
+	entity4->AddComponent<Model>(modelo3);
 	Model* mod = entity4->GetComponent<Model>();
 	//mod->loadModel(modelo3);
 	//mod->loadModel(modelo2);
@@ -194,7 +194,7 @@ int main(void)
 	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
 	entity1->AddComponent<LightSource>(LightType::Point);
-	entity1->GetComponent<LightSource>()->SetIntensity(1.0f);
+	entity1->GetComponent<LightSource>()->SetIntensity(5.0f);
 
 	std::string title;
 	std::shared_ptr<Timer> timo = std::make_shared<Timer>(15);
@@ -205,12 +205,13 @@ int main(void)
 		InputManager::GetActiveInstance()->Update();
 		Time::update();
 
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		title = "FPS: " + std::to_string(Time::fps());
 		if (!timo->isDone()) title += " Timer runing, current time: " + std::to_string(timo->getElapsedTime());
 		glfwSetWindowTitle(window, title.c_str());
 
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if (InputManager::IsKeyPressed(KEY_SPACE))
 		{
