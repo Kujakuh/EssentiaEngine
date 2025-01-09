@@ -113,9 +113,6 @@ namespace Essentia
 		// Check linking errors
 		linkShaderErrorCheck(this->ID);
 
-		//// Free Memory 
-		//glDeleteShader(vertexShader);
-		//glDeleteShader(fragmentShader);
 	}
 	Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath, DATA_SOURCE dataSource, GLuint shProgramID)
 	{
@@ -151,10 +148,6 @@ namespace Essentia
 		// Check linking errors
 		linkShaderErrorCheck(this->ID);
 
-		//// Free Memory 
-		//glDeleteShader(vertexShader);
-		//glDeleteShader(fragmentShader);
-		//glDeleteShader(geometryShader);
 	}
 
 	void Shader::recompileProgram(const char* vertexCode, const char* fragmentCode, DATA_SOURCE dataSource)
@@ -239,17 +232,15 @@ namespace Essentia
 
 		// Comprobación de errores
 		linkShaderErrorCheck(this->ID);
-
-		//// Limpieza
-		//glDeleteShader(vertexShader);
-		//glDeleteShader(fragmentShader);
-		//if (geometryCode)
-		//	glDeleteShader(geometryShader);
 	}
 
 
 	Shader::~Shader()
 	{
+		glDeleteShader(currentVertS);
+		glDeleteShader(currentFragS);
+		if(currentGeomS) glDeleteShader(currentGeomS);
+
 		glUseProgram(0);
 		glDeleteProgram(this->ID);
 	}

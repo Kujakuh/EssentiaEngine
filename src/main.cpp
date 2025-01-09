@@ -127,6 +127,8 @@ int main(void)
 #pragma endregion
 
 	Essentia::initDefaultModels();
+	Essentia::render_mode = RENDER_MODE::PBR;
+	Essentia::bindlessTexturesMode = true;
 
 	std::vector<std::string> faces
 	{
@@ -143,19 +145,8 @@ int main(void)
 	//Camera2D camera("Camera", scene, 45.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
 	scene->RegisterSystems(Renderer2D(&camera), Renderer3D(&camera));
 
-	Shader cube(RESOURCES_PATH "Shaders/cubemap.vert", RESOURCES_PATH "Shaders/cubemap.frag", FILE_PATH);
-
-	cube.use();
-	TextureHandle tx = TextureManager::getTexture(RESOURCES_PATH "Textures/test.hdr", GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP);
-	Material mat2; mat2.diffuse = tx;
-	Mesh cubemap(
-		std::make_shared<Shader>(cube),
-		Essentia::cubeVertices,
-		Essentia::cubeIndices,
-		{ mat2 }
-	);
-	cubemap.shader->setUniform("projection", camera.getProjectionMatrix());
-	cube.disable();
+	Skybox skybox(RESOURCES_PATH "Textures/test.hdr");
+	//Skybox skybox(faces);
 
 	camera.sensitivity = 5.0f;
 	ref->setPosition().x += 1.5f;
@@ -177,7 +168,6 @@ int main(void)
 	const char* modelo1 = RESOURCES_PATH "Models/lamp/Chandelier_03_4k.fbx";
 	const char* modelo2 = RESOURCES_PATH "Models/lamp/Lantern_01_4k.fbx";
 	const char* mmm = RESOURCES_PATH "Models/debug/scene.gltf";
-	const char* modelo3 = RESOURCES_PATH "Models/debug/CoffeeCart_01_4k.gltf";
 
 	entity4->AddComponent<Model>(modelo1);
 	Model* mod = entity4->GetComponent<Model>();
@@ -185,7 +175,7 @@ int main(void)
 	//mod->loadModel(modelo2);
 
 	entity2->AddComponent<Model>(Essentia::sphere);
-	//entity2->GetComponent<Model>()->getMesh(0)->setAlbedo(TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_ALBEDO));
+	entity2->GetComponent<Model>()->getMesh(0)->setAlbedo(TextureManager::getTexture(RESOURCES_PATH "Textures/container.png", GL_TEXTURE_2D, TEX_ALBEDO));
 	entity2->GetComponent<Transform>()->setPosition().x += 6;
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
@@ -197,7 +187,7 @@ int main(void)
 	entity1->GetComponent<LightSource>()->SetIntensity(5.0f);
 
 	std::string title;
-	std::shared_ptr<Timer> timo = std::make_shared<Timer>(15);
+	std::shared_ptr<Timer> timo = std::make_shared<Timer>(15, [](){std::cout << "Timer ended.\n";});
 	int speed = 12;
 
 	while (!glfwWindowShouldClose(window))
@@ -211,7 +201,6 @@ int main(void)
 		title = "FPS: " + std::to_string(Time::fps());
 		if (!timo->isDone()) title += " Timer runing, current time: " + std::to_string(timo->getElapsedTime());
 		glfwSetWindowTitle(window, title.c_str());
-
 
 		if (InputManager::IsKeyPressed(KEY_SPACE))
 		{
@@ -228,12 +217,7 @@ int main(void)
 		entity1->GetComponent<Transform>()->setPosition(camera.getPosition());
 		entity1->GetComponent<LightSource>()->SetDirection(camera.getFront());
 
-		glDepthFunc(GL_LEQUAL);
-		cubemap.initShader();
-		cubemap.shader->setUniform("view", Matrix4(Matrix3(camera.getViewMatrix())));
-		cubemap.render();
-		cubemap.disableShader();
-		glDepthFunc(GL_LESS);
+		skybox.render(camera.getProjectionMatrix(), Matrix4(Matrix3(camera.getViewMatrix())));
 
 		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity * Time::deltaTime();
 		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity * Time::deltaTime();

@@ -17,6 +17,7 @@
 #include <Framework/Camera/CameraOrtho.hpp>
 #include <Framework/Camera/CameraPerspective.hpp>
 #include <Framework/Camera/Camera2D.hpp>
+#include <Framework/Camera/Skybox.hpp>
 #include <Framework/Input/InputManager.hpp>
 #include <Framework/Components/Model/ModelCacheManager.hpp>
 #include <Framework/Time/Time.hpp>
@@ -67,6 +68,7 @@ using CameraBase = Essentia::CameraBase;
 using CameraOrtho = Essentia::CameraOrtho;
 using CameraPerspective = Essentia::CameraPerspective;
 using Camera2D = Essentia::Camera2D;
+using Skybox = Essentia::Skybox;
 
 using InputManager = Essentia::InputManager;
 
