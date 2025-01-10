@@ -1,8 +1,11 @@
 /out
-bin/
 build/
 .vscode/
 /.vs
 .idea/
 /resources/Models/debug
 CMakeSettings.json
+
+# Removed - Issue causing bin required folders from exr not to be uploaded
+
+#bin/
