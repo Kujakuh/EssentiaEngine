@@ -40,8 +40,17 @@ set(IEX_NAMESPACE "Iex" CACHE STRING "Public namespace alias for Iex")
 option(OPENEXR_INSTALL_PKG_CONFIG "Install OpenEXR.pc file" ON)
 
 # Whether to enable threading. This can be disabled, although thread pool and tasks
-# are still used, just processed immediately
+# are still used, just processed immediately. Note that if this is disabled, the
+# OpenEXR library may not be thread-safe and should only be used by a single thread.
 option(OPENEXR_ENABLE_THREADING "Enables threaded processing of requests" ON)
+# When set to ON, will change the thread pool to use TBB for the
+# global thread pool by default.
+#
+# Regardless of this setting, if you create your own additional thread
+# pools, those will NOT use TBB by default, as it can easily cause
+# recursive mutex deadlocks as TBB shares a single thread pool with
+# multiple arenas
+option(OPENEXR_USE_TBB "Switch internals of IlmThreadPool to use TBB by default" OFF)
 
 option(OPENEXR_USE_DEFAULT_VISIBILITY "Makes the compile use default visibility (by default compiles tidy, hidden-by-default)"     OFF)
 
@@ -170,11 +179,18 @@ if(OPENEXR_ENABLE_THREADING)
       message(FATAL_ERROR "Unable to find a threading library, disable with OPENEXR_ENABLE_THREADING=OFF")
     endif()
   endif()
+  if(OPENEXR_USE_TBB)
+    find_package(TBB)
+    if(NOT TBB_FOUND)
+      message(FATAL_ERROR "Unable to find the OneTBB cmake library, disable with ILMTHREAD_USE_TBB=OFF or fix TBB install")
+    endif()
+  endif()
 endif()
+set (ILMTHREAD_USE_TBB ${OPENEXR_USE_TBB})
 
 option(OPENEXR_FORCE_INTERNAL_DEFLATE "Force using an internal libdeflate" OFF)
 set(OPENEXR_DEFLATE_REPO "https://github.com/ebiggers/libdeflate.git" CACHE STRING "Repo path for libdeflate source")
-set(OPENEXR_DEFLATE_TAG "v1.18" CACHE STRING "Tag to use for libdeflate source repo (defaults to primary if empty)")
+set(OPENEXR_DEFLATE_TAG "master" CACHE STRING "Tag to use for libdeflate source repo (defaults to primary if empty)")
 
 if(NOT OPENEXR_FORCE_INTERNAL_DEFLATE)
   #TODO: ^^ Release should not clone from main, this is a place holder
@@ -288,7 +304,7 @@ endif()
 option(OPENEXR_FORCE_INTERNAL_IMATH "Force using an internal imath" OFF)
 # Check to see if Imath is installed outside of the current build directory.
 set(OPENEXR_IMATH_REPO "https://github.com/AcademySoftwareFoundation/Imath.git" CACHE STRING "Repo for auto-build of Imath")
-set(OPENEXR_IMATH_TAG "v3.1.12" CACHE STRING "Tag for auto-build of Imath (branch, tag, or SHA)")
+set(OPENEXR_IMATH_TAG "main" CACHE STRING "Tag for auto-build of Imath (branch, tag, or SHA)")
 if(NOT OPENEXR_FORCE_INTERNAL_IMATH)
   #TODO: ^^ Release should not clone from main, this is a place holder
   set(CMAKE_IGNORE_PATH "${CMAKE_CURRENT_BINARY_DIR}/_deps/imath-src/config;${CMAKE_CURRENT_BINARY_DIR}/_deps/imath-build/config")
