@@ -26,11 +26,12 @@ namespace Essentia
 
         public:
             Entity(int id, const std::string& name);
+            bool active = true;
 
             int GetID() const;
             const std::string& GetName() const;
             bool IsAlive() const;
-            ska::flat_hash_map<std::type_index, std::weak_ptr<IComponent>> GetComponents();
+            ska::flat_hash_map<std::type_index, std::shared_ptr<IComponent>> GetComponents();
             void Destroy();
 
             std::function<void()> onUpdate;

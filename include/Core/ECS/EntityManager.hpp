@@ -30,7 +30,7 @@ namespace Essentia
 
                 for (auto& entity : entities)
                 {
-                    if (entity)
+                    if (entity && entity->active)
                     {
                         bool hasAllComponents = true;
                         (void)std::initializer_list<int>{(hasAllComponents &= entity->HasComponent<Components>(), 0)...};

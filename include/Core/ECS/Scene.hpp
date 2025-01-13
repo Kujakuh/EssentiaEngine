@@ -28,6 +28,8 @@ namespace Essentia
             WeakptrWrapper<Entity> GetEntityByName(const std::string& name);
             void DestroyEntity(WeakptrWrapper<Entity> entity);
 
+            //int Instantiate(std::shared_ptr<Entity> ent, Transform transform, float lifetime = -1);
+
             void SetActive(bool active);
             void SetActive(bool active, std::vector<Entity*> entities, std::vector<std::string> arguments);
             void Update();

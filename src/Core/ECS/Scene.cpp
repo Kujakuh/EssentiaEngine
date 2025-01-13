@@ -24,7 +24,8 @@ namespace Essentia
 
     void Scene::Update()
     {
-        for (WeakptrWrapper<Entity> entity : entityManager.GetEntitiesWith())
+        auto ents = entityManager.GetEntitiesWith();
+        for (WeakptrWrapper<Entity> entity : ents)
             if (entity->IsAlive()) entity->onUpdate();
 
         if (isRunning())
