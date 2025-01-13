@@ -70,6 +70,7 @@ namespace Essentia
             void defaultUpdate() {}
 
             friend class EntityManager;
+            friend class Scene;
     };
 }
 

@@ -9,6 +9,9 @@
 #include <Core/Memory/WeakptrWrapper.hpp>
 #include <Core/EventSystem/EventSystem.hpp>
 #include <Core/Memory/WeakptrWrapper.hpp>
+#include <Shared/user_values.hpp>
+#include <Framework/Time/Time.hpp>
+#include <Framework/Time/Timer.hpp>
 
 namespace Essentia
 {
@@ -28,7 +31,7 @@ namespace Essentia
             WeakptrWrapper<Entity> GetEntityByName(const std::string& name);
             void DestroyEntity(WeakptrWrapper<Entity> entity);
 
-            //int Instantiate(std::shared_ptr<Entity> ent, Transform transform, float lifetime = -1);
+            int Instantiate(WeakptrWrapper<Entity> ent, Transform transform, float lifetime = -1);
 
             void SetActive(bool active);
             void SetActive(bool active, std::vector<Entity*> entities, std::vector<std::string> arguments);

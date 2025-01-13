@@ -190,6 +190,10 @@ int main(void)
 	std::shared_ptr<Timer> timo = std::make_shared<Timer>(15, [](){std::cout << "Timer ended.\n";});
 	int speed = 12;
 
+	entity2->active = false;
+
+	scene->Instantiate(entity4, *entity2->GetComponent<Transform>(), 30);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		InputManager::GetActiveInstance()->Update();
@@ -275,6 +279,9 @@ int main(void)
 
 		//if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(modelo3))
 		//	mod->loadModel(modelo3);
+
+		if (InputManager::IsKeyPressed(KEY_2))
+			entity4->active = !entity4->active;
 			
 		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y, 10);
 

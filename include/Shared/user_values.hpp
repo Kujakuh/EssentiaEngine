@@ -2,6 +2,9 @@
 #define USER_VAL_H
 
 #include <vector>
+#include <random>
+#include <iomanip>
+#include <sstream>
 
 #include <flat_hash_map>
 #include <glad/glad.h>
@@ -19,6 +22,7 @@ namespace Essentia
     extern RENDER_MODE render_mode;
 
     void init();
+    std::string generateUUID();
 }
 
 #endif // !USER_VAL_H

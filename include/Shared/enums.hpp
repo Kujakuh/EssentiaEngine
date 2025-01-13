@@ -69,4 +69,5 @@ enum LightType : int
 	Directional = 1,
 	Spot = 2
 };
+
 #endif // !ENUMS_H

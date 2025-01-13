@@ -78,4 +78,22 @@ namespace Essentia
 			20, 21, 22, 20, 22, 23
 		};
     }
+
+    std::string generateUUID()
+    {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<uint32_t> dist(0, 0xFFFFFFFF);
+
+        std::stringstream ss;
+
+        ss << std::hex << std::setfill('0')
+            << std::setw(8) << dist(gen) << '-'
+            << std::setw(4) << (dist(gen) & 0xFFFF) << '-'
+            << std::setw(4) << ((dist(gen) & 0x0FFF) | 0x4000) << '-'
+            << std::setw(4) << ((dist(gen) & 0x3FFF) | 0x8000) << '-'
+            << std::setw(12) << (dist(gen) & 0xFFFFFFFFFFFF);
+
+        return ss.str();
+    }
 }

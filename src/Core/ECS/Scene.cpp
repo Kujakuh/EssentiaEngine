@@ -20,6 +20,30 @@ namespace Essentia
         }
     }
 
+    int Scene::Instantiate(WeakptrWrapper<Entity> ent, Transform transform, float lifetime)
+    {
+        WeakptrWrapper<Entity> instance = CreateEntity(generateUUID());
+        auto targetComponents = ent->GetComponents();
+
+        for (const auto& pair : targetComponents)
+            instance->components[pair.first] = pair.second;
+
+        instance->components[std::type_index(typeid(Transform))] = std::make_shared<Transform>(transform);
+
+        if (lifetime != -1)
+        {
+            std::shared_ptr<Timer> timer = std::make_shared<Timer>(lifetime, [this, instance, lifetime]() 
+                {
+                    DestroyEntity(instance);
+                    std::cout << "Destroyed instance after secs: " << lifetime << "\n";
+                });
+
+            Time::addTimer(timer);
+        }
+
+        return instance->GetID();
+    }
+
     bool Scene::isRunning() const {return running;}
 
     void Scene::Update()
