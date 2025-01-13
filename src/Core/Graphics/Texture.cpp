@@ -220,7 +220,7 @@ namespace Essentia
         int channels = 0;
 
         if (ext == "exr") loadEXR(texturePath, flip);
-        else if (ext == "jpeg" || ext == "jpg")
+        else if (ext == "jpeg")
         {
             cv::Mat image = cv::imread(texturePath, cv::IMREAD_UNCHANGED);
             if (image.empty())
@@ -306,7 +306,7 @@ namespace Essentia
 
         unbind();
 
-        if (ext != "jpeg" && ext != "jpg" && ext != "exr") stbi_image_free(data);
+        if (ext != "jpeg" && ext != "exr") stbi_image_free(data);
     }
 
     void Texture::loadEXR(const char* texturePath, bool flip)
