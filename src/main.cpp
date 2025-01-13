@@ -192,7 +192,17 @@ int main(void)
 
 	entity2->active = false;
 
-	scene->Instantiate(entity4, *entity2->GetComponent<Transform>(), 30);
+	int id_instance = scene->Instantiate(entity4, entity2->GetComponent<Transform>(), 30);
+	GameObject test = scene->GetEntityByID(id_instance);
+	test->onUpdate = [test]() 
+		{
+		if (InputManager::IsKeyPressed(KEY_K))
+			test.weakPtr_.lock().get()->GetComponent<Transform>()->setPosition().x += 0.002;
+		if (InputManager::IsKeyPressed(KEY_L))
+			test.weakPtr_.lock().get()->GetComponent<Transform>()->setPosition().x -= 0.002;
+		};;
+
+
 
 	while (!glfwWindowShouldClose(window))
 	{
