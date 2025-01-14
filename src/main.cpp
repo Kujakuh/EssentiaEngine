@@ -203,7 +203,6 @@ int main(void)
 			reference->setPosition().x -= 0.002;
 	};
 
-
 	while (!glfwWindowShouldClose(window))
 	{
 		InputManager::GetActiveInstance()->Update();
@@ -223,7 +222,7 @@ int main(void)
 		}
 		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_MIDDLE))
 		{
-			entity4->GetComponent<Transform>()->rotate(Vector3(0.14f, 0.45f, 0.2));
+			entity4->GetComponent<Transform>()->rotate(Vector3(0.045f, 0.045f, 0), Vector3(2.0f,6.0f,2.0f));
 			entity4->GetComponent<Transform>()->updateMatrix();
 		}
 		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

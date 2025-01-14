@@ -38,10 +38,11 @@ namespace Essentia
             glm::mat4 getModelMatrix() const;
 
             void updateMatrix();
-            void rotate(const glm::vec3& eulerAngles,
+            void rotate(const glm::vec3& eulerAngles, bool defautAxis = true,
                 const glm::vec3& customAxisX = glm::vec3(1.0f, 0.0f, 0.0f),
                 const glm::vec3& customAxisY = glm::vec3(0.0f, 1.0f, 0.0f),
                 const glm::vec3& customAxisZ = glm::vec3(0.0f, 0.0f, 1.0f));
+            void rotate(const glm::vec3& eulerAngles, const glm::vec3& centerPoint);
 
             bool areAligned(const glm::vec3& a, const glm::vec3& b, float epsilon = 0.001f);
 

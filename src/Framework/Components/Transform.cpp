@@ -44,7 +44,7 @@ namespace Essentia
         }
     }
 
-    void Transform::rotate(const glm::vec3& eulerAngles,
+    void Transform::rotate(const glm::vec3& eulerAngles, bool defautAxis,
         const glm::vec3& customAxisX,
         const glm::vec3& customAxisY,
         const glm::vec3& customAxisZ)
@@ -60,6 +60,37 @@ namespace Essentia
 
         needsUpdate = true;
     }
+
+    void Transform::rotate(const glm::vec3& eulerAngles, const glm::vec3& centerPoint) {
+        if (eulerAngles == glm::vec3(0.0f)) return;
+
+        // Convertimos los ángulos de Euler a radianes
+        glm::vec3 radians = glm::radians(eulerAngles);
+
+        // Creamos quaternions para cada eje
+        glm::quat rotationX = glm::angleAxis(radians.x, glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::quat rotationY = glm::angleAxis(radians.y, glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::quat rotationZ = glm::angleAxis(radians.z, glm::vec3(0.0f, 0.0f, 1.0f));
+
+        // Combinamos las rotaciones
+        glm::quat combinedRotation = glm::normalize(rotationY * rotationX * rotationZ);
+
+        // Trasladamos el sistema de coordenadas al punto de rotación
+        glm::vec3 translatedPosition = position - centerPoint;
+
+        // Aplicamos la rotación
+        translatedPosition = combinedRotation * translatedPosition;
+
+        // Revertimos la traslación
+        position = translatedPosition + centerPoint;
+
+        // Actualizamos la rotación acumulada
+        rotation = glm::normalize(combinedRotation * rotation);
+
+        // Indicamos que la matriz necesita actualizarse
+        needsUpdate = true;
+    }
+
 
     bool Transform::areAligned(const glm::vec3& a, const glm::vec3& b, float epsilon)
     {

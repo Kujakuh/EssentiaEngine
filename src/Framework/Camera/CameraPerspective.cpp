@@ -43,11 +43,11 @@ namespace Essentia
         deltaX *= sensitivity * speed * Time::deltaTime();
         deltaY *= sensitivity * speed * Time::deltaTime();
 
-        transform->rotate(glm::vec3(deltaY, deltaX, 0.0f), getRight(), glm::vec3(0, 1, 0), getFront());
+        transform->rotate(glm::vec3(deltaY, deltaX, 0.0f), false, getRight(), glm::vec3(0, 1, 0), getFront());
 
         if (transform->areAligned(glm::normalize(transform->getRotation() * glm::vec3(0.0f, 0.0f, -1.0f)),  worldUp, 0.0005) ||
             transform->areAligned(glm::normalize(transform->getRotation() * glm::vec3(0.0f, 0.0f, -1.0f)), -worldUp, 0.0005))
-                transform->rotate(glm::vec3(-deltaY, 0.0f, 0.0f), getRight(), glm::vec3(0, 1, 0), getFront());
+                transform->rotate(glm::vec3(-deltaY, 0.0f, 0.0f), false, getRight(), glm::vec3(0, 1, 0), getFront());
 
         transform->updateMatrix();
         updateCameraVectors();
