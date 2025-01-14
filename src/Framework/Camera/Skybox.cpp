@@ -66,8 +66,8 @@ namespace Essentia
         }
     )";
 
-    Skybox::Skybox(const std::string& path) :
-        texture(TextureManager::getTexture(path, GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP)),
+    Skybox::Skybox(const std::string& path, bool flip) :
+        texture(TextureManager::getTexture(path, GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP, Essentia::defaultFilters, 0, flip)),
         shader(vertexShaderCode.c_str(), fragmentShaderCodeBindless.c_str(), DATA_SOURCE::STR_DATA)
     {
         if (!(GLAD_GL_ARB_bindless_texture && Essentia::bindlessTexturesMode))
@@ -76,8 +76,8 @@ namespace Essentia
         setupMesh();
     }
 
-    Skybox::Skybox(std::vector<std::string> faces) :
-        texture(TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP)),
+    Skybox::Skybox(std::vector<std::string> faces, bool flip) :
+        texture(TextureManager::getCubemapTexture(faces, GL_TEXTURE_CUBE_MAP, TEX_TYPE::TEX_CUBEMAP, flip)),
         shader(vertexShaderCode.c_str(), fragmentShaderCodeBindless.c_str(), DATA_SOURCE::STR_DATA)
     {
         if (!(GLAD_GL_ARB_bindless_texture && Essentia::bindlessTexturesMode))

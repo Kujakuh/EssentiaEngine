@@ -145,8 +145,8 @@ int main(void)
 	//Camera2D camera("Camera", scene, 45.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
 	scene->RegisterSystems(Renderer2D(&camera), Renderer3D(&camera));
 
-	Skybox skybox(RESOURCES_PATH "Textures/test.hdr");
-	//Skybox skybox(faces);
+	//Skybox skybox(RESOURCES_PATH "Textures/test.hdr");
+	Skybox skybox(faces);
 
 	camera.sensitivity = 5.0f;
 	ref->setPosition().x += 1.5f;
@@ -190,18 +190,18 @@ int main(void)
 	std::shared_ptr<Timer> timo = std::make_shared<Timer>(15, [](){std::cout << "Timer ended.\n";});
 	int speed = 12;
 
-	entity2->active = false;
+	//entity2->active = false;
 
 	int id_instance = scene->Instantiate(entity4, entity2->GetComponent<Transform>(), 30);
 	GameObject test = scene->GetEntityByID(id_instance);
-	test->onUpdate = [test]() 
-		{
+	Transform* reference = test->GetComponent<Transform>();
+	test->onUpdate = [test, reference]()
+	{
 		if (InputManager::IsKeyPressed(KEY_K))
-			test.weakPtr_.lock().get()->GetComponent<Transform>()->setPosition().x += 0.002;
+			reference->setPosition().x += 0.002;
 		if (InputManager::IsKeyPressed(KEY_L))
-			test.weakPtr_.lock().get()->GetComponent<Transform>()->setPosition().x -= 0.002;
-		};;
-
+			reference->setPosition().x -= 0.002;
+	};
 
 
 	while (!glfwWindowShouldClose(window))

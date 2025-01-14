@@ -87,7 +87,7 @@ namespace Essentia
 
             void loadFromFile(const char* texturePath, bool flip = false);
             void loadEXR(const char* texturePath, bool flip = true);
-            void loadCubemap(const std::vector<std::string>& faces, bool flip);
+            void loadCubemap(const std::vector<std::string>& faces, bool flip = true);
             void loadHDRIToCubemap(const std::string& hdriPath, unsigned int cubemapResolution = 1024, bool linearFilter = true, bool flip = true);
 
             std::string trim_extension(const std::string& filePath, bool withoutDot = true);

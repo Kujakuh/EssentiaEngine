@@ -82,7 +82,7 @@ namespace Essentia
     }
 
     std::shared_ptr<Texture> TextureManager::getCubemapTexture(const std::vector<std::string>& faces, GLenum textureType,
-        TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters)
+        TEX_TYPE type, bool flip, const ska::flat_hash_map<FILTERS, GLenum>& filters)
     {
         GLint shaderID = 0;
         glGetIntegerv(GL_CURRENT_PROGRAM, &shaderID);
@@ -100,7 +100,7 @@ namespace Essentia
 
         // Cargar un nuevo cubemap
         int unit = allocateUnit(shaderID);
-        auto texture = std::make_shared<Texture>(faces, textureType, unit, filters, type);
+        auto texture = std::make_shared<Texture>(faces, textureType, unit, filters, type, flip);
         shaderCache[key] = texture;
 
         return texture;

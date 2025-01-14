@@ -38,7 +38,7 @@ namespace Essentia
                 TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters, GLint shaderID = 0, bool flip = true);
 
             static std::shared_ptr<Texture> getCubemapTexture(const std::vector<std::string>& faces, GLenum textureType,
-                TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters);
+                TEX_TYPE type, bool flip = false, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters);
 
             //static std::future<std::shared_ptr<Texture>> TextureManager::getTextureAsync(const std::string& texturePath, GLenum textureType,
             //    TEX_TYPE type, const ska::flat_hash_map<FILTERS, GLenum>& filters = Essentia::defaultFilters, GLint shaderId = 0, bool flip = false);

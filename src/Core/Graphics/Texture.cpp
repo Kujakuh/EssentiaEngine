@@ -432,10 +432,13 @@ namespace Essentia
 
         for (size_t i = 0; i < faces.size(); ++i)
         {
-            if (flip && i != 1 && i != 3)
-                stbi_set_flip_vertically_on_load(true);
+            if(!bindlessSupported)
+                if (flip && i != 1 && i != 3)
+                    stbi_set_flip_vertically_on_load(true);
+                else
+                    stbi_set_flip_vertically_on_load(false);
             else
-                stbi_set_flip_vertically_on_load(false);
+                if(flip) stbi_set_flip_vertically_on_load(true);
 
             unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
             if (data)

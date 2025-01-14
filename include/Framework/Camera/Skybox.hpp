@@ -10,8 +10,8 @@ namespace Essentia
     class Skybox
     {
         public:
-            Skybox(const std::string& path);
-            Skybox(std::vector<std::string> faces);
+            Skybox(const std::string& path, bool flip = false);
+            Skybox(std::vector<std::string> faces, bool flip = false);
             void render(glm::mat4 projection, glm::mat4 view);
 
         private:
