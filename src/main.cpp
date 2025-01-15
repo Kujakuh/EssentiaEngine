@@ -127,7 +127,7 @@ int main(void)
 #pragma endregion
 
 	Essentia::initDefaultModels();
-	Essentia::render_mode = RENDER_MODE::PONG_SHADING;
+	Essentia::render_mode = RENDER_MODE::PBR;
 	Essentia::bindlessTexturesMode = true;
 
 	std::vector<std::string> faces
