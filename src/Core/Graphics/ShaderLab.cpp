@@ -84,6 +84,7 @@ namespace Essentia
 
         if (renderMode == RENDER_MODE::PONG_SHADING)
             shaderHeaders3D[FRAGMENT] = R"(
+
             #define PI 3.1415927
 
             in vec3 FragPos;
@@ -98,8 +99,14 @@ namespace Essentia
             uniform vec3 viewPos = vec3(0.0, 0.0, 0.0);
 
             struct Light {
+                int type; // 0 = puntual, 1 = direccional, 2 = focal
+
                 vec3 position;
                 vec3 direction;
+                vec3 color;
+
+                float intensity;
+
                 float innerCutOff;
                 float outerCutOff;
 
@@ -115,50 +122,80 @@ namespace Essentia
             uniform Light lights[10];
             uniform int lightsNum = 0;
 
-            vec3 bpSpecularLight(vec3 normal, vec3 lightDir, vec3 viewDir, float shininess)
-            {
-                vec3 halfwayDir = normalize(lightDir + viewDir); // Halfway vector
-                float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
-                return spec * vec3(1.0); // Specular color (white for simplicity)
+            vec3 calculateAmbient(Light light) {
+                return light.ambient * texture(material.diffuse, TexCoord).rgb * material.color;
             }
 
-            vec3 dirLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos) {
-                vec3 lightDir = normalize(-light.direction);
+            vec3 calculateDiffuse(Light light, vec3 normal, vec3 lightDir) {
                 float diff = max(dot(normal, lightDir), 0.0);
-                vec3 diffuse = light.diffuse * diff * texture(material.diffuse, TexCoord).rgb * material.color;
-                return diffuse;
+                return light.diffuse * diff * texture(material.diffuse, TexCoord).rgb * material.color;
             }
 
-            vec3 pointLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos) {
+            vec3 calculateSpecular(Light light, vec3 normal, vec3 lightDir, vec3 viewDir) {
+                vec3 reflectDir = reflect(-lightDir, normal);
+                float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+                return light.specular * spec * texture(material.specular, TexCoord).rgb;
+            }
+
+            vec3 calculatePointLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos) {
                 vec3 lightDir = normalize(light.position - fragPos);
-                float diff = max(dot(normal, lightDir), 0.0);
-
                 float distance = length(light.position - fragPos);
                 float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-                vec3 diffuse = light.diffuse * diff * attenuation * texture(material.diffuse, TexCoord).rgb * material.color;
+                vec3 ambient = calculateAmbient(light) * attenuation * light.intensity;
+                vec3 diffuse = calculateDiffuse(light, normal, lightDir) * attenuation * light.intensity;
                 vec3 viewDir = normalize(viewPos - fragPos);
-                vec3 specular = bpSpecularLight(normal, lightDir, viewDir, material.shininess) *
-                                texture(material.specular, TexCoord).rgb * attenuation;
-                return diffuse + specular;
+                vec3 specular = calculateSpecular(light, normal, lightDir, viewDir) * attenuation * light.intensity;
+
+                return ambient + diffuse + specular;
             }
 
-            vec3 spotLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos) {
-                vec3 lightDir = normalize(light.direction);
-                float diff = max(dot(normal, lightDir), 0.0);
+            vec3 calculateDirectionalLight(Light light, vec3 normal, vec3 viewPos) {
+                vec3 lightDir = normalize(-light.direction);
 
+                vec3 ambient = calculateAmbient(light) * light.intensity;
+                vec3 diffuse = calculateDiffuse(light, normal, lightDir) * light.intensity;
+                vec3 viewDir = normalize(viewPos - FragPos);
+                vec3 specular = calculateSpecular(light, normal, lightDir, viewDir) * light.intensity;
+
+                return ambient + diffuse + specular;
+            }
+
+            vec3 calculateSpotLight(Light light, vec3 fragPos, vec3 normal, vec3 viewPos) {
+                vec3 lightDir = normalize(light.position - fragPos);
                 float theta = dot(lightDir, normalize(-light.direction));
                 float epsilon = light.innerCutOff - light.outerCutOff;
-                float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+                float spotlightFactor = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
                 float distance = length(light.position - fragPos);
                 float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-                vec3 diffuse = light.diffuse * diff * intensity * attenuation * texture(material.diffuse, TexCoord).rgb * material.color;
+                vec3 ambient = calculateAmbient(light) * attenuation * spotlightFactor * light.intensity;
+                vec3 diffuse = calculateDiffuse(light, normal, lightDir) * attenuation * spotlightFactor * light.intensity;
                 vec3 viewDir = normalize(viewPos - fragPos);
-                vec3 specular = bpSpecularLight(normal, lightDir, viewDir, material.shininess) *
-                                texture(material.specular, TexCoord).rgb * intensity * attenuation;
-                return diffuse + specular;
+                vec3 specular = calculateSpecular(light, normal, lightDir, viewDir) * attenuation * spotlightFactor * light.intensity;
+
+                return ambient + diffuse + specular;
+            }
+
+            vec3 getNormalFromMap()
+            {
+                vec3 tangentNormal = texture(material.normal, TexCoord).xyz * 2.0 - 1.0;
+                // Verificamos si el normal está correctamente mapeado
+                if (length(tangentNormal) == 0.0)
+                    tangentNormal = Normal * 2.0 - 1.0;
+
+                vec3 Q1  = dFdx(FragPos);
+                vec3 Q2  = dFdy(FragPos);
+                vec2 st1 = dFdx(TexCoord);
+                vec2 st2 = dFdy(TexCoord);
+
+                vec3 N   = normalize(Normal);
+                vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
+                vec3 B  = -normalize(cross(N, T));
+                mat3 TBN = mat3(T, B, N);
+
+                return normalize(TBN * tangentNormal);
             }
             )";
 
@@ -555,69 +592,74 @@ namespace Essentia
             if (renderMode == RENDER_MODE::PONG_SHADING)
             {
                 shader << R"(
-                vec3 norm = Normal;
-                vec3 n = texture(material.normal, TexCoord).rgb;
-                if (length(n) > 0) norm = n; 
+                vec3 norm;
+                if (length(texture(material.normal, TexCoord)) != 0) 
+                {
+                    norm = normalize(getNormalFromMap());
+                } 
+                else 
+                {
+                    norm = normalize(Normal);
+                }
 
-                vec3 diffuse = vec3(0.0);
-                vec4 ambient = texture(material.diffuse, TexCoord);
-                vec3 specular = vec3(0.0);
-
+                vec3 rest = vec3(0.0);
                 )";
 
                 if (ambientLightOn)
                     shader << R"(
-                    Light sunLight = Light(
-                    vec3(0.0, 0.0, 0.0), // Posición no relevante para luz direccional
-                    vec3(0.0, -1.0, 0.0), // Dirección de la luz, emula el sol hacia abajo
-                    0.0, // InnerCutOff no necesario para luces direccionales
-                    0.0, // OuterCutOff no necesario para luces direccionales
-                    vec3(0.1, 0.1, 0.1), // Luz ambiental tenue
-                    vec3(0.4, 0.4, 0.4), // Luz difusa fuerte (luz del sol)
-                    vec3(1.0, 1.0, 1.0), // Luz especular fuerte
-                    1.0, // Constante (luz direccional no cambia con la distancia)
-                    0.0, // Linear (sin caída de luz con la distancia)
-                    0.0  // Quadratic (sin caída de luz con la distancia)
-                    );
+                    Light sunLight;
+                    sunLight.type = 1; // Luz direccional
+                    sunLight.position = vec3(0.0, 0.0, 0.0); // La posición no es relevante para luz direccional
+                    sunLight.direction = normalize(vec3(0.0, -1.0, 0.0)); // Emula el sol iluminando hacia abajo
+                    sunLight.color = vec3(1.0, 1.0, 1.0); // Luz blanca pura
+                    sunLight.intensity = 1.0; // Intensidad estándar
 
-                    ambient *= vec4(sunLight.ambient, 1.0);
-                    diffuse += dirLight(sunLight, FragPos, norm, viewPos);
-                    specular += bpSpecularLight(norm, normalize(sunLight.direction), normalize(viewPos - FragPos), 16.0);
+                    sunLight.ambient = vec3(0.05, 0.05, 0.05); // Luz ambiental tenue
+                    sunLight.diffuse = vec3(0.5, 0.5, 0.5); // Luz difusa intensa para simular luz solar
+                    sunLight.specular = vec3(1.0, 1.0, 1.0); // Especular fuerte para reflejos brillantes
+
+                    sunLight.innerCutOff = 0.0; // No aplica para luz direccional
+                    sunLight.outerCutOff = 0.0; // No aplica para luz direccional
+
+                    sunLight.constant = 1.0; // No afecta para luz direccional
+                    sunLight.linear = 0.0; // No afecta para luz direccional
+                    sunLight.quadratic = 0.0; // No afecta para luz direccional
+
+                    rest += calculateDirectionalLight(sunLight, norm, viewPos);
+                    )";
+                else
+                    shader << R"(
+                    rest = vec3(1.0);
                     )";
 
                 shader << R"(
-                for (int i = 0; i < lightsNum; ++i) {
-                    Light light = lights[i];
 
-                    // Luz direccional
-                    if (length(light.position) == 0.0) {
-                        diffuse += dirLight(light, FragPos, norm, viewPos);
-                        ambient *= vec4(light.ambient, 1.0);
-                    }
-                    // Luz puntual
-                    else if (light.innerCutOff > 0.0) {
-                        diffuse += pointLight(light, FragPos, norm, viewPos);
-                    }
-                    // Luz focal
-                    else {
-                        diffuse += spotLight(light, FragPos, norm, viewPos);
+                for (int i = 0; i < lightsNum; i++) {
+                    if (lights[i].type == 0) {
+                        rest *= calculatePointLight(lights[i], FragPos, norm, viewPos);
+                    } else if (lights[i].type == 1) {
+                        rest *= calculateDirectionalLight(lights[i], norm, viewPos);
+                    } else if (lights[i].type == 2) {
+                        rest *= calculateSpotLight(lights[i], FragPos, norm, viewPos);
                     }
                 }
 
                 vec4 alphaMap = texture(material.alpha, TexCoord);
                 float alphaValue = alphaMap.r; // Suponiendo que el canal rojo representa la opacidad
 
+                float diff = texture(material.diffuse, TexCoord).a;
+
                 // Ajustar el canal alfa de ambient si alphaMap tiene datos válidos
                 if (alphaValue > 0.0) {
-                    ambient.a *= alphaValue;
+                    diff *= alphaValue;
                 }
 
-                // Si ambient.a sigue siendo 0, usar el valor de alphaMap si está disponible
-                if (ambient.a == 0.0 && alphaMap.a > 0.0) {
-                    ambient.a = alphaValue;
+                // Si diff sigue siendo 0, usar el valor de alphaMap si está disponible
+                if (diff == 0.0 && alphaMap.a > 0.0) {
+                    diff = alphaValue;
                 }
 
-                vec4 result = ambient + vec4(diffuse, 0.0);
+                vec4 result = vec4(rest, diff);
                 )";
             }
             if (renderMode == RENDER_MODE::PBR)

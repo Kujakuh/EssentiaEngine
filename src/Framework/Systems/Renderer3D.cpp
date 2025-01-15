@@ -60,6 +60,9 @@ namespace Essentia
                     shader->setUniform(lightBase + ".intensity", ls->GetIntensity());
                     shader->setUniform(lightBase + ".innerCutoff", ls->GetInnerCutOff());
                     shader->setUniform(lightBase + ".outerCutoff", ls->GetOuterCutOff());
+                    shader->setUniform(lightBase + ".diffuse", ls->GetDiffuse());
+                    shader->setUniform(lightBase + ".specular", ls->GetSpecular());
+                    shader->setUniform(lightBase + ".ambient", ls->GetAmbient());
                 }
                 ls->needsUpdate = false;
                 shader->disable();
