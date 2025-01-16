@@ -592,10 +592,10 @@ namespace Essentia
             if (renderMode == RENDER_MODE::PONG_SHADING)
             {
                 shader << R"(
-                vec3 norm;
-                if (length(texture(material.normal, TexCoord)) != 0) 
+                vec3 norm = texture(material.normal, TexCoord).rgb;
+                if (length(norm) != 0) 
                 {
-                    norm = normalize(getNormalFromMap());
+                    norm = getNormalFromMap();
                 } 
                 else 
                 {
