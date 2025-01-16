@@ -21,7 +21,7 @@ namespace Essentia
             TexCoords(glm::vec2(0.0f, 0.0f)), Tangent(glm::vec3(1.0f, 0.0f, 0.0f)),
             Bitangent(glm::vec3(0.0f, 1.0f, 0.0f))
         {
-            std::fill(std::begin(m_BoneIDs), std::end(m_BoneIDs), 0);
+            std::fill(std::begin(m_BoneIDs), std::end(m_BoneIDs), -1);
             std::fill(std::begin(m_Weights), std::end(m_Weights), 0.0f);
         }
 
@@ -30,7 +30,7 @@ namespace Essentia
             TexCoords(texCoords), Tangent(glm::vec3(1.0f, 0.0f, 0.0f)),
             Bitangent(glm::vec3(0.0f, 1.0f, 0.0f))
         {
-            std::fill(std::begin(m_BoneIDs), std::end(m_BoneIDs), 0);
+            std::fill(std::begin(m_BoneIDs), std::end(m_BoneIDs), -1);
             std::fill(std::begin(m_Weights), std::end(m_Weights), 0.0f);
         }
 
@@ -38,7 +38,7 @@ namespace Essentia
             : Position(position), Normal(normal), TexCoords(texCoords),
             Tangent(glm::vec3(1.0f, 0.0f, 0.0f)), Bitangent(glm::vec3(0.0f, 1.0f, 0.0f))
         {
-            std::fill(std::begin(m_BoneIDs), std::end(m_BoneIDs), 0);
+            std::fill(std::begin(m_BoneIDs), std::end(m_BoneIDs), -1);
             std::fill(std::begin(m_Weights), std::end(m_Weights), 0.0f);
         }
 
@@ -47,7 +47,7 @@ namespace Essentia
             : Position(position), Normal(normal), TexCoords(texCoords),
             Tangent(tangent), Bitangent(glm::vec3(0.0f, 1.0f, 0.0f))
         {
-            std::fill(std::begin(m_BoneIDs), std::end(m_BoneIDs), 0);
+            std::fill(std::begin(m_BoneIDs), std::end(m_BoneIDs), -1);
             std::fill(std::begin(m_Weights), std::end(m_Weights), 0.0f);
         }
 
@@ -56,7 +56,7 @@ namespace Essentia
             : Position(position), Normal(normal), TexCoords(texCoords),
             Tangent(tangent), Bitangent(bitangent)
         {
-            std::fill(std::begin(m_BoneIDs), std::end(m_BoneIDs), 0);
+            std::fill(std::begin(m_BoneIDs), std::end(m_BoneIDs), -1);
             std::fill(std::begin(m_Weights), std::end(m_Weights), 0.0f);
         }
 
@@ -68,6 +68,19 @@ namespace Essentia
             for (int i = 0; i < MAX_BONE_INFLUENCE; ++i) {
                 m_BoneIDs[i] = boneIDs[i];
                 m_Weights[i] = weights[i];
+            }
+        }
+
+        void SetBoneData(int boneID, float weight)
+        {
+            for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+            {
+                if (m_BoneIDs[i] < 0)
+                {
+                    m_Weights[i] = weight;
+                    m_BoneIDs[i] = boneID;
+                    break;
+                }
             }
         }
     };

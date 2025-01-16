@@ -25,6 +25,42 @@ namespace Essentia
 
     void Model::addMesh(const std::shared_ptr<Mesh>& mesh) { meshes.push_back(mesh); }
 
+    std::map<std::string, BoneInfo>& Model::GetBoneInfoMap() { return m_BoneInfoMap; }
+    int& Model::GetBoneCount() { return m_BoneCounter; }
+
+    void Model::ExtractBoneWeights(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
+    {
+        for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
+        {
+            int boneID = -1;
+            std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+            if (m_BoneInfoMap.find(boneName) == m_BoneInfoMap.end())
+            {
+                BoneInfo newBoneInfo;
+                newBoneInfo.id = m_BoneCounter;
+                newBoneInfo.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
+                m_BoneInfoMap[boneName] = newBoneInfo;
+                boneID = m_BoneCounter;
+                m_BoneCounter++;
+            }
+            else
+            {
+                boneID = m_BoneInfoMap[boneName].id;
+            }
+            assert(boneID != -1);
+            auto weights = mesh->mBones[boneIndex]->mWeights;
+            int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+            for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+            {
+                int vertexId = weights[weightIndex].mVertexId;
+                float weight = weights[weightIndex].mWeight;
+                assert(vertexId <= vertices.size());
+                vertices[vertexId].SetBoneData(boneID, weight);
+            }
+        }
+    }
+
     size_t Model::getMeshCount() const { return meshes.size(); }
     const std::shared_ptr<Mesh> Model::getMesh(size_t index) const
     {
@@ -150,6 +186,8 @@ namespace Essentia
 
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
         materials = loadMaterials(material);
+
+        ExtractBoneWeights(vertices, mesh, scene);
 
         return Mesh(shader, vertices, indices, materials);
     }

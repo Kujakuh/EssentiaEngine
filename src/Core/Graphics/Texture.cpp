@@ -322,10 +322,10 @@ namespace Essentia
             exrWidth = dw.max.x - dw.min.x + 1;
             exrHeight = dw.max.y - dw.min.y + 1;
 
-            // Reserva memoria para los p�xeles
+            // Reserva memoria para los pixeles
             pixels.resizeErase(exrHeight, exrWidth);
 
-            // Lee los p�xeles al buffer
+            // Lee los pixeles al buffer
             file.setFrameBuffer(&pixels[0][0] - dw.min.x - dw.min.y * exrWidth, 1, exrWidth);
             file.readPixels(dw.min.y, dw.max.y);
 
