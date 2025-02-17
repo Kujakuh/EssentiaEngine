@@ -1,17 +1,14 @@
 #ifndef EVENT_LISTENER_H
 #define EVENT_LISTENER_H
 
-#include <Shared/enums.hpp>
+#include <Core/EventSystem/IEvent.hpp> 
 
 namespace Essentia
 {
     class EventListener
     {
         public:
-            virtual void onSysEvent(INTERNAL_EVENT event) {}
-            virtual void onEvent(int event) {}
-
-            virtual ~EventListener() = default;
+            virtual void onEvent(const IEvent& event) = 0;
     };
 }
 

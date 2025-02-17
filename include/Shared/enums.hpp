@@ -12,10 +12,6 @@ enum SH_TYPE
 	FRAGMENT,
 	GEOMETRY
 };
-enum INTERNAL_EVENT
-{
-	SYS_START
-};
 enum TEX_TYPE
 {
 	TEX_DIFF,

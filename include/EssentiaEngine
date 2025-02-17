@@ -4,7 +4,9 @@
 #include <Core/Essentia_ECS>
 #include <Core/Exceptions/Exceptions.hpp>
 #include <Core/EventSystem/EventSystem.hpp>
+#include <Core/EventSystem/IEvent.hpp>
 #include <Core/EventSystem/EventListener.hpp>
+#include <Core/EventSystem/events.hpp>
 #include <Core/Graphics/Shader.hpp>
 #include <Core/Graphics/Texture.hpp>
 #include <Core/Graphics/Vertex.hpp>
@@ -44,8 +46,8 @@ using Entity = Essentia::Entity;
 using Scene = Essentia::Scene;
 using SceneManager = Essentia::SceneManager;
 
-template <typename T>
-using EventSystem = Essentia::EventSystem<T>;
+using IEvent = Essentia::IEvent;
+using EventSystem = Essentia::EventSystem;
 using EventListener = Essentia::EventListener;
 
 using Transform = Essentia::Transform;

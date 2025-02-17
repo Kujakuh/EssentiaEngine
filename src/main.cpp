@@ -42,6 +42,8 @@ int main(void)
 
 	Transform *ref = myEntity.entity->GetComponent<Transform>();
 
+	EventSystem::emit(Essentia::InitEvent());
+
 	if (entity4->HasComponent<Transform>())
 	{
 		ref->setPosition().x = 1;

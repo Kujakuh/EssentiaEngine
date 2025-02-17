@@ -7,15 +7,17 @@ class GameObjectTemplate : EventListener
 
         GameObjectTemplate(Essentia::Scene* scene) : entity(scene->CreateEntity("MyCustomGameObject"))
         {
-            EventSystem<INTERNAL_EVENT>::addListener(this);
             entity->onUpdate = [this]() {Update();};
+			EventSystem::addListener(this);
         }
 
-        void onSysEvent(INTERNAL_EVENT event) override 
+        void onEvent(const IEvent& event) override 
         {
-            if (event == SYS_START) std::cout << "Sys Event Raised" << "\n";
-        }
+			std::string type = event.getType();
 
-        void onEvent(int event) override {}
+            if (type == "InitEvent") {
+				std::cout << event.getInfo() << "\n";
+            }
+        }
         void Update() {}
 };
