@@ -159,30 +159,3 @@ ocv_target_include_modules("${CMAKE_PROJECT_NAME}" ${OPENCV_MODULES_BUILD})
 #	glad stb_image stb_truetype gl2d raudio imgui safeSave profilerLib enet glui)
 
 target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw glad stb_image stb_truetype imgui assimp ska_flat_hash_map nlohmann opencv_world OpenEXR)
-
-find_package(Doxygen)
-
-if(DOXYGEN_FOUND)
-    message(STATUS "Doxygen encontrado: ${DOXYGEN_EXECUTABLE}")
-    
-    set(DOXYGEN_INPUT_DIR "${CMAKE_SOURCE_DIR}/include")
-    set(DOXYGEN_OUTPUT_DIR "${CMAKE_BINARY_DIR}/docs")
-
-    set(DOXYGEN_CONFIG_FILE "${CMAKE_BINARY_DIR}/Doxyfile")
-
-    configure_file(
-        "${CMAKE_SOURCE_DIR}/Doxyfile.in"
-        "${DOXYGEN_CONFIG_FILE}"
-        @ONLY
-    )
-
-    add_custom_target(doc
-        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_CONFIG_FILE}
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Generando documentación con Doxygen en ${DOXYGEN_OUTPUT_DIR}"
-        VERBATIM
-    )
-
-else()
-    message(WARNING "Doxygen no encontrado, no se generará documentación.")
-endif()
