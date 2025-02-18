@@ -3,10 +3,8 @@
 
 #include <Core/EventSystem/EventListener.hpp>
 #include <Core/EventSystem/IEvent.hpp>
+
 #include <unordered_set>
-#include <memory>
-#include <type_traits>
-#include <stdexcept>
 
 namespace Essentia
 {

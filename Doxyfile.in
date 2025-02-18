@@ -1,0 +1,5 @@
+OUTPUT_DIRECTORY       = @DOXYGEN_OUTPUT_DIR@
+INPUT                 = @DOXYGEN_INPUT_DIR@
+RECURSIVE             = YES
+GENERATE_HTML         = YES
+GENERATE_LATEX        = NO
