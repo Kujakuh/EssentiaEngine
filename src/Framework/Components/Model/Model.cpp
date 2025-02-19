@@ -21,6 +21,9 @@ namespace Essentia
     void Model::loadModel(const std::string& path, bool inverseUvY)
     {
         *this = *(ModelCacheManager::getInstance().loadModel(path, inverseUvY));
+		shader->use();
+		shader->setUniform("useBones", m_BoneCounter > 0);
+        shader->disable();
     }
 
     void Model::addMesh(const std::shared_ptr<Mesh>& mesh) { meshes.push_back(mesh); }
@@ -127,6 +130,7 @@ namespace Essentia
             aiProcess_FlipUVs |
             aiProcess_CalcTangentSpace |
             aiProcess_OptimizeMeshes |
+            aiProcess_JoinIdenticalVertices |
             aiProcess_OptimizeGraph
         );
 
