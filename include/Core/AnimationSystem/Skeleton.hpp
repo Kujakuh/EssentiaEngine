@@ -26,6 +26,7 @@ namespace Essentia
             Bone* FindBone(const std::string& name);
             const AssimpNodeData& GetRootNode() const;
             const std::map<std::string, BoneInfo>& GetBoneInfoMap() const;
+            std::vector<glm::mat4> GetFinalBoneMatrices();
 
             void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, float* m_CurrentTime);
     };

@@ -21,15 +21,9 @@ namespace Essentia
         return nullptr;
     }
 
-    const AssimpNodeData& Skeleton::GetRootNode() const
-    {
-        return m_RootNode;
-    }
-
-    const std::map<std::string, BoneInfo>& Skeleton::GetBoneInfoMap() const
-    {
-        return m_BoneInfoMap;
-    }
+    const AssimpNodeData& Skeleton::GetRootNode() const { return m_RootNode; }
+    const std::map<std::string, BoneInfo>& Skeleton::GetBoneInfoMap() const { return m_BoneInfoMap; }
+    std::vector<glm::mat4> Skeleton::GetFinalBoneMatrices() { return m_FinalBoneMatrices; }
 
     void Skeleton::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, float* m_CurrentTime)
     {
