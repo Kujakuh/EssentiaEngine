@@ -30,4 +30,32 @@ namespace Essentia
     {
         return m_BoneInfoMap;
     }
+
+    void Skeleton::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, float* m_CurrentTime)
+    {
+        std::string nodeName = node->name;
+        glm::mat4 nodeTransform = node->transformation;
+
+        Bone* bone = FindBone(nodeName);
+        if (bone)
+        {
+            bone->Update(*m_CurrentTime);
+            nodeTransform = bone->GetLocalTransform();
+        }
+
+        glm::mat4 globalTransformation = parentTransform * nodeTransform;
+
+        auto& boneInfoMap = m_BoneInfoMap;
+        if (boneInfoMap.find(nodeName) != boneInfoMap.end())
+        {
+            int index = boneInfoMap[nodeName].id;
+            glm::mat4 offset = boneInfoMap[nodeName].offset;
+            m_FinalBoneMatrices[index] = globalTransformation * offset;
+        }
+
+        for (int i = 0; i < node->childrenCount; i++)
+        {
+            CalculateBoneTransform(&node->children[i], globalTransformation, m_CurrentTime);
+        }
+    }
 }

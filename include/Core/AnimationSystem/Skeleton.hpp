@@ -18,6 +18,9 @@ namespace Essentia
             std::unordered_map<std::string, Bone*> m_BoneMap;
             AssimpNodeData m_RootNode;
             std::map<std::string, BoneInfo> m_BoneInfoMap;
+            std::vector<glm::mat4> m_FinalBoneMatrices;
+
+            void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, float *m_CurrentTime);
 
         public:
             Skeleton(const std::vector<Bone>& bones, const AssimpNodeData& rootNode, const std::map<std::string, BoneInfo>& boneInfoMap);
