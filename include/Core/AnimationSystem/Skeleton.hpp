@@ -20,14 +20,14 @@ namespace Essentia
             std::map<std::string, BoneInfo> m_BoneInfoMap;
             std::vector<glm::mat4> m_FinalBoneMatrices;
 
-            void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, float *m_CurrentTime);
-
         public:
             Skeleton(const std::vector<Bone>& bones, const AssimpNodeData& rootNode, const std::map<std::string, BoneInfo>& boneInfoMap);
 
             Bone* FindBone(const std::string& name);
             const AssimpNodeData& GetRootNode() const;
             const std::map<std::string, BoneInfo>& GetBoneInfoMap() const;
+
+            void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, float* m_CurrentTime);
     };
 }
 
