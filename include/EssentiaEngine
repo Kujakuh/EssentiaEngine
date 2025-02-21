@@ -13,6 +13,11 @@
 #include <Core/Graphics/TextureManager.hpp>
 #include <Core/Graphics/Mesh.hpp>
 #include <Core/Graphics/Material.hpp>
+#include <Core/AnimationSystem/AssimpNodeData.hpp>
+#include <Core/AnimationSystem/Keyframe.hpp>
+#include <Core/AnimationSystem/Bone.hpp>
+#include <Core/AnimationSystem/BoneInfo.hpp>
+#include <Core/AnimationSystem/Skeleton.hpp>
 #include <Framework/Components/components.hpp>
 #include <Framework/Systems/systems.hpp>
 #include <Framework/Camera/CameraBase.hpp>
