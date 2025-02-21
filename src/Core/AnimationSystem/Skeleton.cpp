@@ -6,9 +6,12 @@ namespace Essentia
         : m_Bones(bones), m_RootNode(rootNode), m_BoneInfoMap(boneInfoMap)
     {
         for (auto& bone : m_Bones)
-        {
             m_BoneMap[bone.GetBoneName()] = &bone;
-        }
+
+        m_FinalBoneMatrices.reserve(100);
+
+        for (int i = 0; i < 100; i++)
+            m_FinalBoneMatrices.push_back(glm::mat4(1.0f));
     }
 
     Bone* Skeleton::FindBone(const std::string& name)
