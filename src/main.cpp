@@ -169,7 +169,7 @@ int main(void)
 
 	const char* modelo1 = RESOURCES_PATH "Models/lamp/Chandelier_03_4k.fbx";
 	const char* modelo2 = RESOURCES_PATH "Models/lamp/Lantern_01_4k.fbx";
-	const char* mmm = RESOURCES_PATH "Models/debug/scene.gltf";
+	const char* modelo3 = RESOURCES_PATH "Models/bones/Polin-Ani.fbx";
 
 	entity4->AddComponent<Model>(modelo1);
 	Model* mod = entity4->GetComponent<Model>();

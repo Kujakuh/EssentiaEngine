@@ -22,7 +22,13 @@ namespace Essentia
     {
         *this = *(ModelCacheManager::getInstance().loadModel(path, inverseUvY));
 		shader->use();
-		shader->setUniform("useBones", m_BoneCounter > 0);
+        shader->setUniform("useBones", m_BoneCounter > 0);
+		// ---------- BONES DEBUG ----------
+        /*shader->setUniform("useBones", 0);
+        for (size_t i = 0; i < 100; ++i) {
+            shader->setUniform("finalBonesMatrices[" + std::to_string(i) + "]", glm::mat4(1.0f));
+        }*/
+        // ---------- BONES DEBUG ----------
         shader->disable();
     }
 
