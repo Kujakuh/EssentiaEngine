@@ -17,16 +17,13 @@ namespace Essentia
 
     void AnimationStateMachine::Update(float deltaTime)
     {
-        //if (!currentState) return;
+        if (!currentState) return;
+        if (currentState->GetName() != currentState->GetNextState()) return;
 
-        //std::string nextState = currentState->GetNextState();
-        //if (nextState != currentState->GetAnimation()->GetBoneIDMap())
-        //{
-        //    currentState = &states[nextState];
-        //    //currentState->GetAnimation()->Reset();
-        //}
+        currentState = &states[nextState];
+        //currentState->GetAnimation()->Reset();
 
-        //currentState->GetAnimation()->Update(deltaTime);
+        currentState->GetAnimation()->Update(deltaTime);
     }
 
     Animation* AnimationStateMachine::GetCurrentAnimation() const

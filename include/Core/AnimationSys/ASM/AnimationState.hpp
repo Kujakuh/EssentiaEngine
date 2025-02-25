@@ -18,6 +18,7 @@ namespace Essentia
             void AddTransition(const std::string& nextState, std::function<bool()> condition);
             std::string GetNextState();
             Animation* GetAnimation() const;
+            std::string GetName() const;
 
         private:
             std::string name;

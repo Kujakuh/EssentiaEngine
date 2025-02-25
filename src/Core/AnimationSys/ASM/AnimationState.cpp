@@ -23,4 +23,6 @@ namespace Essentia
     {
         return animation;
     }
+
+    std::string AnimationState::GetName() const { return name; }
 }

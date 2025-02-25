@@ -13,6 +13,7 @@ namespace Essentia
         protected:
             float m_Duration;
             float m_TicksPerSecond;
+			float m_CurrentTime = 0.0f;
             std::unordered_map<std::string, std::vector<Keyframe>> m_Keyframes;
 
         public:
@@ -21,6 +22,8 @@ namespace Essentia
 
             virtual ~Animation() = default;
             virtual void Update(float animationTime) = 0;
+
+			void Reset() { m_CurrentTime = 0.0f; }
 
             float GetDuration() const { return m_Duration; }
             float GetTicksPerSecond() const { return m_TicksPerSecond; }
