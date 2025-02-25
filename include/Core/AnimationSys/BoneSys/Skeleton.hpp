@@ -5,9 +5,9 @@
 #include <unordered_map>
 #include <string>
 #include <map>
-#include <Core/AnimationSystem/Bone.hpp>
-#include <Core/AnimationSystem/BoneInfo.hpp>
-#include <Core/AnimationSystem/AssimpNodeData.hpp>
+#include <Core/AnimationSys/BoneSys/Bone.hpp>
+#include <Core/AnimationSys/BoneSys/BoneInfo.hpp>
+#include <Core/AnimationSys/BoneSys/AssimpNodeData.hpp>
 
 namespace Essentia
 {

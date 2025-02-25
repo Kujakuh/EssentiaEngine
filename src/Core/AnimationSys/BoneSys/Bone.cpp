@@ -1,4 +1,4 @@
-#include <Core/AnimationSystem/Bone.hpp>
+#include <Core/AnimationSys/BoneSys/Bone.hpp>
 
 namespace Essentia
 {

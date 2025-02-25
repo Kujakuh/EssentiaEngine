@@ -18,7 +18,7 @@
 #include <Core/Graphics/TextureManager.hpp>
 #include <Core/Graphics/ShaderLab.hpp>
 #include <Core/Graphics/assimp_glm_helpers.hpp>
-#include <Core/AnimationSystem/BoneInfo.hpp>
+#include <Core/AnimationSys/BoneSys/BoneInfo.hpp>
 #include <Shared/enums.hpp>
 
 namespace Essentia

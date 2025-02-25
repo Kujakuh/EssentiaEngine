@@ -5,7 +5,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <assimp/anim.h>
-#include <Core/AnimationSystem/Keyframe.hpp>
+#include <Core/AnimationSys/Keyframe.hpp>
 #include <Core/Graphics/assimp_glm_helpers.hpp>
 
 namespace Essentia
