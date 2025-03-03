@@ -20,7 +20,7 @@ namespace Essentia
         if (!currentState) return;
         if (currentState->GetName() != currentState->GetNextState()) return;
 
-        currentState = &states[nextState];
+        currentState = &states[currentState->GetNextState()];
         //currentState->GetAnimation()->Reset();
 
         currentState->GetAnimation()->Update(deltaTime);

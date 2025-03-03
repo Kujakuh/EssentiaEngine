@@ -205,6 +205,8 @@ int main(void)
 			reference->setPosition().x -= 0.002;
 	};
 
+	std::cout << scene->GetEntityByID(0)->GetName() << std::endl;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		InputManager::GetActiveInstance()->Update();

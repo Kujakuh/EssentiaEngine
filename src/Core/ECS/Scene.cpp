@@ -49,7 +49,7 @@ namespace Essentia
 	{
 		Transform* temp = new Transform();
 		temp->setPosition(position);
-		Instantiate(ent, temp, lifetime);
+		return Instantiate(ent, temp, lifetime);
     }
 
     bool Scene::isRunning() const {return running;}
