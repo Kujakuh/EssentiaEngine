@@ -45,6 +45,13 @@ namespace Essentia
         return instance->GetID();
     }
 
+    int Scene::Instantiate(WeakptrWrapper<Entity> ent, glm::vec3 position, float lifetime) 
+	{
+		Transform* temp = new Transform();
+		temp->setPosition(position);
+		Instantiate(ent, temp, lifetime);
+    }
+
     bool Scene::isRunning() const {return running;}
 
     void Scene::Update()

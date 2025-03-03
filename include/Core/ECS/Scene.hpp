@@ -32,6 +32,7 @@ namespace Essentia
             void DestroyEntity(WeakptrWrapper<Entity> entity);
 
             int Instantiate(WeakptrWrapper<Entity> ent, Transform* transform, float lifetime = -1);
+            int Instantiate(WeakptrWrapper<Entity> ent, glm::vec3 position, float lifetime = -1);
 
             void SetActive(bool active);
             void SetActive(bool active, std::vector<Entity*> entities, std::vector<std::string> arguments);
