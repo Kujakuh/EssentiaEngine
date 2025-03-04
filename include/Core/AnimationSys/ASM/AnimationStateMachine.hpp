@@ -19,7 +19,7 @@ namespace Essentia
         private:
             std::unordered_map<std::string, AnimationState> states;
             AnimationState* currentState;
-        };
+    };
 }
 
 #endif // !ASM_H
