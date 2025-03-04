@@ -23,6 +23,8 @@ namespace Essentia
             std::string name;
             ska::flat_hash_map<std::type_index, std::shared_ptr<IComponent>> components;
             bool isAlive;
+            bool isInstance;
+            int instanceParentId = -1;
 
         public:
             Entity(int id, const std::string& name);

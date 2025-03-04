@@ -2,10 +2,13 @@
 #define ENTITY_MANAGER_H
 
 #include <vector>
+#include <map>
 #include <memory>
 #include <queue>
 
 #include <Core/ECS/Entity.hpp>
+#include <Framework/Time/Time.hpp>
+#include <Framework/Time/Timer.hpp>
 #include <Core/Memory/WeakptrWrapper.hpp>
 
 namespace Essentia
@@ -14,13 +17,17 @@ namespace Essentia
     {
         private:
             std::vector<std::shared_ptr<Entity>> entities;
+            std::map<int, std::vector<std::string>> instances;
             std::queue<int> availableIDs;
 
         public:
-            WeakptrWrapper<Entity> CreateEntity(const std::string& name);
+            WeakptrWrapper<Entity> CreateEntity(const std::string& name, bool isInstance = false);
             WeakptrWrapper<Entity> GetEntityByID(int entityId);
             WeakptrWrapper<Entity> GetEntityByName(const std::string& name);
             void RemoveEntity(int entityId);
+            int Instantiate(WeakptrWrapper<Entity> ent, Transform* transform, float lifetime);
+            int Instantiate(WeakptrWrapper<Entity> ent, glm::vec3 position, float lifetime);
+            std::map<int, std::vector<std::string>> GetInstances();
 
         public:
             template <typename... Components>

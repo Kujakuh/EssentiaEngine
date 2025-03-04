@@ -10,8 +10,7 @@
 #include <Core/EventSystem/EventSystem.hpp>
 #include <Core/Memory/WeakptrWrapper.hpp>
 #include <Shared/user_values.hpp>
-#include <Framework/Time/Time.hpp>
-#include <Framework/Time/Timer.hpp>
+
 
 namespace Essentia
 {
@@ -26,13 +25,14 @@ namespace Essentia
             virtual ~Scene() = default;
 
             WeakptrWrapper<Entity> CreateEntity(const std::string& name);
-            EntityManager& GetEntityManager();
+            //EntityManager& GetEntityManager();
             WeakptrWrapper<Entity> GetEntityByID(int entityId);
             WeakptrWrapper<Entity> GetEntityByName(const std::string& name);
             void DestroyEntity(WeakptrWrapper<Entity> entity);
 
             int Instantiate(WeakptrWrapper<Entity> ent, Transform* transform, float lifetime = -1);
             int Instantiate(WeakptrWrapper<Entity> ent, glm::vec3 position, float lifetime = -1);
+            std::map<int, std::vector<std::string>> GetInstances();
 
             void SetActive(bool active);
             void SetActive(bool active, std::vector<Entity*> entities, std::vector<std::string> arguments);

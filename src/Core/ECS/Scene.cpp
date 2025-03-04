@@ -4,11 +4,13 @@ namespace Essentia
 {
     WeakptrWrapper<Entity> Scene::CreateEntity(const std::string& name) {return entityManager.CreateEntity(name);}
 
-    EntityManager& Scene::GetEntityManager() {return entityManager;}
+    //EntityManager& Scene::GetEntityManager() {return entityManager;}
 
     WeakptrWrapper<Entity> Scene::GetEntityByID(int entityId) {return entityManager.GetEntityByID(entityId);}
 
     WeakptrWrapper<Entity> Scene::GetEntityByName(const std::string& name) { return entityManager.GetEntityByName(name);}
+
+	std::map<int, std::vector<std::string>> Scene::GetInstances() { return entityManager.GetInstances(); }
 
     void Scene::DestroyEntity(WeakptrWrapper<Entity> entity)
     {
@@ -22,34 +24,12 @@ namespace Essentia
 
     int Scene::Instantiate(WeakptrWrapper<Entity> ent, Transform* transform, float lifetime)
     {
-        auto uuid = generateUUID();
-        WeakptrWrapper<Entity> instance = CreateEntity(uuid);
-        auto targetComponents = ent->GetComponents();
-
-        for (const auto& pair : targetComponents)
-            instance->components[pair.first] = pair.second;
-
-        instance->components[std::type_index(typeid(Transform))] = std::make_shared<Transform>(*transform);
-        
-        if (lifetime != -1)
-        {
-            std::shared_ptr<Timer> lifeTimeOut= std::make_shared<Timer>(lifetime, [this, instance, lifetime, uuid]()
-                {
-                    DestroyEntity(instance);
-                    std::cout << "Destroyed instance " << uuid <<" after secs: " << lifetime << "\n";
-                });
-
-            Time::addTimer(lifeTimeOut);
-        }
-
-        return instance->GetID();
+		return entityManager.Instantiate(ent, transform, lifetime);
     }
 
     int Scene::Instantiate(WeakptrWrapper<Entity> ent, glm::vec3 position, float lifetime) 
 	{
-		Transform* temp = new Transform();
-		temp->setPosition(position);
-		return Instantiate(ent, temp, lifetime);
+		return entityManager.Instantiate(ent, position, lifetime);
     }
 
     bool Scene::isRunning() const {return running;}

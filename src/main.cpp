@@ -195,7 +195,7 @@ int main(void)
 	//entity2->active = false;
 
 	int id_instance = scene->Instantiate(entity4, entity2->GetComponent<Transform>(), 30);
-	GameObject test = scene->GetEntityByID(id_instance);
+	GameObject test = scene->GetEntityByName(scene->GetInstances()[entity4->GetID()][0]);
 	Transform* reference = test->GetComponent<Transform>();
 	test->onUpdate = [test, reference]()
 	{
