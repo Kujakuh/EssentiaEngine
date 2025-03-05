@@ -2,7 +2,7 @@
 
 namespace Essentia
 {
-    WeakptrWrapper<Entity> EntityManager::CreateEntity(const std::string& name, bool isInstance)
+    WeakptrWrapper<Entity> EntityManager::CreateEntity(const std::string& name)
     {
         int entityId;
 
@@ -19,7 +19,6 @@ namespace Essentia
 
         // Crear y almacenar la entidad
         auto entity = std::make_shared<Entity>(entityId, name);
-		entity->isInstance = isInstance;
         entities[entityId] = std::move(entity);
         entities[entityId].get()->AddComponent<Transform>();
         return WeakptrWrapper<Entity>(entities[entityId]);
@@ -57,7 +56,7 @@ namespace Essentia
     {
         if (entityId >= 0 && entityId < entities.size() && entities[entityId]) 
         {
-            if (entities[entityId]->isInstance)
+            if (entities[entityId]->instanceParentId != -1)
             {
 				instances[entities[entityId]->instanceParentId].erase(
                     std::remove(
@@ -76,7 +75,7 @@ namespace Essentia
     int EntityManager::Instantiate(WeakptrWrapper<Entity> ent, Transform* transform, float lifetime)
     {
         auto uuid = generateUUID();
-        WeakptrWrapper<Entity> instance = CreateEntity(uuid, true);
+        WeakptrWrapper<Entity> instance = CreateEntity(uuid);
 		instance->instanceParentId = ent->GetID();
         auto targetComponents = ent->GetComponents();
 

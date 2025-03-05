@@ -21,7 +21,7 @@ namespace Essentia
             std::queue<int> availableIDs;
 
         public:
-            WeakptrWrapper<Entity> CreateEntity(const std::string& name, bool isInstance = false);
+            WeakptrWrapper<Entity> CreateEntity(const std::string& name);
             WeakptrWrapper<Entity> GetEntityByID(int entityId);
             WeakptrWrapper<Entity> GetEntityByName(const std::string& name);
             void RemoveEntity(int entityId);
