@@ -4,7 +4,7 @@ namespace Essentia
 {
     AnimationStateMachine::AnimationStateMachine() : currentState(nullptr) {}
 
-    void AnimationStateMachine::AddState(const std::string& name, Animation* animation)
+    void AnimationStateMachine::AddState(const std::string& name, IAnimation* animation)
     {
         states[name] = AnimationState(name, animation);
         if (!currentState) currentState = &states[name];
@@ -26,7 +26,7 @@ namespace Essentia
         currentState->GetAnimation()->Update(deltaTime);
     }
 
-    Animation* AnimationStateMachine::GetCurrentAnimation() const
+    IAnimation* AnimationStateMachine::GetCurrentAnimation() const
     {
         return currentState ? currentState->GetAnimation() : nullptr;
     }

@@ -2,7 +2,7 @@
 
 namespace Essentia
 {
-    AnimationState::AnimationState(const std::string& stateName, Animation* anim)
+    AnimationState::AnimationState(const std::string& stateName, IAnimation* anim)
         : name(stateName), animation(anim) {}
 
     void AnimationState::AddTransition(const std::string& nextState, std::function<bool()> condition)
@@ -19,7 +19,7 @@ namespace Essentia
         return name;
     }
 
-    Animation* AnimationState::GetAnimation() const
+    IAnimation* AnimationState::GetAnimation() const
     {
         return animation;
     }

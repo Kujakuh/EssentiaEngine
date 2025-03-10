@@ -18,7 +18,7 @@
 #include <Core/Graphics/TextureManager.hpp>
 #include <Core/Graphics/ShaderLab.hpp>
 #include <Core/Graphics/assimp_glm_helpers.hpp>
-#include <Core/AnimationSys/BoneSys/BoneInfo.hpp>
+#include <Core/AnimationSys/BoneSys/Skeleton.hpp>
 #include <Shared/enums.hpp>
 
 namespace Essentia
@@ -29,13 +29,10 @@ namespace Essentia
             std::string dir;
             std::shared_ptr<Shader> shader;
 
-            std::map<std::string, BoneInfo> m_BoneInfoMap;
-            int m_BoneCounter = 0;
-
             void initializeShader();
 
             std::map<std::string, BoneInfo>& GetBoneInfoMap();
-            int& GetBoneCount();
+            const int& GetBoneCount();
             void ExtractBoneWeights(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 
             void processNode(aiNode* node, const aiScene* scene, bool inverseUvY);
@@ -49,6 +46,7 @@ namespace Essentia
         public:
             std::vector<std::shared_ptr<Mesh>> meshes;
             ShaderLab shaderLab;
+			Skeleton skeleton;
 
             Model() = default;
             Model(const Mesh mesh);

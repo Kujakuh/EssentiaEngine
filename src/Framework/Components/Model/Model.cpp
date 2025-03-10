@@ -22,7 +22,7 @@ namespace Essentia
     {
         *this = *(ModelCacheManager::getInstance().loadModel(path, inverseUvY));
 		shader->use();
-        shader->setUniform("useBones", m_BoneCounter > 0);
+        shader->setUniform("useBones", skeleton.GetBoneMap().size() > 0);
 		// ---------- BONES DEBUG ----------
         /*shader->setUniform("useBones", 0);
         for (size_t i = 0; i < 100; ++i) {
@@ -34,8 +34,8 @@ namespace Essentia
 
     void Model::addMesh(const std::shared_ptr<Mesh>& mesh) { meshes.push_back(mesh); }
 
-    std::map<std::string, BoneInfo>& Model::GetBoneInfoMap() { return m_BoneInfoMap; }
-    int& Model::GetBoneCount() { return m_BoneCounter; }
+    std::map<std::string, BoneInfo>& Model::GetBoneInfoMap() { return skeleton.GetBoneInfoMap(); }
+    const int& Model::GetBoneCount() { return skeleton.GetBoneMap().size(); }
 
     void Model::ExtractBoneWeights(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
     {
@@ -43,18 +43,17 @@ namespace Essentia
         {
             int boneID = -1;
             std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
-            if (m_BoneInfoMap.find(boneName) == m_BoneInfoMap.end())
+            if (GetBoneInfoMap().find(boneName) == GetBoneInfoMap().end())
             {
                 BoneInfo newBoneInfo;
-                newBoneInfo.id = m_BoneCounter;
+                newBoneInfo.id = GetBoneCount();
                 newBoneInfo.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
-                m_BoneInfoMap[boneName] = newBoneInfo;
-                boneID = m_BoneCounter;
-                m_BoneCounter++;
+                GetBoneInfoMap()[boneName] = newBoneInfo;
+                boneID = GetBoneCount();
             }
             else
             {
-                boneID = m_BoneInfoMap[boneName].id;
+                boneID = GetBoneInfoMap()[boneName].id;
             }
             assert(boneID != -1);
             auto weights = mesh->mBones[boneIndex]->mWeights;

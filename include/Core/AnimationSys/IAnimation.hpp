@@ -8,7 +8,7 @@
 
 namespace Essentia
 {
-    class Animation
+    class IAnimation
     {
         protected:
             float m_Duration;
@@ -17,10 +17,10 @@ namespace Essentia
             std::unordered_map<std::string, std::vector<Keyframe>> m_Keyframes;
 
         public:
-            Animation(float duration, float ticksPerSecond)
+            IAnimation(float duration, float ticksPerSecond)
                 : m_Duration(duration), m_TicksPerSecond(ticksPerSecond) {}
 
-            virtual ~Animation() = default;
+            virtual ~IAnimation() = default;
             virtual void Update(float animationTime) = 0;
 
 			void Reset() { m_CurrentTime = 0.0f; }

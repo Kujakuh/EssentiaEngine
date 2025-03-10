@@ -20,7 +20,7 @@
 #include <Core/AnimationSys/ASM/AnimationState.hpp>
 #include <Core/AnimationSys/ASM/AnimationStateMachine.hpp>
 #include <Core/AnimationSys/Keyframe.hpp>
-#include <Core/AnimationSys/Animation.hpp>
+#include <Core/AnimationSys/IAnimation.hpp>
 #include <Framework/Components/components.hpp>
 #include <Framework/Systems/systems.hpp>
 #include <Framework/Camera/CameraBase.hpp>

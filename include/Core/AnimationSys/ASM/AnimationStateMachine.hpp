@@ -11,10 +11,10 @@ namespace Essentia
         public:
             AnimationStateMachine();
 
-            void AddState(const std::string& name, Animation* animation);
+            void AddState(const std::string& name, IAnimation* animation);
             void AddTransition(const std::string& from, const std::string& to, std::function<bool()> condition);
             void Update(float deltaTime);
-            Animation* GetCurrentAnimation() const;
+            IAnimation* GetCurrentAnimation() const;
 
         private:
             std::unordered_map<std::string, AnimationState> states;

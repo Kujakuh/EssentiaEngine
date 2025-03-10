@@ -14,6 +14,14 @@ namespace Essentia
             m_FinalBoneMatrices.push_back(glm::mat4(1.0f));
     }
 
+    Skeleton::Skeleton()
+    {
+        m_FinalBoneMatrices.reserve(100);
+
+        for (int i = 0; i < 100; i++)
+            m_FinalBoneMatrices.push_back(glm::mat4(1.0f));
+    }
+
     Bone* Skeleton::FindBone(const std::string& name)
     {
         auto it = m_BoneMap.find(name);
@@ -25,7 +33,8 @@ namespace Essentia
     }
 
     const AssimpNodeData& Skeleton::GetRootNode() const { return m_RootNode; }
-    const std::map<std::string, BoneInfo>& Skeleton::GetBoneInfoMap() const { return m_BoneInfoMap; }
+    std::map<std::string, BoneInfo>& Skeleton::GetBoneInfoMap() { return m_BoneInfoMap; }
+    std::unordered_map<std::string, Bone*> Skeleton::GetBoneMap() { return m_BoneMap; }
     std::vector<glm::mat4> Skeleton::GetFinalBoneMatrices() { return m_FinalBoneMatrices; }
 
     void Skeleton::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, float* m_CurrentTime)
