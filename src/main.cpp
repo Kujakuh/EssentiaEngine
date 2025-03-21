@@ -182,8 +182,8 @@ int main(void)
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
-	entity4->GetComponent<Transform>()->setScale(Vector3(1.3f));
-	entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
+	entity4->GetComponent<Transform>()->setScale(Vector3(0.2f));
+	//entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
 	entity1->AddComponent<LightSource>(LightType::Point);
 	entity1->GetComponent<LightSource>()->SetIntensity(5.0f);
@@ -194,7 +194,7 @@ int main(void)
 
 	//entity2->active = false;
 
-	int id_instance = scene->Instantiate(entity4, entity2->GetComponent<Transform>(), 30);
+	int id_instance = scene->Instantiate(entity4, entity2->GetComponent<Transform>(), 10);
 	GameObject test = scene->GetEntityByName(scene->GetInstances()[entity4->GetID()][0]);
 	Transform* reference = test->GetComponent<Transform>();
 	test->onUpdate = [test, reference]()
