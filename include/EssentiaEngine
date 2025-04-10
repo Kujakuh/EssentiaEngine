@@ -21,6 +21,7 @@
 #include <Core/AnimationSys/ASM/AnimationStateMachine.hpp>
 #include <Core/AnimationSys/Keyframe.hpp>
 #include <Core/AnimationSys/IAnimation.hpp>
+#include <Core/AnimationSys/SkeletalAnimation.hpp>
 #include <Framework/Components/components.hpp>
 #include <Framework/Systems/systems.hpp>
 #include <Framework/Camera/CameraBase.hpp>

@@ -14,23 +14,19 @@ namespace Essentia
     class Skeleton
     {
         private:
-            std::vector<Bone> m_Bones;
-            std::unordered_map<std::string, Bone*> m_BoneMap;
             AssimpNodeData m_RootNode;
             std::map<std::string, BoneInfo> m_BoneInfoMap;
             std::vector<glm::mat4> m_FinalBoneMatrices;
 
         public:
-            Skeleton(const std::vector<Bone>& bones, const AssimpNodeData& rootNode, const std::map<std::string, BoneInfo>& boneInfoMap);
+            Skeleton(const AssimpNodeData& rootNode, const std::map<std::string, BoneInfo>& boneInfoMap);
             Skeleton();
 
-            Bone* FindBone(const std::string& name);
             const AssimpNodeData& GetRootNode() const;
             std::map<std::string, BoneInfo>& GetBoneInfoMap();
-			std::unordered_map<std::string, Bone*> GetBoneMap();
-            std::vector<glm::mat4> GetFinalBoneMatrices();
+            std::vector<glm::mat4> GetFinalBoneMatrices() const;
 
-            void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform, float* m_CurrentTime);
+		friend class SkeletalAnimation;
     };
 }
 

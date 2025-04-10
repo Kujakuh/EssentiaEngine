@@ -22,20 +22,20 @@ namespace Essentia
     {
         *this = *(ModelCacheManager::getInstance().loadModel(path, inverseUvY));
 		shader->use();
-        shader->setUniform("useBones", skeleton.GetBoneMap().size() > 0);
-		// ---------- BONES DEBUG ----------
-        /*shader->setUniform("useBones", 0);
-        for (size_t i = 0; i < 100; ++i) {
-            shader->setUniform("finalBonesMatrices[" + std::to_string(i) + "]", glm::mat4(1.0f));
-        }*/
-        // ---------- BONES DEBUG ----------
+
+        shader->setUniform("useBones", GetBoneCount() > 0);
+
+        if (GetBoneCount() > 0)
+            for (size_t i = 0; i < 100; ++i)
+                shader->setUniform("finalBonesMatrices[" + std::to_string(i) + "]", glm::mat4(1.0f));
+
         shader->disable();
     }
 
     void Model::addMesh(const std::shared_ptr<Mesh>& mesh) { meshes.push_back(mesh); }
 
     std::map<std::string, BoneInfo>& Model::GetBoneInfoMap() { return skeleton.GetBoneInfoMap(); }
-    const int& Model::GetBoneCount() { return skeleton.GetBoneMap().size(); }
+    const int& Model::GetBoneCount() { return skeleton.GetBoneInfoMap().size(); }
 
     void Model::ExtractBoneWeights(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
     {

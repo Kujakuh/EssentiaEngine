@@ -170,9 +170,14 @@ int main(void)
 	const char* modelo1 = RESOURCES_PATH "Models/lamp/Chandelier_03_4k.fbx";
 	const char* modelo2 = RESOURCES_PATH "Models/lamp/Lantern_01_4k.fbx";
 	const char* modelo3 = RESOURCES_PATH "Models/bones/Polin-Ani.fbx";
+	const char* modelo4 = RESOURCES_PATH "Models/debug/wolf/Wolf-Blender-2.82a.gltf";
 
-	entity4->AddComponent<Model>(modelo3);
+	entity4->AddComponent<Model>(modelo4);
 	Model* mod = entity4->GetComponent<Model>();
+	Essentia::SkeletalAnimation testAnim(modelo4, &mod->skeleton);
+	mod->getShader()->use();
+	mod->getShader()->disable();
+
 	//mod->loadModel(modelo3);
 	//mod->loadModel(modelo2);
 

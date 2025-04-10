@@ -19,6 +19,8 @@ namespace Essentia
         public:
             IAnimation(float duration, float ticksPerSecond)
                 : m_Duration(duration), m_TicksPerSecond(ticksPerSecond) {}
+			IAnimation(const IAnimation&) = default;
+			IAnimation() = default;
 
             virtual ~IAnimation() = default;
             virtual void Update(float animationTime) = 0;
