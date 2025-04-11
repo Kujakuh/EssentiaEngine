@@ -20,8 +20,6 @@ namespace Essentia
 		m_Duration = animation->mDuration;
 		m_TicksPerSecond = animation->mTicksPerSecond;
 
-		// Read the skeleton data
-		ReadHeirarchyData(m_Skeleton->m_RootNode, scene->mRootNode);
 		ReadMissingBones(animation);
     }
 
@@ -43,26 +41,7 @@ namespace Essentia
 
     std::unordered_map<std::string, Bone*> SkeletalAnimation::GetBoneMap() { return m_BoneMap; }
 
-    void SkeletalAnimation::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src)
-    {
-		if (!src) {
-			std::cerr << "ERROR::ASSIMP::Null node pointer \n";
-			return;
-		}
-
-        dest.name = src->mName.data;
-        dest.transformation = AssimpGLMHelpers::ConvertMatrixToGLMFormat(src->mTransformation);
-        dest.childrenCount = src->mNumChildren;
-
-        for (int i = 0; i < src->mNumChildren; i++)
-        {
-            AssimpNodeData newData;
-            ReadHeirarchyData(newData, src->mChildren[i]);
-            dest.children.push_back(newData);
-        }
-    }
-
-    void SkeletalAnimation::ReadMissingBones(const aiAnimation* animation)
+    void SkeletalAnimation::LoadAnimationBonesKeyframes(const aiAnimation* animation)
     {
         int size = animation->mNumChannels;
 

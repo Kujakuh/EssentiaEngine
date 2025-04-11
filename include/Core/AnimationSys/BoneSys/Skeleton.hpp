@@ -9,6 +9,9 @@
 #include <Core/AnimationSys/BoneSys/BoneInfo.hpp>
 #include <Core/AnimationSys/BoneSys/AssimpNodeData.hpp>
 
+#include <iostream>
+#include <assimp/scene.h>
+
 namespace Essentia
 {
     class Skeleton
@@ -22,9 +25,11 @@ namespace Essentia
             Skeleton(const AssimpNodeData& rootNode, const std::map<std::string, BoneInfo>& boneInfoMap);
             Skeleton();
 
-            const AssimpNodeData& GetRootNode() const;
-            std::map<std::string, BoneInfo>& GetBoneInfoMap();
+            void ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src);
             std::vector<glm::mat4> GetFinalBoneMatrices() const;
+
+            AssimpNodeData& GetRootNode();
+            std::map<std::string, BoneInfo>& GetBoneInfoMap();
 
 		friend class SkeletalAnimation;
     };

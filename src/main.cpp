@@ -175,6 +175,7 @@ int main(void)
 	entity4->AddComponent<Model>(modelo4);
 	Model* mod = entity4->GetComponent<Model>();
 	Essentia::SkeletalAnimation testAnim(modelo4, &mod->skeleton);
+	Essentia::SkeletalAnimation testAnim2(modelo4, &mod->skeleton, 1);
 	mod->getShader()->use();
 	mod->getShader()->disable();
 

@@ -31,8 +31,7 @@ namespace Essentia
 
 		private:
 
-			void ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src);
-			void ReadMissingBones(const aiAnimation* animation);
+			void LoadAnimationBonesKeyframes(const aiAnimation* animation);
 			
 			void UpdateBoneMap();
 			void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);

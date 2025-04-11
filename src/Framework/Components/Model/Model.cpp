@@ -146,6 +146,7 @@ namespace Essentia
         }
         dir = path.substr(0, path.find_last_of('/'));
         processNode(scene->mRootNode, scene, inverseUvY);
+        skeleton.ReadHeirarchyData(skeleton.GetRootNode(), scene->mRootNode);
     }
 
 
