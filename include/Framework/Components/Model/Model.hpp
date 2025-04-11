@@ -33,7 +33,7 @@ namespace Essentia
 
             std::map<std::string, BoneInfo>& GetBoneInfoMap();
             const int& GetBoneCount();
-            void ExtractBoneWeights(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
+            bool ExtractBoneWeights(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 
             void processNode(aiNode* node, const aiScene* scene, bool inverseUvY);
             Mesh processMesh(aiMesh* mesh, const aiScene* scene, bool inverseUvY);

@@ -89,6 +89,7 @@ namespace Essentia
             shader->use();
 
             shader->setUniform("model", transform->getModelMatrix());
+
             if (camera)
             {
                 shader->setUniform("view", camera->getViewMatrix());
@@ -96,7 +97,12 @@ namespace Essentia
                 shader->setUniform("viewPos", camera->getPosition());
             }
 
-            for (auto& mesh : model->meshes) {mesh->render();}
+            for (auto& mesh : model->meshes) 
+            {
+                if(mesh->_hasBoneWeights) shader->setUniform("useBones", 1);
+                else shader->setUniform("useBones", 0);
+                mesh->render();
+            }
             model->getShader()->disable();
         }
     }
@@ -133,6 +139,8 @@ namespace Essentia
                 mesh->shader->setUniform("projection", camera->getProjectionMatrix());
                 mesh->shader->setUniform("viewPos", camera->getPosition());
             }
+            if (mesh->_hasBoneWeights) mesh->shader->setUniform("useBones", 1);
+            else mesh->shader->setUniform("useBones", 0);
             mesh->render();
             mesh->shader->disable();
         }
@@ -179,7 +187,8 @@ namespace Essentia
                 mesh->shader->setUniform("projection", camera->getProjectionMatrix());
                 mesh->shader->setUniform("viewPos", camera->getPosition());
             }
-
+            if (mesh->_hasBoneWeights) mesh->shader->setUniform("useBones", 1);
+            else mesh->shader->setUniform("useBones", 0);
             mesh->render();
             mesh->shader->disable();
         }

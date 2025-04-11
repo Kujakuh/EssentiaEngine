@@ -22,12 +22,14 @@ namespace Essentia
             std::vector<GLuint> indices;
             GLuint VAO;
 
+			bool _hasBoneWeights;
+
             std::vector<Material> materials;
             std::shared_ptr<Shader> shader;
 
             Mesh() = default;
-            Mesh(std::shared_ptr<Shader> sh, std::vector<Vertex> vert, std::vector<GLuint> ind, std::vector<Material> mat)
-                : vertices(vert), indices(ind), materials(mat), shader(sh) { setupMesh(); needsUpdate = true; }
+            Mesh(std::shared_ptr<Shader> sh, std::vector<Vertex> vert, std::vector<GLuint> ind, std::vector<Material> mat, bool hasBoneWeights = false)
+                : vertices(vert), indices(ind), materials(mat), shader(sh), _hasBoneWeights(hasBoneWeights) { setupMesh(); needsUpdate = true; }
 
             void render();
             void initShader() const { shader->use(); }

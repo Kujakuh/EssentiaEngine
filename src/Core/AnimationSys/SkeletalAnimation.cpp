@@ -1,26 +1,39 @@
 #include <Core/AnimationSys/SkeletalAnimation.hpp>
 
-namespace Essentia 
+namespace Essentia
 {
-	SkeletalAnimation::SkeletalAnimation(const std::string& path, Skeleton* skeleton, int animationIndex) : m_Skeleton(skeleton), m_Path(path)
+    SkeletalAnimation::SkeletalAnimation(const std::string& path, Skeleton* skeleton, int animationIndex) : m_Skeleton(skeleton), m_Path(path)
     {
-		m_CurrentTime = 0.0f;
-		m_Speed = 1.0f;
+        m_CurrentTime = 0.0f;
+        m_Speed = 1.0f;
 
-		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(m_Path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices);
+        Assimp::Importer importer;
+        const aiScene* scene = importer.ReadFile(m_Path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices);
 
-		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+        if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+        {
+            std::cerr << "ERROR::ASSIMP::" << importer.GetErrorString() << "\n";
+            return;
+        }
+
+        if (scene &&
+            scene->mAnimations != nullptr &&
+            animationIndex < scene->mNumAnimations)
+        {
+            aiAnimation* animation = scene->mAnimations[animationIndex];
+            if (animation)
+            {
+                m_Duration = animation->mDuration;
+                m_TicksPerSecond = animation->mTicksPerSecond;
+
+                LoadAnimationBonesKeyframes(animation);
+            }
+		}
+		else
 		{
-			std::cerr << "ERROR::ASSIMP::" << importer.GetErrorString() << "\n";
+			std::cerr << "ERROR::ASSIMP::No animation found in the file.\n";
 			return;
 		}
-
-		auto animation = scene->mAnimations[animationIndex];
-		m_Duration = animation->mDuration;
-		m_TicksPerSecond = animation->mTicksPerSecond;
-
-        LoadAnimationBonesKeyframes(animation);
     }
 
     Bone* SkeletalAnimation::FindBone(const std::string& name)

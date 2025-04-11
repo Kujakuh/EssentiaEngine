@@ -37,12 +37,15 @@ namespace Essentia
     std::map<std::string, BoneInfo>& Model::GetBoneInfoMap() { return skeleton.GetBoneInfoMap(); }
     const int& Model::GetBoneCount() { return skeleton.GetBoneInfoMap().size(); }
 
-    void Model::ExtractBoneWeights(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
+    bool Model::ExtractBoneWeights(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene)
     {
+        bool anyVertexAffected = false;
+
         for (int boneIndex = 0; boneIndex < mesh->mNumBones; ++boneIndex)
         {
             int boneID = -1;
             std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+
             if (GetBoneInfoMap().find(boneName) == GetBoneInfoMap().end())
             {
                 BoneInfo newBoneInfo;
@@ -55,6 +58,7 @@ namespace Essentia
             {
                 boneID = GetBoneInfoMap()[boneName].id;
             }
+
             assert(boneID != -1);
             auto weights = mesh->mBones[boneIndex]->mWeights;
             int numWeights = mesh->mBones[boneIndex]->mNumWeights;
@@ -63,11 +67,18 @@ namespace Essentia
             {
                 int vertexId = weights[weightIndex].mVertexId;
                 float weight = weights[weightIndex].mWeight;
-                assert(vertexId <= vertices.size());
+
+                assert(vertexId < vertices.size());
                 vertices[vertexId].SetBoneData(boneID, weight);
+
+                if (weight > 0.0f)
+                    anyVertexAffected = true;
             }
         }
+
+        return anyVertexAffected;
     }
+
 
     size_t Model::getMeshCount() const { return meshes.size(); }
     const std::shared_ptr<Mesh> Model::getMesh(size_t index) const
@@ -197,9 +208,9 @@ namespace Essentia
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
         materials = loadMaterials(material);
 
-        ExtractBoneWeights(vertices, mesh, scene);
+        bool hasBoneWeights = ExtractBoneWeights(vertices, mesh, scene);
 
-        return Mesh(shader, vertices, indices, materials);
+        return Mesh(shader, vertices, indices, materials, hasBoneWeights);
     }
     
     std::vector<Essentia::Material> Model::loadMaterials(aiMaterial* mat) {
