@@ -731,40 +731,33 @@ namespace Essentia
             }
             else
             {
-            //    shader << R"(
-            //FragPos = vec3(model * vec4(aPos, 1.0));
-            //Normal = mat3(transpose(inverse(model))) * aNormal;
-            //TexCoord = aTexCoord;
-            ////TexCoord = mod(aTexCoord, 1.0);
-            //Tangent = aTangent;
-            //Bitangent = aBitangent;
-            //gl_Position = projection * view * vec4(FragPos, 1.0);
-            //)";
-
                 shader << R"(
                 vec4 totalPosition = vec4(aPos, 1.0);
                 vec3 totalNormal = aNormal;
     
                 if (useBones == 1) {
-                    totalPosition = vec4(0.0);
-                    totalNormal = vec3(0.0);
-        
-                    for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
-                    {
-                        if(aBoneIDs[i] == -1) 
-                            continue;
-            
-                        if(aBoneIDs[i] >= MAX_BONES) 
-                        {
-                            totalPosition = vec4(aPos, 1.0);
-                            totalNormal = aNormal;
-                            break;
-                        }
-            
-                        vec4 localPosition = finalBonesMatrices[aBoneIDs[i]] * vec4(aPos, 1.0);
-                        totalPosition += localPosition * aWeights[i];
-                        totalNormal += mat3(finalBonesMatrices[aBoneIDs[i]]) * aNormal * aWeights[i];
+ 				    vec4 totalPosition = vec4(0.0);
+                    vec3 totalNormal = vec3(0.0);
+
+                    for(int i = 0; i < MAX_BONE_INFLUENCE; ++i) {
+                        int boneID = aBoneIDs[i];
+                        float weight = aWeights[i];
+                        if (boneID < 0 || boneID >= MAX_BONES || weight <= 0.0) continue;
+
+                        mat4 boneMatrix = finalBonesMatrices[boneID];
+                        totalPosition += boneMatrix * vec4(aPos, 1.0) * weight;
+                        totalNormal   += mat3(boneMatrix) * aNormal * weight;
                     }
+
+                    // Solo usar fallback si no hay huesos válidos
+                    if (length(totalPosition) == 0.0)
+                        totalPosition = vec4(aPos, 1.0);
+                    if (length(totalNormal) == 0.0)
+                        totalNormal = aNormal;
+
+                    FragPos = vec3(model * totalPosition);
+                    Normal = normalize(mat3(transpose(inverse(model))) * totalNormal);
+
                 }
     
                 FragPos = vec3(model * totalPosition);
@@ -775,6 +768,37 @@ namespace Essentia
     
                 gl_Position = projection * view * vec4(FragPos, 1.0);
                 )";
+
+                /*------ OLD shader code -----*/
+                //    shader << R"(
+                //FragPos = vec3(model * vec4(aPos, 1.0));
+                //Normal = mat3(transpose(inverse(model))) * aNormal;
+                //TexCoord = aTexCoord;
+                ////TexCoord = mod(aTexCoord, 1.0);
+                //Tangent = aTangent;
+                //Bitangent = aBitangent;
+                //gl_Position = projection * view * vec4(FragPos, 1.0);
+                //)";
+                // ------------
+                /*totalPosition = vec4(0.0);
+                totalNormal = vec3(0.0);
+
+                for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
+                {
+                    if(aBoneIDs[i] == -1)
+                        continue;
+
+                    if(aBoneIDs[i] >= MAX_BONES)
+                    {
+                        totalPosition = vec4(aPos, 1.0);
+                        totalNormal = aNormal;
+                        break;
+                    }
+
+                    vec4 localPosition = finalBonesMatrices[aBoneIDs[i]] * vec4(aPos, 1.0);
+                    totalPosition += localPosition * aWeights[i];
+                    totalNormal += mat3(finalBonesMatrices[aBoneIDs[i]]) * aNormal * aWeights[i];
+                }*/
             }
         }
 

@@ -172,10 +172,10 @@ int main(void)
 	const char* modelo3 = RESOURCES_PATH "Models/bones/Polin-Ani.fbx";
 	const char* modelo4 = RESOURCES_PATH "Models/debug/wolf/Wolf-Blender-2.82a.gltf";
 
-	entity4->AddComponent<Model>(modelo4);
+	entity4->AddComponent<Model>(modelo3);
 	Model* mod = entity4->GetComponent<Model>();
-	Essentia::SkeletalAnimation testAnim(modelo4, &mod->skeleton);
-	Essentia::SkeletalAnimation testAnim2(modelo4, &mod->skeleton, 1);
+	Essentia::SkeletalAnimation testAnim(modelo3, &mod->skeleton);
+	Essentia::SkeletalAnimation testAnim2(modelo3, &mod->skeleton, 1);
 	mod->getShader()->use();
 	mod->getShader()->disable();
 
