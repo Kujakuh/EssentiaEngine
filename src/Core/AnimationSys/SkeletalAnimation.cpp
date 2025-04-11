@@ -20,7 +20,7 @@ namespace Essentia
 		m_Duration = animation->mDuration;
 		m_TicksPerSecond = animation->mTicksPerSecond;
 
-		ReadMissingBones(animation);
+        LoadAnimationBonesKeyframes(animation);
     }
 
     Bone* SkeletalAnimation::FindBone(const std::string& name)
