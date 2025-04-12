@@ -29,7 +29,7 @@ namespace Essentia
     {
         for (size_t i = 0; i < m_Keyframes.size() - 1; ++i)
         {
-            if (animationTime < m_Keyframes[i + 1].timeStamp)
+            if (animationTime <= m_Keyframes[i + 1].timeStamp)
                 return i;
         }
         return static_cast<int>(m_Keyframes.size() - 1);
@@ -51,6 +51,8 @@ namespace Essentia
 
         int index = GetKeyframeIndex(animationTime);
         int nextIndex = index + 1;
+		if (nextIndex >= static_cast<int>(m_Keyframes.size()))
+			nextIndex = 0;
         float factor = GetScaleFactor(m_Keyframes[index].timeStamp, m_Keyframes[nextIndex].timeStamp, animationTime);
 
         Keyframe interpolatedKF = Keyframe::interpolateKF(m_Keyframes[index], m_Keyframes[nextIndex], factor);

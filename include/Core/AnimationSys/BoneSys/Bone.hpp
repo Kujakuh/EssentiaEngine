@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <set>
+
 #include <glm/glm.hpp>
 #include <assimp/anim.h>
 #include <Core/AnimationSys/Keyframe.hpp>

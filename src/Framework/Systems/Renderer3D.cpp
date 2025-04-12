@@ -99,7 +99,11 @@ namespace Essentia
 
             for (auto& mesh : model->meshes) 
             {
-                if(mesh->_hasBoneWeights) shader->setUniform("useBones", 1);
+                if (mesh->_hasBoneWeights) {
+                    shader->setUniform("useBones", 1);
+                    for (int i = 0; i < model->skeleton.GetFinalBoneMatrices().size(); ++i)
+                        model->getShader()->setUniform("finalBonesMatrices[" + std::to_string(i) + "]", model->skeleton.GetFinalBoneMatrices()[i]);
+                }
                 else shader->setUniform("useBones", 0);
                 mesh->render();
             }
@@ -129,6 +133,7 @@ namespace Essentia
         for (auto& [entity, mesh] : opaqueMeshes)
         {
             auto transform = entity->GetComponent<Transform>();
+            auto model = entity->GetComponent<Model>();
             transform->updateMatrix();
 
             mesh->shader->use();
@@ -139,7 +144,11 @@ namespace Essentia
                 mesh->shader->setUniform("projection", camera->getProjectionMatrix());
                 mesh->shader->setUniform("viewPos", camera->getPosition());
             }
-            if (mesh->_hasBoneWeights) mesh->shader->setUniform("useBones", 1);
+            if (mesh->_hasBoneWeights) {
+                mesh->shader->setUniform("useBones", 1);
+                for (int i = 0; i < model->skeleton.GetFinalBoneMatrices().size(); ++i)
+                    model->getShader()->setUniform("finalBonesMatrices[" + std::to_string(i) + "]", model->skeleton.GetFinalBoneMatrices()[i]);
+            }
             else mesh->shader->setUniform("useBones", 0);
             mesh->render();
             mesh->shader->disable();
@@ -177,6 +186,7 @@ namespace Essentia
         for (auto& [entity, mesh] : transparentMeshes)
         {
             auto transform = entity->GetComponent<Transform>();
+            auto model = entity->GetComponent<Model>();
             transform->updateMatrix();
 
             mesh->shader->use();
@@ -187,7 +197,11 @@ namespace Essentia
                 mesh->shader->setUniform("projection", camera->getProjectionMatrix());
                 mesh->shader->setUniform("viewPos", camera->getPosition());
             }
-            if (mesh->_hasBoneWeights) mesh->shader->setUniform("useBones", 1);
+            if (mesh->_hasBoneWeights) {
+                mesh->shader->setUniform("useBones", 1);
+                for (int i = 0; i < model->skeleton.GetFinalBoneMatrices().size(); ++i)
+                    model->getShader()->setUniform("finalBonesMatrices[" + std::to_string(i) + "]", model->skeleton.GetFinalBoneMatrices()[i]);
+            }
             else mesh->shader->setUniform("useBones", 0);
             mesh->render();
             mesh->shader->disable();

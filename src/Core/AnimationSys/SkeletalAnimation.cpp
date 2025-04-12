@@ -105,5 +105,10 @@ namespace Essentia
         }
     }
 
-    void SkeletalAnimation::Update(float deltaTime) { std::cout << "aa"; }
+    void SkeletalAnimation::Update(float deltaTime)
+    { 
+		m_CurrentTime += m_TicksPerSecond * deltaTime * m_Speed;
+		m_CurrentTime = fmod(m_CurrentTime, m_Duration);
+		CalculateBoneTransform(&m_Skeleton->GetRootNode(), glm::mat4(1.0f));
+    }
 }

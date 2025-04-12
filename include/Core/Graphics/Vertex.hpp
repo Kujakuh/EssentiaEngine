@@ -83,6 +83,20 @@ namespace Essentia
                 }
             }
         }
+
+        void NormalizeWeights()
+        {
+            float total = 0.0f;
+            for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+                total += m_Weights[i];
+
+            if (total > 0.0f)
+            {
+                for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
+                    m_Weights[i] /= total;
+            }
+        }
+
     };
 }
 

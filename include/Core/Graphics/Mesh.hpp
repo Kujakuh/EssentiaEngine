@@ -31,6 +31,18 @@ namespace Essentia
             Mesh(std::shared_ptr<Shader> sh, std::vector<Vertex> vert, std::vector<GLuint> ind, std::vector<Material> mat, bool hasBoneWeights = false)
                 : vertices(vert), indices(ind), materials(mat), shader(sh), _hasBoneWeights(hasBoneWeights) { setupMesh(); needsUpdate = true; }
 
+            /*Mesh(std::shared_ptr<Shader> sh, std::vector<Vertex> vert, std::vector<GLuint> ind, std::vector<Material> mat, bool hasBoneWeights = false)
+                : vertices(vert), indices(ind), materials(mat), shader(sh), _hasBoneWeights(hasBoneWeights)
+            {
+                if (_hasBoneWeights) {
+                    for (auto& v : vertices)
+                        v.NormalizeWeights();
+                }
+
+                setupMesh();
+                needsUpdate = true;
+            }*/
+
             void render();
             void initShader() const { shader->use(); }
             void disableShader() const { shader->disable(); }
