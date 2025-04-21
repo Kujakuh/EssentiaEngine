@@ -170,14 +170,14 @@ int main(void)
 	const char* modelo1 = RESOURCES_PATH "Models/lamp/Chandelier_03_4k.fbx";
 	const char* modelo2 = RESOURCES_PATH "Models/lamp/Lantern_01_4k.fbx";
 	const char* modelo3 = RESOURCES_PATH "Models/bones/Polin-Ani.fbx";
-	const char* modelo4 = RESOURCES_PATH "Models/debug/wolf/Wolf-Blender-2.82a.gltf";
+	const char* modelo4 = RESOURCES_PATH "Models/debug/wolf/Wolf-Blender-2.82a.gltf"; 
+	const char* modelo5 = RESOURCES_PATH "Models/debug/test/rp_sophia_animated_003_idling.fbx";
+	const char* modelo6 = RESOURCES_PATH "Models/debug/aa/rp_manuel_animated_001_dancing.fbx";
 
-	entity4->AddComponent<Model>(modelo4);
+	entity4->AddComponent<Model>(modelo6);
 	Model* mod = entity4->GetComponent<Model>();
-	Essentia::SkeletalAnimation testAnim(modelo4, &mod->skeleton);
-	Essentia::SkeletalAnimation testAnim2(modelo4, &mod->skeleton, 1);
-	mod->getShader()->use();
-	mod->getShader()->disable();
+	SkeletalAnimation testAnim(modelo6, &mod->skeleton);
+	SkeletalAnimation testAnim2(modelo6, &mod->skeleton, 1);
 
 	//mod->loadModel(modelo3);
 	//mod->loadModel(modelo2);
@@ -188,7 +188,7 @@ int main(void)
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
-	entity4->GetComponent<Transform>()->setScale(Vector3(0.2f));
+	entity4->GetComponent<Transform>()->setScale(Vector3(0.1f));
 	//entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
 	entity1->AddComponent<LightSource>(LightType::Point);
@@ -200,7 +200,7 @@ int main(void)
 
 	//entity2->active = false;
 
-	int id_instance = scene->Instantiate(entity4, entity2->GetComponent<Transform>(), 10);
+	/*int id_instance = scene->Instantiate(entity4, entity2->GetComponent<Transform>(), 10);
 	GameObject test = scene->GetEntityByName(scene->GetInstances()[entity4->GetID()][0]);
 	Transform* reference = test->GetComponent<Transform>();
 	test->onUpdate = [test, reference]()
@@ -209,9 +209,15 @@ int main(void)
 			reference->setPosition().x += 0.002;
 		if (InputManager::IsKeyPressed(KEY_L))
 			reference->setPosition().x -= 0.002;
-	};
+	};*/
 
 	std::cout << scene->GetEntityByID(0)->GetName() << std::endl;
+
+	SpriteKeyframe frame1("player_idle");
+	SpriteKeyframe frame2("player_walk", 1.0f);
+	SpriteAnimation anim(*sprit);
+	anim.AddFrame(frame1);
+	anim.AddFrame(frame2);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -226,12 +232,12 @@ int main(void)
 		if (!timo->isDone()) title += " Timer runing, current time: " + std::to_string(timo->getElapsedTime());
 		glfwSetWindowTitle(window, title.c_str());
 
-		if (InputManager::IsKeyPressed(KEY_SPACE))
+		if (InputManager::IsKeyHeld(KEY_SPACE))
 		{
 			ref->rotate(Vector3(0.024f * (float)glfwGetTime(), 0.015f * (float)glfwGetTime(), 0.03 * (float)glfwGetTime()));
 			ref->updateMatrix();
 		}
-		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_MIDDLE))
+		if (InputManager::IsMouseButtonHeld(MOUSE_BTN_MIDDLE))
 		{
 			entity4->GetComponent<Transform>()->rotate(Vector3(0.045f, 0.045f, 0), Vector3(2.0f,6.0f,2.0f));
 			entity4->GetComponent<Transform>()->updateMatrix();
@@ -243,12 +249,12 @@ int main(void)
 
 		skybox.render(camera.getProjectionMatrix(), Matrix4(Matrix3(camera.getViewMatrix())));
 
-		if (InputManager::IsKeyPressed(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity * Time::deltaTime();
-		if (InputManager::IsKeyPressed(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity * Time::deltaTime();
-		if (InputManager::IsKeyPressed(KEY_S)) camera.transform->setPosition() -= camera.getFront() * camera.sensitivity * Time::deltaTime();
-		if (InputManager::IsKeyPressed(KEY_W)) camera.transform->setPosition() += camera.getFront() * camera.sensitivity * Time::deltaTime();
+		if (InputManager::IsKeyHeld(KEY_A)) camera.transform->setPosition() -= camera.getRight() * camera.sensitivity * Time::deltaTime();
+		if (InputManager::IsKeyHeld(KEY_D)) camera.transform->setPosition() += camera.getRight() * camera.sensitivity * Time::deltaTime();
+		if (InputManager::IsKeyHeld(KEY_S)) camera.transform->setPosition() -= camera.getFront() * camera.sensitivity * Time::deltaTime();
+		if (InputManager::IsKeyHeld(KEY_W)) camera.transform->setPosition() += camera.getFront() * camera.sensitivity * Time::deltaTime();
 
-		if (InputManager::IsKeyPressed(KEY_UP))
+		if (InputManager::IsKeyHeld(KEY_UP))
 		{
 			//ref->setPosition().y += 0.1;
 			entity6->GetComponent<Transform>()->setPosition().y += speed * Time::deltaTime();
@@ -259,7 +265,7 @@ int main(void)
 				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/right.png");
 			}
 		}
-		if (InputManager::IsKeyPressed(KEY_LEFT))
+		if (InputManager::IsKeyHeld(KEY_LEFT))
 		{
 			entity6->GetComponent<Transform>()->setPosition().x -= speed * Time::deltaTime();
 			//ref->setPosition().y -= 0.1;
@@ -270,7 +276,7 @@ int main(void)
 				sprit->useRegionFromAtlas("player_idle");
 			}
 		}
-		if (InputManager::IsKeyPressed(KEY_DOWN))
+		if (InputManager::IsKeyHeld(KEY_DOWN))
 		{
 			//ref->setPosition().x -= 0.1;
 			entity6->GetComponent<Transform>()->setPosition().y -= speed * Time::deltaTime();
@@ -281,7 +287,7 @@ int main(void)
 				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/left.png");
 			}
 		}
-		if (InputManager::IsKeyPressed(KEY_RIGHT))
+		if (InputManager::IsKeyHeld(KEY_RIGHT))
 		{
 			//ref->setPosition().x += 0.1;
 			entity6->GetComponent<Transform>()->setPosition().x += speed * Time::deltaTime();
@@ -302,8 +308,10 @@ int main(void)
 
 		if (InputManager::IsKeyPressed(KEY_2))
 			entity4->active = !entity4->active;
-		if (InputManager::IsKeyPressed(KEY_0))
+		if (InputManager::IsKeyHeld(KEY_0))
 			testAnim.Update(Time::deltaTime());
+		if (InputManager::IsKeyHeld(KEY_L))
+			anim.Update(Time::deltaTime());
 			
 		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y, 10);
 

@@ -19,8 +19,13 @@ namespace Essentia
 
             static KEY_STATE GetKeyState(int key);
             static bool IsKeyPressed(int key);
+            static bool IsKeyReleased(int key);
+            static bool IsKeyHeld(int key);
+
             static KEY_STATE GetMouseButtonState(int button);
             static bool IsMouseButtonPressed(int button);
+            static bool IsMouseButtonReleased(int key);
+            static bool IsMouseButtonHeld(int key);
 
             static const MouseData& GetMouseData();
 
@@ -28,6 +33,7 @@ namespace Essentia
             void Update();
 
         private:
+
             InputManager(GLFWwindow* window);
 
             // GLFW Callbacks
@@ -41,6 +47,9 @@ namespace Essentia
             std::unordered_map<int, KEY_STATE> keyStates;
             std::unordered_map<int, KEY_STATE> mouseButtonStates;
             MouseData mouseData;
+            std::unordered_map<int, KEY_STATE> prevKeyStates;
+            std::unordered_map<int, KEY_STATE> prevMouseButtonStates;
+
     };
 }
 

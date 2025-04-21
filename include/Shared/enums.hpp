@@ -47,7 +47,8 @@ enum KEY_STATE
 {
 	IDLE = 0,
 	PRESSED = 1,
-	RELEASED = 2
+	RELEASED = 2,
+	HELD = 3
 };
 enum SORT_ORDER
 {

@@ -30,8 +30,12 @@ namespace Essentia
         if (it != instances.end()) activeInstance = it->second;
     }
 
-    bool InputManager::IsKeyPressed(int key){ return GetKeyState(key) == PRESSED; }
+    bool InputManager::IsKeyPressed(int key) { return GetKeyState(key) == PRESSED; }
+    bool InputManager::IsKeyReleased(int key) { return GetKeyState(key) == RELEASED; }
+    bool InputManager::IsKeyHeld(int key){ return GetKeyState(key) == HELD; }
     bool InputManager::IsMouseButtonPressed(int button) { return GetMouseButtonState(button) == PRESSED;}
+    bool InputManager::IsMouseButtonReleased(int key) { return GetMouseButtonState(key) == RELEASED; }
+    bool InputManager::IsMouseButtonHeld(int key) { return GetMouseButtonState(key) == HELD; }
 
     KEY_STATE InputManager::GetKeyState(int key)
     {
@@ -64,19 +68,52 @@ namespace Essentia
 
     void InputManager::Update()
     {
+        // Teclas
         for (int key = GLFW_KEY_SPACE; key <= GLFW_KEY_LAST; ++key)
         {
             int state = glfwGetKey(window, key);
-            if (state == GLFW_PRESS) keyStates[key] = PRESSED;
-            else if (state == GLFW_RELEASE) keyStates[key] = RELEASED;
-            else keyStates[key] = IDLE;
+            KEY_STATE prev = prevKeyStates[key];
+
+            if (state == GLFW_PRESS)
+            {
+                if (prev == PRESSED || prev == HELD)
+                    keyStates[key] = HELD;
+                else
+                    keyStates[key] = PRESSED;
+            }
+            else if (state == GLFW_RELEASE)
+            {
+                if (prev == PRESSED || prev == HELD)
+                    keyStates[key] = RELEASED;
+                else
+                    keyStates[key] = IDLE;
+            }
+
+            prevKeyStates[key] = keyStates[key];
         }
+
+        // Botones del ratón
         for (int button = GLFW_MOUSE_BUTTON_1; button <= GLFW_MOUSE_BUTTON_LAST; ++button)
         {
             int state = glfwGetMouseButton(window, button);
-            if (state == GLFW_PRESS) mouseButtonStates[button] = PRESSED;
-            else if (state == GLFW_RELEASE) mouseButtonStates[button] = RELEASED;
-            else mouseButtonStates[button] = IDLE;
+            KEY_STATE prev = prevMouseButtonStates[button];
+
+            if (state == GLFW_PRESS)
+            {
+                if (prev == PRESSED || prev == HELD)
+                    mouseButtonStates[button] = HELD;
+                else
+                    mouseButtonStates[button] = PRESSED;
+            }
+            else if (state == GLFW_RELEASE)
+            {
+                if (prev == PRESSED || prev == HELD)
+                    mouseButtonStates[button] = RELEASED;
+                else
+                    mouseButtonStates[button] = IDLE;
+            }
+
+            prevMouseButtonStates[button] = mouseButtonStates[button];
         }
     }
 

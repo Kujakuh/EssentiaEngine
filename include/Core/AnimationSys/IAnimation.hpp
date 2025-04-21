@@ -12,13 +12,15 @@ namespace Essentia
     {
         protected:
             float m_Duration;
-            float m_TicksPerSecond;
+            float m_Speed = 1.0f;
 			float m_CurrentTime = 0.0f;
             std::unordered_map<std::string, std::vector<Keyframe>> m_Keyframes;
 
         public:
-            IAnimation(float duration, float ticksPerSecond)
-                : m_Duration(duration), m_TicksPerSecond(ticksPerSecond) {}
+            IAnimation(float duration, float speed)
+                : m_Duration(duration), m_Speed(speed) {}
+            IAnimation(float duration)
+                : m_Duration(duration) {}
 			IAnimation(const IAnimation&) = default;
 			IAnimation() = default;
 
@@ -28,7 +30,7 @@ namespace Essentia
 			void Reset() { m_CurrentTime = 0.0f; }
 
             float GetDuration() const { return m_Duration; }
-            float GetTicksPerSecond() const { return m_TicksPerSecond; }
+            float GetSpeed() const { return m_Speed; }
     };
 }
 

@@ -22,6 +22,8 @@
 #include <Core/AnimationSys/Keyframe.hpp>
 #include <Core/AnimationSys/IAnimation.hpp>
 #include <Core/AnimationSys/SkeletalAnimation.hpp>
+#include <Core/AnimationSys/SpriteAnimation.hpp>
+#include <Core/AnimationSys/SpriteKeyframe.hpp>
 #include <Framework/Components/components.hpp>
 #include <Framework/Systems/systems.hpp>
 #include <Framework/Camera/CameraBase.hpp>
@@ -74,6 +76,10 @@ using TextureManager = Essentia::TextureManager;
 using ModelCacheManager = Essentia::ModelCacheManager;
 using Mesh = Essentia::Mesh;
 using Material = Essentia::Material;
+
+using SkeletalAnimation = Essentia::SkeletalAnimation;
+using SpriteAnimation = Essentia::SpriteAnimation;
+using SpriteKeyframe = Essentia::SpriteKeyframe;
 
 using CameraBase = Essentia::CameraBase;
 using CameraOrtho = Essentia::CameraOrtho;

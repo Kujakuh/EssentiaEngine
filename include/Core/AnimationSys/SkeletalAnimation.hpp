@@ -45,8 +45,7 @@ namespace Essentia
 			std::string m_Path;
 			Skeleton* m_Skeleton;
 
-			float m_CurrentTime;
-			float m_Speed;
+			float m_TicksPerSecond;
 	};
 }
 
