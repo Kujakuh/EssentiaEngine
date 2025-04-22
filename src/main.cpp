@@ -63,32 +63,27 @@ int main(void)
 	//std::cout << ents.size() << ents.at(0)->GetName() << std::endl;
 
 	if (!glfwInit()) return -1;
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-#pragma region ENABLE DEBUG CONTEXT
+	AppConfig config;
 
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+	config.setAspectRatio(16, 9)
+		.setWindowSize(_WIDTH)
+		.setWindowTitle("Essentia")
+		.setMSAASamples(16)
+		.enableDepthTest(true)
+		.enableBlending(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		.setGLVersion(4, 3)
+		.setWireframeMode(false)
+		.enableDebugMode(true);
 
-#pragma endregion
+	GLFWwindow* window = config.createWindow();
 
-	// ANTI-ALIASING (multisample  MSAA) 1 -> 4 sampling point per fragment
-	glfwWindowHint(GLFW_SAMPLES, 8);
-
-	GLFWwindow *window = window = glfwCreateWindow(_WIDTH, _HEIGHT, "Essentia", NULL, NULL);
-	if (window == NULL)
-    {
-        std::cout << " ERROR::GLFW::WINDOW::CREATE" << '\n';
-        glfwTerminate();
-        return -1;
-    }
 	glfwMakeContextCurrent(window);
+
 	InputManager::Initialize(window);
 	InputManager::SetActiveInstance(window);
 
-	// Define and init render window and rescaling
-    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+	config.setupFramebufferCallback(window, framebufferSizeCallback);
 
     // Try load Glad for his own OS-specific pointers
     if ( !gladLoadGLLoader( (GLADloadproc) glfwGetProcAddress) )
@@ -107,7 +102,6 @@ int main(void)
 	// VSYNC
 	//glfwSwapInterval(1);
 
-    glfwSetWindowAspectRatio(window, 16, 9);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 #pragma region ENABLE OUTPUT DEBUG
