@@ -65,19 +65,19 @@ int main(void)
 
 	AppConfig config;
 	
-	ConfigLoader configLoader(
-		config  .setAspectRatio(16, 9)
-				.setWindowSize(_WIDTH)
-				.setWindowTitle("Essentia")
-				.setMSAASamples(16)
-				.enableDepthTest(true)
-				.enableBlending(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-				.setGLVersion(4, 3)
-				.setWireframeMode(false)
-				.enableDebugMode(true)
-	);
+	ConfigLoader configLoader(config.setAspectRatio(16, 9)
+									.setWindowSize(_WIDTH)
+									.setWindowTitle("Essentia")
+									.setMSAASamples(16)
+									.enableDepthTest(true)
+									.enableBlending(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+									.setGLVersion(4, 3)
+									.setWireframeMode(false)
+									.enableDebugMode(true));
 
 	GLFWwindow* window = configLoader.createWindow();
+	GLFWwindow* window2 = configLoader.createWindow();
+	configLoader.initializeOpenGL(window2);
 	configLoader.initializeOpenGL(window);
 
 	InputManager::Initialize(window);
