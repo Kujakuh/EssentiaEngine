@@ -77,8 +77,11 @@ int main(void)
 
 	GLFWwindow* window = configLoader.createWindow();
 	GLFWwindow* window2 = configLoader.createWindow();
+
 	configLoader.initializeOpenGL(window2);
 	configLoader.initializeOpenGL(window);
+
+	configLoader.applyDebugOutput(glDebugOutput);
 
 	InputManager::Initialize(window);
 	InputManager::SetActiveInstance(window);
