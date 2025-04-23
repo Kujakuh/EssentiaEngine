@@ -5,6 +5,7 @@
 #include <Core/Configuration/WindowConfig.hpp>
 #include <Core/Configuration/RenderConfig.hpp>
 #include <Core/Configuration/OpenGLConfig.hpp>
+#include <Core/Configuration/ConfigLoader.hpp>
 
 #include <Core/Essentia_ECS>
 #include <Core/Exceptions/Exceptions.hpp>
@@ -61,6 +62,7 @@ using AppConfig = Essentia::AppConfig;
 using WindowConfig = Essentia::WindowConfig;
 using RenderConfig = Essentia::RenderConfig;
 using OpenGLConfig = Essentia::OpenGLConfig;
+using ConfigLoader = Essentia::ConfigLoader;
 
 using GameObject = Essentia::WeakptrWrapper<Essentia::Entity>;
 using Entity = Essentia::Entity;

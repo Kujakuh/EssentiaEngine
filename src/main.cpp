@@ -20,7 +20,6 @@ constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
 
 //extern "C"{}
 
-void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 enum dir {
 	left, right, up, down
 };
@@ -65,62 +64,24 @@ int main(void)
 	if (!glfwInit()) return -1;
 
 	AppConfig config;
+	
+	ConfigLoader configLoader(
+		config  .setAspectRatio(16, 9)
+				.setWindowSize(_WIDTH)
+				.setWindowTitle("Essentia")
+				.setMSAASamples(16)
+				.enableDepthTest(true)
+				.enableBlending(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+				.setGLVersion(4, 3)
+				.setWireframeMode(false)
+				.enableDebugMode(true)
+	);
 
-	config.setAspectRatio(16, 9)
-		.setWindowSize(_WIDTH)
-		.setWindowTitle("Essentia")
-		.setMSAASamples(16)
-		.enableDepthTest(true)
-		.enableBlending(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-		.setGLVersion(4, 3)
-		.setWireframeMode(false)
-		.enableDebugMode(true);
-
-	GLFWwindow* window = config.createWindow();
-
-	glfwMakeContextCurrent(window);
+	GLFWwindow* window = configLoader.createWindow();
+	configLoader.initializeOpenGL(window);
 
 	InputManager::Initialize(window);
 	InputManager::SetActiveInstance(window);
-
-	config.setupFramebufferCallback(window, framebufferSizeCallback);
-
-    // Try load Glad for his own OS-specific pointers
-    if ( !gladLoadGLLoader( (GLADloadproc) glfwGetProcAddress) )
-    {
-        std::cout << "ERROR::GLAD::INIT" << '\n';
-        glfwTerminate();
-        return -1;
-    }
-
-	// -- Most of the times this is an unneeded call
-	// -- since default framebuffer coords are correctly mapped to NDC
-	// -- but its not the case for all devices
-	 glViewport(0, 0, _WIDTH, _HEIGHT);
-
-    glEnable(GL_DEPTH_TEST);
-	// VSYNC
-	//glfwSwapInterval(1);
-
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-#pragma region ENABLE OUTPUT DEBUG
-
-	glEnable(GL_DEBUG_OUTPUT);
-	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	glDebugMessageCallback(glDebugOutput, 0);
-	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-
-#pragma endregion
-
-#pragma region ANTI-ALIASING (opengl) MSAA
-	glEnable(GL_MULTISAMPLE);
-#pragma endregion 
-
-#pragma region BLEND
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#pragma endregion
 
 	Essentia::initDefaultModels();
 	Essentia::render_mode = RENDER_MODE::PBR;
@@ -194,7 +155,7 @@ int main(void)
 
 	//entity2->active = false;
 
-	/*int id_instance = scene->Instantiate(entity4, entity2->GetComponent<Transform>(), 10);
+	int id_instance = scene->Instantiate(entity4, entity2->GetComponent<Transform>(), 10);
 	GameObject test = scene->GetEntityByName(scene->GetInstances()[entity4->GetID()][0]);
 	Transform* reference = test->GetComponent<Transform>();
 	test->onUpdate = [test, reference]()
@@ -203,7 +164,7 @@ int main(void)
 			reference->setPosition().x += 0.002;
 		if (InputManager::IsKeyPressed(KEY_L))
 			reference->setPosition().x -= 0.002;
-	};*/
+	};
 
 	std::cout << scene->GetEntityByID(0)->GetName() << std::endl;
 
@@ -326,9 +287,4 @@ int main(void)
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
-}
-
-void framebufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
 }

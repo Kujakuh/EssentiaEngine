@@ -31,7 +31,6 @@ namespace Essentia
             AppConfig& enableBlending(bool enable, GLenum srcFactor, GLenum destFactor);
             AppConfig& setWireframeMode(bool enable);
             AppConfig& enableDebugMode(bool enable);
-            void setupFramebufferCallback(GLFWwindow* window, GLFWframebuffersizefun callback) const;
 
             // Render configuration
             AppConfig& setRenderMode(const std::string& mode);

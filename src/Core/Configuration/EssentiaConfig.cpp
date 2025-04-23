@@ -67,13 +67,6 @@ namespace Essentia
         return *this;
     }
 
-    void AppConfig::setupFramebufferCallback(GLFWwindow* window, GLFWframebuffersizefun callback) const {
-        if (!window) {
-            throw std::invalid_argument("Window handle is null");
-        }
-        glfwSetFramebufferSizeCallback(window, callback);
-    }
-
     // Render configuration methods
     AppConfig& AppConfig::setRenderMode(const std::string& mode) {
         if (mode != "PBR" && mode != "Phong") {
