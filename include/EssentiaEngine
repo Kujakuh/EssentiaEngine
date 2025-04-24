@@ -41,6 +41,8 @@
 #include <Framework/Components/Model/ModelCacheManager.hpp>
 #include <Framework/Time/Time.hpp>
 #include <Framework/Time/Timer.hpp>
+#include <Framework/Windowing/WindowContext.hpp>
+#include <Framework/Windowing/WindowManager.hpp>
 
 #include <DebugTools>
 
@@ -67,7 +69,9 @@ using ConfigLoader = Essentia::ConfigLoader;
 using GameObject = Essentia::WeakptrWrapper<Essentia::Entity>;
 using Entity = Essentia::Entity;
 using Scene = Essentia::Scene;
-using SceneManager = Essentia::SceneManager;
+
+using WindowManager = Essentia::WindowManager;
+using WindowContext = Essentia::WindowContext;
 
 using IEvent = Essentia::IEvent;
 using EventSystem = Essentia::EventSystem;

@@ -5,7 +5,8 @@
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 #include <iostream>
-#include "AppConfig.hpp"
+#include <Core/Configuration/AppConfig.hpp>
+#include <Debug/openglDebug.hpp>
 
 namespace Essentia
 {
@@ -25,7 +26,7 @@ namespace Essentia
             void applyDepthTest() const;
             void applyBlending() const;
             void applyMultisample() const;
-            void applyDebugOutput(GLDEBUGPROC callback = nullptr) const;
+            void applyDebugOutput(GLDEBUGPROC callback = glDebugOutput) const;
             //void applyInputMode(GLFWwindow* window) const;
             void applyVSync() const;
 

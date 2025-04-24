@@ -25,11 +25,43 @@ enum dir {
 };
 int main(void)
 {
-	Essentia::init();
-	SceneManager* sceneManager = SceneManager::GetInstance();
+	if (!glfwInit()) return -1;
 
-	SceneTemplate *scene = new SceneTemplate();
-	sceneManager->ChangeScene(scene);
+	AppConfig config;
+
+	ConfigLoader configLoader(config.setAspectRatio(16, 9)
+		.setWindowSize(_WIDTH)
+		.setWindowTitle("Essentia")
+		.setMSAASamples(16)
+		.enableDepthTest(true)
+		.enableBlending(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		.setGLVersion(4, 3)
+		.setWireframeMode(false)
+		.enableDebugMode(true));
+
+
+	WindowContext context;
+	context.window = configLoader.createWindow();
+	context.windowId = 0;
+
+	GLFWwindow* window2 = configLoader.createWindow();
+
+	configLoader.initializeOpenGL(window2);
+	configLoader.initializeOpenGL(context.window);
+
+	Essentia::init();
+	Essentia::initDefaultModels();
+	Essentia::render_mode = RENDER_MODE::PBR;
+	Essentia::bindlessTexturesMode = true;
+
+	WindowManager* windowManager = WindowManager::GetInstance();
+	windowManager->RegisterWindowContext(context);
+
+	SceneTemplate* scene = new SceneTemplate();
+	windowManager->ChangeScene(context.windowId, scene);
+
+	InputManager::Initialize(context.window);
+	InputManager::SetActiveInstance(context.window);
 
 	GameObject entity1 = scene->CreateEntity("Entity1");
 	GameObject entity2 = scene->CreateEntity("Entity2");
@@ -58,37 +90,9 @@ int main(void)
 		printMatrix(ref->getModelMatrix());
 
 	}
+
 	//std::vector<GameObject> ents = myEntity.entity->GetChildren();
 	//std::cout << ents.size() << ents.at(0)->GetName() << std::endl;
-
-	if (!glfwInit()) return -1;
-
-	AppConfig config;
-	
-	ConfigLoader configLoader(config.setAspectRatio(16, 9)
-									.setWindowSize(_WIDTH)
-									.setWindowTitle("Essentia")
-									.setMSAASamples(16)
-									.enableDepthTest(true)
-									.enableBlending(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-									.setGLVersion(4, 3)
-									.setWireframeMode(false)
-									.enableDebugMode(true));
-
-	GLFWwindow* window = configLoader.createWindow();
-	GLFWwindow* window2 = configLoader.createWindow();
-
-	configLoader.initializeOpenGL(window2);
-	configLoader.initializeOpenGL(window);
-
-	configLoader.applyDebugOutput(glDebugOutput);
-
-	InputManager::Initialize(window);
-	InputManager::SetActiveInstance(window);
-
-	Essentia::initDefaultModels();
-	Essentia::render_mode = RENDER_MODE::PBR;
-	Essentia::bindlessTexturesMode = true;
 
 	std::vector<std::string> faces
 	{
@@ -177,7 +181,7 @@ int main(void)
 	anim.AddFrame(frame1);
 	anim.AddFrame(frame2);
 
-	while (!glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(context.window))
 	{
 
 		InputManager::GetActiveInstance()->Update();
@@ -188,7 +192,7 @@ int main(void)
 
 		title = "FPS: " + std::to_string(Time::fps());
 		if (!timo->isDone()) title += " Timer runing, current time: " + std::to_string(timo->getElapsedTime());
-		glfwSetWindowTitle(window, title.c_str());
+		glfwSetWindowTitle(context.window, title.c_str());
 
 		if (InputManager::IsKeyHeld(KEY_SPACE))
 		{
@@ -200,7 +204,7 @@ int main(void)
 			entity4->GetComponent<Transform>()->rotate(Vector3(0.045f, 0.045f, 0), Vector3(2.0f,6.0f,2.0f));
 			entity4->GetComponent<Transform>()->updateMatrix();
 		}
-		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		if (InputManager::IsMouseButtonPressed(MOUSE_BTN_LEFT)) glfwSetInputMode(context.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		entity1->GetComponent<Transform>()->setPosition(camera.getPosition());
 		entity1->GetComponent<LightSource>()->SetDirection(camera.getFront());
@@ -273,12 +277,12 @@ int main(void)
 			
 		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y, 10);
 
-		scene->Update();
+		windowManager->GetCurrentScene(context.windowId)->Update();
 
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(context.window);
 		glfwPollEvents();
 
-		if (InputManager::IsKeyPressed(KEY_ESCAPE)) glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);;
+		if (InputManager::IsKeyPressed(KEY_ESCAPE)) glfwSetInputMode(context.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);;
 		if (InputManager::IsKeyPressed(KEY_TAB)) 
 		{
 			wireframeMode = !wireframeMode;
@@ -287,7 +291,7 @@ int main(void)
 		}
 	}
 
-	glfwDestroyWindow(window);
+	glfwDestroyWindow(context.window);
 	glfwTerminate();
 	return 0;
 }
