@@ -14,7 +14,6 @@ void GLAPIENTRY glDebugOutput(	GLenum source,
 								const void *userParam);
 
 GLenum glCheckError_(const char* file, int line);
-void showFPS(GLFWwindow* window);
 bool isExtensionSupported(const char* extensionName);
 
 #endif // !DEBUG_UTILS_H
