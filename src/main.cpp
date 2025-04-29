@@ -4,6 +4,8 @@
 
 #include <iostream>
 #include <vector>
+#include <future>
+#include <thread>
 
 #include <EssentiaEngine>
 
@@ -18,7 +20,6 @@ constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
 #	define DllImport __declspec(dllimport)
 #endif
 
-//extern "C"{}
 enum dir {
 	left, right, up, down
 };
@@ -130,15 +131,13 @@ int main(void)
 
 	const char* modelo1 = RESOURCES_PATH "Models/lamp/Chandelier_03_4k.fbx";
 	const char* modelo2 = RESOURCES_PATH "Models/lamp/Lantern_01_4k.fbx";
-	const char* modelo3 = RESOURCES_PATH "Models/bones/Polin-Ani.fbx";
+	const char* modelo3 = RESOURCES_PATH "Models/bones/rp_manuel_animated_001_dancing.fbx";
 	const char* modelo4 = RESOURCES_PATH "Models/debug/wolf/Wolf-Blender-2.82a.gltf"; 
-	const char* modelo5 = RESOURCES_PATH "Models/debug/test/rp_sophia_animated_003_idling.fbx";
-	const char* modelo6 = RESOURCES_PATH "Models/debug/aa/rp_manuel_animated_001_dancing.fbx";
 
-	entity4->AddComponent<Model>(modelo6);
+	entity4->AddComponent<Model>(modelo3);
 	Model* mod = entity4->GetComponent<Model>();
-	SkeletalAnimation testAnim(modelo6, &mod->skeleton);
-	SkeletalAnimation testAnim2(modelo6, &mod->skeleton, 1);
+	SkeletalAnimation testAnim(modelo3, &mod->skeleton);
+	SkeletalAnimation testAnim2(modelo3, &mod->skeleton, 1);
 
 	//mod->loadModel(modelo3);
 	//mod->loadModel(modelo2);
@@ -149,7 +148,7 @@ int main(void)
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
-	entity4->GetComponent<Transform>()->setScale(Vector3(2.1f));
+	entity4->GetComponent<Transform>()->setScale(Vector3(0.05f));
 	//entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
 	entity1->AddComponent<LightSource>(LightType::Point);
@@ -187,6 +186,7 @@ int main(void)
 
 	while (!glfwWindowShouldClose(context.window))
 	{
+		auto dt = Time::deltaTime();
 
 		InputManager::GetActiveInstance()->Update();
 		Time::update();
@@ -272,7 +272,10 @@ int main(void)
 		//if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(modelo3))
 		//	mod->loadModel(modelo3);
 
-		testAnim.Update(Time::deltaTime());
+		//testAnim.Update(Time::deltaTime());
+		std::async(std::launch::async, [dt, &testAnim]() {
+			testAnim.Update(dt);
+		});
 
 		if (InputManager::IsKeyPressed(KEY_2))
 			entity4->active = !entity4->active;
