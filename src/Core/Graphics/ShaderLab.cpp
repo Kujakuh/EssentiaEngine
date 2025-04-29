@@ -742,14 +742,8 @@ namespace Essentia
                     BoneTransform += finalBonesMatrices[aBoneIDs[2]] * aWeights[2];
                     BoneTransform += finalBonesMatrices[aBoneIDs[3]] * aWeights[3];
 
-					float sumWeights = aWeights[0] + aWeights[1] + aWeights[2] + aWeights[3];
-                    if (sumWeights > 0.0) {
-                        BoneTransform /= sumWeights;
-                    }
-
                     totalPosition = BoneTransform * vec4(aPos, 1.0);    
-                    //totalNormal = vec3(BoneTransform * vec4(aNormal, 1.0));
-                    totalNormal = mat3(transpose(inverse(BoneTransform))) * aNormal;
+                    totalNormal = vec3(BoneTransform * vec4(aNormal, 1.0));
                 }
 
                 FragPos = vec3(model * totalPosition);

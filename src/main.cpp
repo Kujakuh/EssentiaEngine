@@ -19,7 +19,6 @@ constexpr int _HEIGHT = (int) (0.5625*_WIDTH);
 #endif
 
 //extern "C"{}
-
 enum dir {
 	left, right, up, down
 };
@@ -150,7 +149,7 @@ int main(void)
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
-	entity4->GetComponent<Transform>()->setScale(Vector3(0.1f));
+	entity4->GetComponent<Transform>()->setScale(Vector3(2.1f));
 	//entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
 	entity1->AddComponent<LightSource>(LightType::Point);
@@ -180,6 +179,11 @@ int main(void)
 	SpriteAnimation anim(*sprit);
 	anim.AddFrame(frame1);
 	anim.AddFrame(frame2);
+
+	testAnim.SetSpeed(0.5f);
+
+	ShaderLab asp;
+	Shader bonesShader(asp.generateShader3D(VERTEX).c_str(), asp.generateShader3D(FRAGMENT).c_str(), DATA_SOURCE::STR_DATA);
 
 	while (!glfwWindowShouldClose(context.window))
 	{
@@ -268,12 +272,25 @@ int main(void)
 		//if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(modelo3))
 		//	mod->loadModel(modelo3);
 
+		testAnim.Update(Time::deltaTime());
+
 		if (InputManager::IsKeyPressed(KEY_2))
 			entity4->active = !entity4->active;
-		if (InputManager::IsKeyHeld(KEY_0))
-			testAnim.Update(Time::deltaTime());
 		if (InputManager::IsKeyHeld(KEY_L))
 			anim.Update(Time::deltaTime());
+		if (InputManager::IsKeyPressed(KEY_0)) {
+			if (testAnim.GetSpeed() > 0.0f)
+				testAnim.Pause();
+			else
+				testAnim.Play();
+		}
+			
+		//for (int i = 0; i < mod->skeleton.GetRootNode().childrenCount; i++) {
+		//	DebugDrawSkeleton(&mod->skeleton.GetRootNode().children[i],
+		//		glm::mat4(1.0f),
+		//		bonesShader,
+		//		glm::vec3(0,0,1), camera.getProjectionMatrix());
+		//}
 			
 		camera.processMouseMovement(-InputManager::GetMouseData().x, InputManager::GetMouseData().y, 10);
 
@@ -295,3 +312,4 @@ int main(void)
 	glfwTerminate();
 	return 0;
 }
+

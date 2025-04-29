@@ -28,6 +28,10 @@ namespace Essentia
             virtual void Update(float animationTime) = 0;
 
 			void Reset() { m_CurrentTime = 0.0f; }
+            void Play() { m_Speed = 1.0f; }
+            void Pause() { m_Speed = 0.0f; }
+
+			void SetSpeed(float speed) { m_Speed = speed; }
 
             float GetDuration() const { return m_Duration; }
             float GetSpeed() const { return m_Speed; }

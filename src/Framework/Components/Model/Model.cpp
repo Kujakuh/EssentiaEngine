@@ -51,8 +51,8 @@ namespace Essentia
                 BoneInfo newBoneInfo;
                 newBoneInfo.id = GetBoneCount();
                 newBoneInfo.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
-                GetBoneInfoMap()[boneName] = newBoneInfo;
                 boneID = GetBoneCount();
+                GetBoneInfoMap()[boneName] = newBoneInfo;
             }
             else
             {
