@@ -1,7 +1,3 @@
-#define GLFW_INCLUDE_NONE
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include <iostream>
 #include <vector>
 #include <future>
@@ -134,10 +130,10 @@ int main(void)
 	const char* modelo3 = RESOURCES_PATH "Models/bones/rp_manuel_animated_001_dancing.fbx";
 	const char* modelo4 = RESOURCES_PATH "Models/debug/wolf/Wolf-Blender-2.82a.gltf"; 
 
-	entity4->AddComponent<Model>(modelo3);
+	entity4->AddComponent<Model>(modelo2);
 	Model* mod = entity4->GetComponent<Model>();
-	SkeletalAnimation testAnim(modelo3, &mod->skeleton);
-	SkeletalAnimation testAnim2(modelo3, &mod->skeleton, 1);
+	SkeletalAnimation testAnim(modelo2, &mod->skeleton);
+	SkeletalAnimation testAnim2(modelo2, &mod->skeleton, 1);
 
 	//mod->loadModel(modelo3);
 	//mod->loadModel(modelo2);
@@ -148,10 +144,10 @@ int main(void)
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
-	entity4->GetComponent<Transform>()->setScale(Vector3(0.05f));
+	entity4->GetComponent<Transform>()->setScale(Vector3(2.05f));
 	//entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
-	entity1->AddComponent<LightSource>(LightType::Point);
+	entity1->AddComponent<LightSource>(LightType::Spot);
 	entity1->GetComponent<LightSource>()->SetIntensity(5.0f);
 
 	std::string title;
@@ -272,7 +268,6 @@ int main(void)
 		//if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(modelo3))
 		//	mod->loadModel(modelo3);
 
-		//testAnim.Update(Time::deltaTime());
 		std::async(std::launch::async, [dt, &testAnim]() {
 			testAnim.Update(dt);
 		});

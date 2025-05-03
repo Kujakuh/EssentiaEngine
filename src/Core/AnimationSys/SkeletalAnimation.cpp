@@ -1,5 +1,6 @@
 #include <Core/AnimationSys/SkeletalAnimation.hpp>
-
+#include <future>
+#include <vector>
 namespace Essentia
 {
     SkeletalAnimation::SkeletalAnimation(const std::string& path, Skeleton* skeleton, int animationIndex) : m_Skeleton(skeleton), m_Path(path)
@@ -82,8 +83,7 @@ namespace Essentia
         std::string nodeName = node->name;
         glm::mat4 nodeTransform = node->transformation;
 
-        Bone* bone = FindBone(nodeName);
-        if (bone)
+        if (Bone* bone = FindBone(nodeName))
         {
             bone->Update(m_CurrentTime);
             nodeTransform = bone->GetLocalTransform();
@@ -91,15 +91,16 @@ namespace Essentia
 
         glm::mat4 globalTransformation = parentTransform * nodeTransform;
 
-        auto& boneInfoMap = m_Skeleton->m_BoneInfoMap;
-        if (boneInfoMap.find(nodeName) != boneInfoMap.end())
+        const auto& boneInfoMap = m_Skeleton->m_BoneInfoMap;
+        auto it = boneInfoMap.find(nodeName);
+        if (it != boneInfoMap.end())
         {
-            int index = boneInfoMap[nodeName].id;
-            glm::mat4 offset = boneInfoMap[nodeName].offset;
+            int index = it->second.id;
+            glm::mat4 offset = it->second.offset;
             m_Skeleton->m_FinalBoneMatrices[index] = globalTransformation * offset;
         }
 
-        for (int i = 0; i < node->childrenCount; i++)
+        for (int i = 0; i < node->childrenCount; ++i)
         {
             CalculateBoneTransform(&node->children[i], globalTransformation);
         }
@@ -107,6 +108,7 @@ namespace Essentia
 
     void SkeletalAnimation::Update(float deltaTime)
     { 
+		if (m_Speed == 0.0f) return;
 		m_CurrentTime += m_TicksPerSecond * deltaTime * m_Speed;
 		m_CurrentTime = fmod(m_CurrentTime, m_Duration);
 		CalculateBoneTransform(&m_Skeleton->GetRootNode(), glm::mat4(1.0f));

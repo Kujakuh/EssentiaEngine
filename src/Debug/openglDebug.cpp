@@ -3,9 +3,6 @@
 
 #include <Debug/openglDebug.hpp>
 
-// --https://learnopengl.com/In-Practice/Debugging
-// --https://github.com/KhronosGroup/glslang
-
 GLenum glCheckError_(const char* file, int line)
 {
 	GLenum errorCode;
@@ -104,14 +101,11 @@ void DebugDrawSkeleton(const Essentia::AssimpNodeData* node, const glm::mat4& pa
 	glm::mat4 nodeTransform = node->transformation;
 	glm::mat4 globalTransform = parentTransform * nodeTransform;
 
-	// Dibujar una línea desde el nodo padre hasta el nodo actual
 	glm::vec3 parentPos = glm::vec3(parentTransform[3]);
 	glm::vec3 currentPos = glm::vec3(globalTransform[3]);
 
-	// Si no es el nodo raíz, dibujar una línea
 	if (glm::length(parentPos - currentPos) > 0.001f) {
-		// Código para dibujar una línea simple usando OpenGL
-		// (Necesitarás un shader básico para esto)
+
 		debugShader.use();
 		debugShader.setUniform("color", color);
 		debugShader.setUniform("viewProjection", projection);
@@ -121,7 +115,6 @@ void DebugDrawSkeleton(const Essentia::AssimpNodeData* node, const glm::mat4& pa
 			currentPos.x, currentPos.y, currentPos.z
 		};
 
-		// Configurar VAO/VBO para dibujar la línea
 		unsigned int VBO, VAO;
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
@@ -140,10 +133,6 @@ void DebugDrawSkeleton(const Essentia::AssimpNodeData* node, const glm::mat4& pa
 		glDeleteBuffers(1, &VBO);
 	}
 
-	// Dibujar un punto en la posición actual del hueso
-	// (Similar al código anterior, pero usando GL_POINTS)
-
-	// Llamar recursivamente para los nodos hijos
 	for (int i = 0; i < node->childrenCount; i++) {
 		DebugDrawSkeleton(&node->children[i], globalTransform, debugShader, color, projection);
 	}
