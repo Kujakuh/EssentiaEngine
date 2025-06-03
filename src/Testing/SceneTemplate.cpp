@@ -39,9 +39,10 @@ class SceneTemplate : public Scene
 		}
 
 		// DONT USE -- DEBUG ONLY, NOT A REAL FEATURE USAGE
-		void RegisterSystems(Essentia::Renderer2D renderer, Essentia::Renderer3D renderer3d)
+		void RegisterSystems(Essentia::Renderer2D renderer, Essentia::Renderer3D renderer3d, AnimationController anim)
 		{
 			systemDispatcher.RegisterSystem(std::make_shared<Essentia::Renderer2D>(renderer));
 			systemDispatcher.RegisterSystem(std::make_shared<Essentia::Renderer3D>(renderer3d));
+			systemDispatcher.RegisterSystem(std::make_shared<Essentia::AnimationController>(anim));
 		}
 };

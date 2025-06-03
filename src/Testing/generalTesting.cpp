@@ -5,6 +5,7 @@
 
 #include "SceneTemplate.cpp"
 #include "GameObjectTemplate.cpp"
+#include "../GameDemo/player.cpp"
 
 constexpr int _WIDTH = 900;
 constexpr int _HEIGHT = (int)(0.5625 * _WIDTH);
@@ -26,7 +27,6 @@ static void generalTesting()
 		.setGLVersion(4, 3)
 		.setWireframeMode(false)
 		.enableDebugMode(true));
-
 
 	WindowContext context;
 	context.window = configLoader.createWindow();
@@ -95,7 +95,7 @@ static void generalTesting()
 	CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
 	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);
 	//Camera2D camera("Camera", scene, 45.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
-	scene->RegisterSystems(Renderer2D(&camera), Renderer3D(&camera));
+	scene->RegisterSystems(Renderer2D(&camera), Renderer3D(&camera), AnimationController());
 
 	//Skybox skybox(RESOURCES_PATH "Textures/test.hdr");
 	Skybox skybox(faces);
@@ -107,6 +107,7 @@ static void generalTesting()
 	entity6->AddComponent<Sprite>(RESOURCES_PATH "Textures/atlas2.png");
 	Sprite* sprit = entity6->GetComponent<Sprite>();
 	sprit->getTexture()->loadUVsFromJSON(RESOURCES_PATH "atlas2.json");
+	//sprit->getTexture()->loadUVsFromJSON(RESOURCES_PATH "Textures/atlas2.png");
 
 	sprit->useRegionFromAtlas("player_idle");
 
@@ -122,10 +123,12 @@ static void generalTesting()
 	const char* modelo3 = RESOURCES_PATH "Models/bones/rp_manuel_animated_001_dancing.fbx";
 	const char* modelo4 = RESOURCES_PATH "Models/debug/wolf/Wolf-Blender-2.82a.gltf";
 
-	entity4->AddComponent<Model>(modelo2);
+	entity4->AddComponent<Model>(modelo3);
 	Model* mod = entity4->GetComponent<Model>();
-	SkeletalAnimation testAnim(modelo2, &mod->skeleton);
-	SkeletalAnimation testAnim2(modelo2, &mod->skeleton, 1);
+	SkeletalAnimation testAnim(modelo3, &mod->skeleton);
+	SkeletalAnimation testAnim2(modelo3, &mod->skeleton, 1);
+	entity4->AddComponent<Animator>();
+	entity4->GetComponent<Animator>()->AddState("idle", &testAnim);
 
 	//mod->loadModel(modelo3);
 	//mod->loadModel(modelo2);
@@ -136,7 +139,7 @@ static void generalTesting()
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
-	entity4->GetComponent<Transform>()->setScale(Vector3(2.05f));
+	entity4->GetComponent<Transform>()->setScale(Vector3(0.05f));
 	//entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
 
 	entity1->AddComponent<LightSource>(LightType::Spot);
@@ -171,6 +174,8 @@ static void generalTesting()
 
 	ShaderLab asp;
 	Shader bonesShader(asp.generateShader3D(VERTEX).c_str(), asp.generateShader3D(FRAGMENT).c_str(), DATA_SOURCE::STR_DATA);
+
+	Player player(scene);
 
 	while (!glfwWindowShouldClose(context.window))
 	{
@@ -260,9 +265,9 @@ static void generalTesting()
 		//if (InputManager::IsKeyPressed(KEY_1) && ModelCacheManager::getInstance().isLoaded(modelo3))
 		//	mod->loadModel(modelo3);
 
-		std::async(std::launch::async, [dt, &testAnim]() {
+		/*std::async(std::launch::async, [dt, &testAnim]() {
 			testAnim.Update(dt);
-		});
+		});*/
 
 		if (InputManager::IsKeyPressed(KEY_2))
 			entity4->active = !entity4->active;

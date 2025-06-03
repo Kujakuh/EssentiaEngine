@@ -1,0 +1,321 @@
+{
+  "player_idle_down_0": {
+    "uMin": 0.0,
+    "uMax": 0.1,
+    "vMin": 0.875,
+    "vMax": 1.0
+  },
+  "player_idle_down_1": {
+    "uMin": 0.1,
+    "uMax": 0.2,
+    "vMin": 0.875,
+    "vMax": 1.0
+  },
+  "player_idle_down_2": {
+    "uMin": 0.2,
+    "uMax": 0.3,
+    "vMin": 0.875,
+    "vMax": 1.0
+  },
+
+  "player_idle_left_0": {
+    "uMin": 0.0,
+    "uMax": 0.1,
+    "vMin": 0.75,
+    "vMax": 0.875
+  },
+  "player_idle_left_1": {
+    "uMin": 0.1,
+    "uMax": 0.2,
+    "vMin": 0.75,
+    "vMax": 0.875
+  },
+  "player_idle_left_2": {
+    "uMin": 0.2,
+    "uMax": 0.3,
+    "vMin": 0.75,
+    "vMax": 0.875
+  },
+
+  "player_idle_up_0": {
+    "uMin": 0.0,
+    "uMax": 0.1,
+    "vMin": 0.625,
+    "vMax": 0.75
+  },
+  "player_idle_up_1": {
+    "uMin": 0.1,
+    "uMax": 0.2,
+    "vMin": 0.625,
+    "vMax": 0.75
+  },
+  "player_idle_up_2": {
+    "uMin": 0.2,
+    "uMax": 0.3,
+    "vMin": 0.625,
+    "vMax": 0.75
+  },
+
+  "player_idle_right_0": {
+    "uMin": 0.0,
+    "uMax": 0.1,
+    "vMin": 0.5,
+    "vMax": 0.625
+  },
+  "player_idle_right_1": {
+    "uMin": 0.1,
+    "uMax": 0.2,
+    "vMin": 0.5,
+    "vMax": 0.625
+  },
+  "player_idle_right_2": {
+    "uMin": 0.2,
+    "uMax": 0.3,
+    "vMin": 0.5,
+    "vMax": 0.625
+  },
+
+  "player_walk_down_0": {
+    "uMin": 0.0,
+    "uMax": 0.1,
+    "vMin": 0.375,
+    "vMax": 0.5
+  },
+  "player_walk_down_1": {
+    "uMin": 0.1,
+    "uMax": 0.2,
+    "vMin": 0.375,
+    "vMax": 0.5
+  },
+  "player_walk_down_2": {
+    "uMin": 0.2,
+    "uMax": 0.3,
+    "vMin": 0.375,
+    "vMax": 0.5
+  },
+  "player_walk_down_3": {
+    "uMin": 0.3,
+    "uMax": 0.4,
+    "vMin": 0.375,
+    "vMax": 0.5
+  },
+  "player_walk_down_4": {
+    "uMin": 0.4,
+    "uMax": 0.5,
+    "vMin": 0.375,
+    "vMax": 0.5
+  },
+  "player_walk_down_5": {
+    "uMin": 0.5,
+    "uMax": 0.6,
+    "vMin": 0.375,
+    "vMax": 0.5
+  },
+  "player_walk_down_6": {
+    "uMin": 0.6,
+    "uMax": 0.7,
+    "vMin": 0.375,
+    "vMax": 0.5
+  },
+  "player_walk_down_7": {
+    "uMin": 0.7,
+    "uMax": 0.8,
+    "vMin": 0.375,
+    "vMax": 0.5
+  },
+  "player_walk_down_8": {
+    "uMin": 0.8,
+    "uMax": 0.9,
+    "vMin": 0.375,
+    "vMax": 0.5
+  },
+  "player_walk_down_9": {
+    "uMin": 0.9,
+    "uMax": 1.0,
+    "vMin": 0.375,
+    "vMax": 0.5
+  },
+
+  "player_walk_left_0": {
+    "uMin": 0.0,
+    "uMax": 0.1,
+    "vMin": 0.25,
+    "vMax": 0.375
+  },
+  "player_walk_left_1": {
+    "uMin": 0.1,
+    "uMax": 0.2,
+    "vMin": 0.25,
+    "vMax": 0.375
+  },
+  "player_walk_left_2": {
+    "uMin": 0.2,
+    "uMax": 0.3,
+    "vMin": 0.25,
+    "vMax": 0.375
+  },
+  "player_walk_left_3": {
+    "uMin": 0.3,
+    "uMax": 0.4,
+    "vMin": 0.25,
+    "vMax": 0.375
+  },
+  "player_walk_left_4": {
+    "uMin": 0.4,
+    "uMax": 0.5,
+    "vMin": 0.25,
+    "vMax": 0.375
+  },
+  "player_walk_left_5": {
+    "uMin": 0.5,
+    "uMax": 0.6,
+    "vMin": 0.25,
+    "vMax": 0.375
+  },
+  "player_walk_left_6": {
+    "uMin": 0.6,
+    "uMax": 0.7,
+    "vMin": 0.25,
+    "vMax": 0.375
+  },
+  "player_walk_left_7": {
+    "uMin": 0.7,
+    "uMax": 0.8,
+    "vMin": 0.25,
+    "vMax": 0.375
+  },
+  "player_walk_left_8": {
+    "uMin": 0.8,
+    "uMax": 0.9,
+    "vMin": 0.25,
+    "vMax": 0.375
+  },
+  "player_walk_left_9": {
+    "uMin": 0.9,
+    "uMax": 1.0,
+    "vMin": 0.25,
+    "vMax": 0.375
+  },
+
+  "player_walk_up_0": {
+    "uMin": 0.0,
+    "uMax": 0.1,
+    "vMin": 0.125,
+    "vMax": 0.25
+  },
+  "player_walk_up_1": {
+    "uMin": 0.1,
+    "uMax": 0.2,
+    "vMin": 0.125,
+    "vMax": 0.25
+  },
+  "player_walk_up_2": {
+    "uMin": 0.2,
+    "uMax": 0.3,
+    "vMin": 0.125,
+    "vMax": 0.25
+  },
+  "player_walk_up_3": {
+    "uMin": 0.3,
+    "uMax": 0.4,
+    "vMin": 0.125,
+    "vMax": 0.25
+  },
+  "player_walk_up_4": {
+    "uMin": 0.4,
+    "uMax": 0.5,
+    "vMin": 0.125,
+    "vMax": 0.25
+  },
+  "player_walk_up_5": {
+    "uMin": 0.5,
+    "uMax": 0.6,
+    "vMin": 0.125,
+    "vMax": 0.25
+  },
+  "player_walk_up_6": {
+    "uMin": 0.6,
+    "uMax": 0.7,
+    "vMin": 0.125,
+    "vMax": 0.25
+  },
+  "player_walk_up_7": {
+    "uMin": 0.7,
+    "uMax": 0.8,
+    "vMin": 0.125,
+    "vMax": 0.25
+  },
+  "player_walk_up_8": {
+    "uMin": 0.8,
+    "uMax": 0.9,
+    "vMin": 0.125,
+    "vMax": 0.25
+  },
+  "player_walk_up_9": {
+    "uMin": 0.9,
+    "uMax": 1.0,
+    "vMin": 0.125,
+    "vMax": 0.25
+  },
+
+  "player_walk_right_0": {
+    "uMin": 0.0,
+    "uMax": 0.1,
+    "vMin": 0.0,
+    "vMax": 0.125
+  },
+  "player_walk_right_1": {
+    "uMin": 0.1,
+    "uMax": 0.2,
+    "vMin": 0.0,
+    "vMax": 0.125
+  },
+  "player_walk_right_2": {
+    "uMin": 0.2,
+    "uMax": 0.3,
+    "vMin": 0.0,
+    "vMax": 0.125
+  },
+  "player_walk_right_3": {
+    "uMin": 0.3,
+    "uMax": 0.4,
+    "vMin": 0.0,
+    "vMax": 0.125
+  },
+  "player_walk_right_4": {
+    "uMin": 0.4,
+    "uMax": 0.5,
+    "vMin": 0.0,
+    "vMax": 0.125
+  },
+  "player_walk_right_5": {
+    "uMin": 0.5,
+    "uMax": 0.6,
+    "vMin": 0.0,
+    "vMax": 0.125
+  },
+  "player_walk_right_6": {
+    "uMin": 0.6,
+    "uMax": 0.7,
+    "vMin": 0.0,
+    "vMax": 0.125
+  },
+  "player_walk_right_7": {
+    "uMin": 0.7,
+    "uMax": 0.8,
+    "vMin": 0.0,
+    "vMax": 0.125
+  },
+  "player_walk_right_8": {
+    "uMin": 0.8,
+    "uMax": 0.9,
+    "vMin": 0.0,
+    "vMax": 0.125
+  },
+  "player_walk_right_9": {
+    "uMin": 0.9,
+    "uMax": 1.0,
+    "vMin": 0.0,
+    "vMax": 0.125
+  }
+}

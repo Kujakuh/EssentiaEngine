@@ -11,7 +11,6 @@
 #include <Core/Memory/WeakptrWrapper.hpp>
 #include <Shared/user_values.hpp>
 
-
 namespace Essentia
 {
     class Scene 

@@ -81,9 +81,11 @@ using Transform = Essentia::Transform;
 using Sprite = Essentia::Sprite;
 using Model = Essentia::Model;
 using LightSource = Essentia::LightSource;
+using Animator = Essentia::Animator;
 
 using Renderer2D = Essentia::Renderer2D;
 using Renderer3D = Essentia::Renderer3D;
+using AnimationController = Essentia::AnimationController;
 
 using TextureHandle = std::shared_ptr<Essentia::Texture>;
 using Vertex = Essentia::Vertex;

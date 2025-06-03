@@ -19,7 +19,7 @@ namespace Essentia
     void Renderer3D::Update(EntityManager& entityManager)
     {
         auto entitiesWithLights = entityManager.GetEntitiesWith<LightSource>();
-        auto entitiesWithModels = entityManager.GetEntitiesWith<Transform, Model>();
+        auto entitiesWithModels = entityManager.GetEntitiesWith<Transform, Model>();	
 
         for (auto& entity : entitiesWithModels)
         {
