@@ -18,7 +18,6 @@ namespace Essentia
     void AnimationStateMachine::Update(float deltaTime)
     {
         if (!currentState) return;
-        //if (currentState->GetName() != currentState->GetNextState()) return;
 
         currentState = &states[currentState->GetNextState()];
         //currentState->GetAnimation()->Reset();

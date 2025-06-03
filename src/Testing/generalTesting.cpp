@@ -177,6 +177,8 @@ static void generalTesting()
 
 	Player player(scene);
 
+	auto checkval = player.entity->GetComponent<Sprite>();
+
 	while (!glfwWindowShouldClose(context.window))
 	{
 		auto dt = Time::deltaTime();
