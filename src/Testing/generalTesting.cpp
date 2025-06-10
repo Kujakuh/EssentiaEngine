@@ -13,7 +13,7 @@ constexpr int _WIDTH = 900;
 constexpr int _HEIGHT = (int)(0.5625 * _WIDTH);
 
 enum dir {
-	left, right, up, down
+	_left, _right, _up, _down
 };
 
 static void generalTesting()
@@ -118,7 +118,7 @@ static void generalTesting()
 	entity6->GetComponent<Transform>()->setPosition().x = 4;
 
 	bool wireframeMode = false;
-	dir direction = down;
+	dir direction = _down;
 
 	const char* modelo1 = RESOURCES_PATH "Models/lamp/Chandelier_03_4k.fbx";
 	const char* modelo2 = RESOURCES_PATH "Models/lamp/Lantern_01_4k.fbx";
@@ -221,9 +221,9 @@ static void generalTesting()
 		{
 			//ref->setPosition().y += 0.1;
 			entity6->GetComponent<Transform>()->setPosition().y += speed * Time::deltaTime();
-			if (direction != up)
+			if (direction != _up)
 			{
-				direction = up;
+				direction = _up;
 				//sprit->useRegionFromAtlas("player_idle");
 				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/right.png");
 			}
@@ -232,9 +232,9 @@ static void generalTesting()
 		{
 			entity6->GetComponent<Transform>()->setPosition().x -= speed * Time::deltaTime();
 			//ref->setPosition().y -= 0.1;
-			if (direction != down)
+			if (direction != _down)
 			{
-				direction = down;
+				direction = _down;
 				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/atlas2.png");
 				sprit->useRegionFromAtlas("player_idle");
 			}
@@ -243,9 +243,9 @@ static void generalTesting()
 		{
 			//ref->setPosition().x -= 0.1;
 			entity6->GetComponent<Transform>()->setPosition().y -= speed * Time::deltaTime();
-			if (direction != left)
+			if (direction != _left)
 			{
-				direction = left;
+				direction = _left;
 				//sprit->useRegionFromAtlas("player_walk");
 				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/left.png");
 			}
@@ -254,9 +254,9 @@ static void generalTesting()
 		{
 			//ref->setPosition().x += 0.1;
 			entity6->GetComponent<Transform>()->setPosition().x += speed * Time::deltaTime();
-			if (direction != right)
+			if (direction != _right)
 			{
-				direction = right;
+				direction = _right;
 				entity6->GetComponent<Sprite>()->setTexture(RESOURCES_PATH "Textures/atlas2.png");
 				sprit->useRegionFromAtlas("player_walk");
 				std::cout << "15 secs Timer Started\n";
