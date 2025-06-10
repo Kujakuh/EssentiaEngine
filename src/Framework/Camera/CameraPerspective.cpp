@@ -3,9 +3,9 @@
 
 namespace Essentia
 {
-    CameraPerspective::CameraPerspective(const std::string& name, Scene* bindScene,
+    CameraPerspective::CameraPerspective(const std::string& name,
         float fov, float aspectRatio, float nearPlane, float farPlane) :
-        CameraBase(name, bindScene),
+        CameraBase(name),
         fov(fov), aspectRatio(aspectRatio), nearPlane(nearPlane), farPlane(farPlane) {}
 
     glm::mat4 CameraPerspective::getViewMatrix() const

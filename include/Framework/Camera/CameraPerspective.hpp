@@ -19,7 +19,7 @@ namespace Essentia
 
         public:
             CameraPerspective() = default;
-            CameraPerspective(const std::string& name, Scene* bindScene,
+            CameraPerspective(const std::string& name,
                                float fov, float aspectRatio, float nearPlane, float farPlane);
 
             glm::mat4 getViewMatrix() const override;

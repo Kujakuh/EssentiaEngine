@@ -42,8 +42,8 @@ namespace Essentia
 
         if (isRunning())
         {
-            systemDispatcher.Dispatch(entityManager);
             onUpdate();
+            systemDispatcher.Dispatch(entityManager);
         }
     }
 

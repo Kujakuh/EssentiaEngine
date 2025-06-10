@@ -5,7 +5,9 @@
 
 #include "SceneTemplate.cpp"
 #include "GameObjectTemplate.cpp"
-#include "../GameDemo/player.cpp"
+//#include "../GameDemo/player.cpp"
+//#include "../GameDemo/demoScene.cpp"
+
 
 constexpr int _WIDTH = 900;
 constexpr int _HEIGHT = (int)(0.5625 * _WIDTH);
@@ -92,7 +94,7 @@ static void generalTesting()
 			RESOURCES_PATH "Textures/back.jpg"
 	};
 
-	CameraPerspective camera("Camera", scene, 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
+	CameraPerspective camera("Camera", 45.0f, (float)_WIDTH / (float)_HEIGHT, 0.1f, 100.0f);
 	//CameraOrtho camera("Camera", scene, -10.0f * (_WIDTH / _HEIGHT) / 2.0f, 10.0f * (_WIDTH / _HEIGHT) / 2.0f, -10.0f / 2.0f, 10.0f / 2.0f, -0.1f, 0.1f);
 	//Camera2D camera("Camera", scene, 45.0f, static_cast<float>(_WIDTH) / _HEIGHT, 0.1f, 100.0f);
 	scene->RegisterSystems(Renderer2D(&camera), Renderer3D(&camera), AnimationController());
@@ -175,9 +177,9 @@ static void generalTesting()
 	ShaderLab asp;
 	Shader bonesShader(asp.generateShader3D(VERTEX).c_str(), asp.generateShader3D(FRAGMENT).c_str(), DATA_SOURCE::STR_DATA);
 
-	Player player(scene);
+	//Player player(scene);
 
-	auto checkval = player.entity->GetComponent<Sprite>();
+	//auto checkval = player.entity->GetComponent<Sprite>();
 
 	while (!glfwWindowShouldClose(context.window))
 	{

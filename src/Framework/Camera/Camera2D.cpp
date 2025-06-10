@@ -2,9 +2,9 @@
 
 namespace Essentia
 {
-    Camera2D::Camera2D(const std::string& name, Scene* bindScene,
+    Camera2D::Camera2D(const std::string& name,
         float fov, float aspectRatio, float nearPlane, float farPlane) :
-        CameraPerspective(name, bindScene, fov, aspectRatio, nearPlane, farPlane)
+        CameraPerspective(name, fov, aspectRatio, nearPlane, farPlane)
     {
         if (transform) transform->setPosition(glm::vec3(0.0f, 0.0f, 10.0f));
     }

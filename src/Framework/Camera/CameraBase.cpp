@@ -2,13 +2,9 @@
 
 namespace Essentia
 {
-    CameraBase::CameraBase(const std::string& name, Scene* bindScene) :
-        scene(bindScene),
-        entity(bindScene->CreateEntity(name))
+    CameraBase::CameraBase(const std::string& name)
     {
-        if (!scene) throw std::runtime_error("CameraBase requires a valid Scene instance.");
-
-        transform = entity->GetComponent<Transform>();
+        transform = new Transform();
         if (!transform)
             throw std::runtime_error("CameraBase requires a valid Transform component.");
 

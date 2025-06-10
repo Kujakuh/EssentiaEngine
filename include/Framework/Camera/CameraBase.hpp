@@ -23,8 +23,6 @@ namespace Essentia
     class CameraBase
     {
         protected:
-            Scene* scene;
-
             glm::vec3 front;
             glm::vec3 worldUp;
             glm::vec3 right;
@@ -33,9 +31,8 @@ namespace Essentia
             void updateCameraVectors();
 
         public:
-            CameraBase(const std::string& name, Scene* bindScene);
+            CameraBase(const std::string& name);
 
-            WeakptrWrapper<Entity> entity;
             Transform* transform;
 
             float sensitivity = 0.01;

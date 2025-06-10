@@ -16,7 +16,7 @@ namespace Essentia
             float farPlane;
 
         public:
-            CameraOrtho(const std::string& name, Scene* bindScene,
+            CameraOrtho(const std::string& name,
                 float left, float right, float bottom, float top, float nearPlane, float farPlane);
 
             glm::mat4 getViewMatrix() const override;

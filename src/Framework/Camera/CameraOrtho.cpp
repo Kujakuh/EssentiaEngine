@@ -2,9 +2,9 @@
 
 namespace Essentia
 {
-    CameraOrtho::CameraOrtho(const std::string& name, Scene* bindScene,
+    CameraOrtho::CameraOrtho(const std::string& name,
         float left, float right, float bottom, float top, float nearPlane, float farPlane) :
-        CameraBase(name, bindScene),
+        CameraBase(name),
         left(left), right(right), bottom(bottom), top(top), nearPlane(nearPlane), farPlane(farPlane)
     {
     }

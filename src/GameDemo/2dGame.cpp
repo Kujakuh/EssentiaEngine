@@ -1,17 +1,16 @@
 #include <EssentiaEngine>
 
-#include "../Testing/SceneTemplate.cpp"
-
-constexpr int _WIDTH = 900;
-constexpr int _HEIGHT = (int)(0.5625 * _WIDTH);
+#include "headers/demoScene.hpp"
 
  static void twoDGame()
  {
+	std::string title = "Essentia";
+
 	AppConfig config;
 
 	ConfigLoader configLoader(config.setAspectRatio(16, 9)
-		.setWindowSize(_WIDTH)
-		.setWindowTitle("Essentia")
+		.setWindowSize(_WIDTH_)
+		.setWindowTitle(title)
 		.setMSAASamples(16)
 		.enableDepthTest(true)
 		.enableBlending(true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -24,9 +23,6 @@ constexpr int _HEIGHT = (int)(0.5625 * _WIDTH);
 	context.window = configLoader.createWindow();
 	context.windowId = 0;
 
-	GLFWwindow* window2 = configLoader.createWindow();
-
-	configLoader.initializeOpenGL(window2);
 	configLoader.initializeOpenGL(context.window);
 
 	Essentia::init();
@@ -37,9 +33,29 @@ constexpr int _HEIGHT = (int)(0.5625 * _WIDTH);
 	WindowManager* windowManager = WindowManager::GetInstance();
 	windowManager->RegisterWindowContext(context);
 
-	SceneTemplate* scene = new SceneTemplate();
+	demoScene* scene = new demoScene();
 	windowManager->ChangeScene(context.windowId, scene);
 
 	InputManager::Initialize(context.window);
 	InputManager::SetActiveInstance(context.window);
+
+	while (!glfwWindowShouldClose(context.window))
+	{
+		InputManager::GetActiveInstance()->Update();
+		Time::update();
+		auto dt = Time::deltaTime();
+
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+		title = "FPS: " + std::to_string(Time::fps());
+		glfwSetWindowTitle(context.window, title.c_str());
+
+		windowManager->GetCurrentScene(context.windowId)->Update();
+
+		glfwSwapBuffers(context.window);
+		glfwPollEvents();
+	}
+	glfwDestroyWindow(context.window);
+
 }
