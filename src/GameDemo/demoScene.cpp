@@ -6,7 +6,7 @@ demoScene::demoScene()
     renderer = Renderer2D(camera);
     animator = AnimationController();
     player = new Player(this);
-	skybox = new Skybox(RESOURCES_PATH "Textures/test.hdr");
+	skybox = new Skybox(RESOURCES_PATH "Textures/tes.hdr");
 }
 
 void demoScene::onInit()

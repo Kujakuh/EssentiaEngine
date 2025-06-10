@@ -53,25 +53,23 @@ void Player::Update()
 
 void Player::setUpAnimations() 
 {
-    SpriteAnimation* idleDown = new SpriteAnimation(*sprite, 0.6f);
-    idleDown->AddFrame(SpriteKeyframe("player_idle_down_0", 0.2f));
-    idleDown->AddFrame(SpriteKeyframe("player_idle_down_1", 0.2f));
-    idleDown->AddFrame(SpriteKeyframe("player_idle_down_2", 0.2f));
+    SpriteAnimation* idleDown = new SpriteAnimation(*sprite, 0.75f);
+    idleDown->AddFrame(SpriteKeyframe("player_idle_down_0", 0.1f));
+    idleDown->AddFrame(SpriteKeyframe("player_idle_down_1", 0.1f));
+    idleDown->AddFrame(SpriteKeyframe("player_idle_down_2", 0.1f));
 
-    SpriteAnimation* idleUp = new SpriteAnimation(*sprite, 0.6f);
-    idleUp->AddFrame(SpriteKeyframe("player_idle_up_0", 0.2f));
-    idleUp->AddFrame(SpriteKeyframe("player_idle_up_1", 0.2f));
-    idleUp->AddFrame(SpriteKeyframe("player_idle_up_2", 0.2f));
+    SpriteAnimation* idleUp = new SpriteAnimation(*sprite);
+    idleUp->AddFrame(SpriteKeyframe("player_idle_up_0", 1.0f));
 
-    SpriteAnimation* idleRight = new SpriteAnimation(*sprite, 0.6f);
-    idleRight->AddFrame(SpriteKeyframe("player_idle_right_0", 0.2f));
-    idleRight->AddFrame(SpriteKeyframe("player_idle_right_1", 0.2f));
-    idleRight->AddFrame(SpriteKeyframe("player_idle_right_2", 0.2f));
+    SpriteAnimation* idleRight = new SpriteAnimation(*sprite, 0.75f);
+    idleRight->AddFrame(SpriteKeyframe("player_idle_right_0", 0.1f));
+    idleRight->AddFrame(SpriteKeyframe("player_idle_right_1", 0.1f));
+    idleRight->AddFrame(SpriteKeyframe("player_idle_right_2", 0.1f));
 
-    SpriteAnimation* idleLeft = new SpriteAnimation(*sprite, 0.6f);
-    idleLeft->AddFrame(SpriteKeyframe("player_idle_left_0", 0.2f));
-    idleLeft->AddFrame(SpriteKeyframe("player_idle_left_1", 0.2f));
-    idleLeft->AddFrame(SpriteKeyframe("player_idle_left_2", 0.2f));
+    SpriteAnimation* idleLeft = new SpriteAnimation(*sprite, 0.75f);
+    idleLeft->AddFrame(SpriteKeyframe("player_idle_left_0", 0.1f));
+    idleLeft->AddFrame(SpriteKeyframe("player_idle_left_1", 0.1f));
+    idleLeft->AddFrame(SpriteKeyframe("player_idle_left_2", 0.1f));
 
     SpriteAnimation* walkDown = new SpriteAnimation(*sprite);
     for (int i = 0; i <= 9; ++i)
@@ -104,17 +102,32 @@ void Player::setUpAnimations()
     animator->AddTransition("IdleDown", "WalkUp", [this]() {return direction == up; });
     animator->AddTransition("IdleDown", "WalkDown", [this]() {return direction == down; });
 
-    animator->AddTransition("WalkLeft", "IdleDown", [this]() {return direction == idle; });
+	animator->AddTransition("IdleUp", "WalkDown", [this]() {return direction == down; });
+	animator->AddTransition("IdleUp", "WalkLeft", [this]() {return direction == left; });
+	animator->AddTransition("IdleUp", "WalkRight", [this]() {return direction == right; });
+	animator->AddTransition("IdleUp", "WalkUp", [this]() {return direction == up; });
+
+	animator->AddTransition("IdleRight", "WalkLeft", [this]() {return direction == left; });
+	animator->AddTransition("IdleRight", "WalkRight", [this]() {return direction == right; });
+	animator->AddTransition("IdleRight", "WalkUp", [this]() {return direction == up; });
+	animator->AddTransition("IdleRight", "WalkDown", [this]() {return direction == down; });
+
+	animator->AddTransition("IdleLeft", "WalkDown", [this]() {return direction == down; });
+	animator->AddTransition("IdleLeft", "WalkRight", [this]() {return direction == right; });
+	animator->AddTransition("IdleLeft", "WalkUp", [this]() {return direction == up; });
+	animator->AddTransition("IdleLeft", "WalkLeft", [this]() {return direction == left; });
+
+    animator->AddTransition("WalkLeft", "IdleLeft", [this]() {return direction == idle; });
     animator->AddTransition("WalkLeft", "WalkRight", [this]() {return direction == right; });
     animator->AddTransition("WalkLeft", "WalkUp", [this]() {return direction == up; });
     animator->AddTransition("WalkLeft", "WalkDown", [this]() {return direction == down; });
 
-	animator->AddTransition("WalkRight", "IdleDown", [this]() {return direction == idle; });
+	animator->AddTransition("WalkRight", "IdleRight", [this]() {return direction == idle; });
 	animator->AddTransition("WalkRight", "WalkLeft", [this]() {return direction == left; });
 	animator->AddTransition("WalkRight", "WalkUp", [this]() {return direction == up; });
 	animator->AddTransition("WalkRight", "WalkDown", [this]() {return direction == down; });
 
-	animator->AddTransition("WalkUp", "IdleDown", [this]() {return direction == idle; });
+	animator->AddTransition("WalkUp", "IdleUp", [this]() {return direction == idle; });
 	animator->AddTransition("WalkUp", "WalkLeft", [this]() {return direction == left; });
 	animator->AddTransition("WalkUp", "WalkRight", [this]() {return direction == right; });
 	animator->AddTransition("WalkUp", "WalkDown", [this]() {return direction == down; });
