@@ -125,10 +125,21 @@ static void generalTesting()
 	const char* modelo3 = RESOURCES_PATH "Models/bones/rp_manuel_animated_001_dancing.fbx";
 	const char* modelo4 = RESOURCES_PATH "Models/debug/wolf/Wolf-Blender-2.82a.gltf";
 
-	entity4->AddComponent<Model>(modelo3);
+	// ---------------------------------- TESTING Y DEBUG ----------------------------------
+	// -------------------------------------------------------------------------------------
+
+	auto selectedModel = modelo2;
+	entity4->GetComponent<Transform>()->setScale(Vector3(4.05f));
+	entity1->AddComponent<LightSource>(LightType::Point);
+	entity1->GetComponent<LightSource>()->SetIntensity(5.0f);
+
+	// -------------------------------------------------------------------------------------
+	// ---------------------------------- TESTING Y DEBUG ----------------------------------
+
+	entity4->AddComponent<Model>(selectedModel);
 	Model* mod = entity4->GetComponent<Model>();
-	SkeletalAnimation testAnim(modelo3, &mod->skeleton);
-	SkeletalAnimation testAnim2(modelo3, &mod->skeleton, 1);
+	SkeletalAnimation testAnim(selectedModel, &mod->skeleton);
+	SkeletalAnimation testAnim2(selectedModel, &mod->skeleton, 1);
 	entity4->AddComponent<Animator>();
 	entity4->GetComponent<Animator>()->AddState("idle", &testAnim);
 
@@ -141,11 +152,8 @@ static void generalTesting()
 
 	//entity4->GetComponent<Transform>()->setPosition().x += 5;
 	//entity4->GetComponent<Transform>()->setPosition().z -= 12;
-	entity4->GetComponent<Transform>()->setScale(Vector3(0.05f));
+	
 	//entity4->GetComponent<Transform>()->rotate(Vector3(-90,0,0));
-
-	entity1->AddComponent<LightSource>(LightType::Spot);
-	entity1->GetComponent<LightSource>()->SetIntensity(5.0f);
 
 	std::string title;
 	std::shared_ptr<Timer> timo = std::make_shared<Timer>(15, []() {std::cout << "Timer ended.\n";});
