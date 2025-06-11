@@ -28,22 +28,22 @@ void Player::onEvent(const IEvent& event)
 
 void Player::Update()
 {
-    if (InputManager::IsKeyHeld(KEY_A))
+    if (InputManager::IsKeyHeld(KEY_A) || InputManager::IsKeyPressed(KEY_A))
     {
         direction = left;
 		transform->setPosition().x -= speed * Time::deltaTime();
     }
-    else if (InputManager::IsKeyHeld(KEY_D))
+    else if (InputManager::IsKeyHeld(KEY_D) || InputManager::IsKeyPressed(KEY_D))
     {
         direction = right;
 		transform->setPosition().x += speed * Time::deltaTime();
     }
-    else if (InputManager::IsKeyHeld(KEY_W))
+    else if (InputManager::IsKeyHeld(KEY_W) || InputManager::IsKeyPressed(KEY_W))
     {
         direction = up;
 		transform->setPosition().y += speed * Time::deltaTime();
     }
-    else if (InputManager::IsKeyHeld(KEY_S))
+    else if (InputManager::IsKeyHeld(KEY_S) || InputManager::IsKeyPressed(KEY_S))
     {
         direction = down;
 		transform->setPosition().y -= speed * Time::deltaTime();
@@ -137,4 +137,3 @@ void Player::setUpAnimations()
 	animator->AddTransition("WalkDown", "WalkRight", [this]() {return direction == right; });
 	animator->AddTransition("WalkDown", "WalkUp", [this]() {return direction == up; });
 }
-

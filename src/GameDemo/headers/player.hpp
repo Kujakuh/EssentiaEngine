@@ -23,7 +23,7 @@ class Player : public EventListener
 	    Animator* animator = nullptr;
 		Transform* transform = nullptr;
 		Direccion direction = down;
-        float speed = 5.0f;
+        float speed = 2.5f;
 };
 
 #endif // PLAYER_HPP
